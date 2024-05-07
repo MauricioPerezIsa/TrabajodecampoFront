@@ -1,8 +1,13 @@
 import React from 'react'
+import{useEffect,useState} from 'react'
 
 function Carreras() {
+
+
   return (
-    <div>Carreras</div>
+    <><h1>Carreras</h1>
+
+    </>
   )
 }
 
