@@ -106,7 +106,7 @@ getMaterias()
 
     if (Object.keys(newErrores).length === 0) {
 
-        await CreatePersonal()
+        await createMateria()
         setShowCreateForm(false)
     }
 }
@@ -136,7 +136,7 @@ useEffect(()=>{getMaterias(),getPersonal()},[])
                 <Form.Control type="number" placeholder="Carga Horaria" value={CargaHoraria} onChange={(e) => setCargaHoraria(e.target.value)} min={1} max={16} />
             </Form.Group>
             <Form.Group controlId="formBasicProfesores">
-                <Form.Label>Profesores</Form.Label>
+                <Form.Label>Profesor</Form.Label>
                 <Form.Control as="select" value={profesoresSeleccionados} onChange={(e) => setProfesoresSeleccionados(e.target.value)}>
         <option value="">Seleccione un profesor</option>
         {allPersonal.map((profesor) => (
