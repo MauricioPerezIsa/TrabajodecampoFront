@@ -95,7 +95,7 @@ function CrudProfesores() {
     <><Container>
         <Row>
     <Button onClick={() => setShowCreateForm(prevState => !prevState)}>
-        {showCreateForm ? "Cancelar" : "Nuevo Estudiante"}
+        {showCreateForm ? "Cancelar" : "Nuevo Profesor"}
     </Button>
     {showCreateForm && (
         <Form>
