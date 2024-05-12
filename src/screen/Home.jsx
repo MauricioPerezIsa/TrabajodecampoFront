@@ -1,10 +1,11 @@
 import React from 'react'
-import Sidebarlateral from '../components/Sidebarlateral'
+import Cuadrito from '../components/Cuadrito'
+
 
 
 function Home() {
   return ( 
-    <Sidebarlateral></Sidebarlateral>    
+    <Cuadrito></Cuadrito>
   )
 }
 

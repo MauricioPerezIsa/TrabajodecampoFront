@@ -1,8 +1,11 @@
 import React from 'react'
+import Cuadrito from '../../components/Cuadrito'
 
 function Elementos() {
   return (
-    <div>Elementos</div>
+   <> 
+   <Cuadrito></Cuadrito>
+   </>
   )
 }
 

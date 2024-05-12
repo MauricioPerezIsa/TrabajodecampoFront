@@ -1,11 +1,12 @@
 import React from 'react'
 import{useEffect,useState} from 'react'
+import Cuadrito from '../../components/Cuadrito'
 
 function Carreras() {
 
 
   return (
-    <><h1>Carreras</h1>
+    <><Cuadrito></Cuadrito>
 
     </>
   )

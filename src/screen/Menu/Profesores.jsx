@@ -1,13 +1,16 @@
   import React from 'react'
   import CrudProfesores from '../../components/CrudProfesores'
-  import Sidebarlateral from '../../components/Sidebarlateral'
+  import Cuadrito from '../../components/Cuadrito'
+  
 
 
   function Profesores() {
     
     return (   
       <> 
-            <CrudProfesores />
+    
+      <CrudProfesores></CrudProfesores>
+            
       </> 
     )
   }
