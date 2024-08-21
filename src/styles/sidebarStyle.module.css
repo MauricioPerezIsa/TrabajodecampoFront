@@ -1,6 +1,8 @@
+
 .sidebar-conteiner {
+    margin-top: 0px;
     width: 14em;
-    height: 120vh;
+    height: 95vh;
     padding: 1px;
     transition: 0.5s;
     cursor: pointer;
@@ -8,17 +10,24 @@
     box-shadow: 8px 0 0 0 #2f3132;
     background-color: #4b1010;
     box-shadow: 4px 6px 14px #00000036;
+    overflow-y: auto;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    border: 4px solid #afafaf
 }
+
 .sidebar-conteiner:hover {
     width: 16em;
-    box-shadow: 8px 0 0 0 #2f3132;
 }
+
 .container-links{
-    height: 40%;
+    height: 100%;
 }
 .wrapper-link{
-    height: 80%;
-    width: 60%;
+    width: 80%;
+    margin: 5px 0;
 }
 .links-custom{
     height: 6em;

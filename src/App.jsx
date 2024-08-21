@@ -1,16 +1,20 @@
+import React from 'react'
 import { useState } from 'react'
-import Rutas from '../src/router/Rutas'
 import { Route } from 'react-router-dom'
+import Rutas from '../src/router/Rutas'
+import FooterCustom from './components/FooterCustom'
 
 
 
 function App() {
   return (    
-    <>
-    
-    <Rutas></Rutas>
-    
-    </>
+    <div>
+      <div>
+        <Rutas />
+        <FooterCustom />
+      </div>
+      
+    </div>
   )
 }
 

@@ -5,7 +5,9 @@ function Espacios() {
   return (
     <div> 
       <Cuadrito/>
+      
     </div>
+    
   )
 }
 
