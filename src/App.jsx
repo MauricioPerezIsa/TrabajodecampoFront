@@ -3,18 +3,20 @@ import { useState } from 'react'
 import { Route } from 'react-router-dom'
 import Rutas from '../src/router/Rutas'
 import FooterCustom from './components/FooterCustom'
+import Sidebarlateral from './components/Sidebarlateral'
 
 
 
 function App() {
   return (    
-    <div>
-      <div>
+    
+      <>
+        
         <Rutas />
-        <FooterCustom />
-      </div>
+        
+      </>
       
-    </div>
+    
   )
 }
 
