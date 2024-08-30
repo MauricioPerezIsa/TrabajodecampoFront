@@ -5,7 +5,7 @@ function FooterCustom() {
   return (
     <div className={`d-flex text-center ${Style['footerCustom']}`}>
       <div className={`d-flex align-items-center justify-content-center my-4 ${Style['container-Custom']}`}>
-      <p className="text-white font-monospace h5">Footer</p>
+      <p className="text-white font-monospace h5">© Todos los derechos reservados</p>
       </div>
     </div>
 
