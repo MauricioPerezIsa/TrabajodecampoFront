@@ -260,7 +260,7 @@ function CrudProfesores() {
               <td>{profesor.apellido}</td>
               <td>{profesor.dni}</td>
               <td>
-                <Button variant="danger" onClick={() => handleDelete(profesor._id)}>
+                <Button variant="danger" onClick={() => DeletePersonal(profesor._id)}>
                   Borrar
                 </Button>
                 <Button
