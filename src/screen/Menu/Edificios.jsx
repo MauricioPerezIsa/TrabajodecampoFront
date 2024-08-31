@@ -1,9 +1,10 @@
 import React from 'react'
 import Cuadrito from '../../components/Cuadrito'
+import CrudEdificio from '../../components/CrudEdificios'
 
 function Edificios() {
   return (
-   <Cuadrito/>
+   <CrudEdificio></CrudEdificio>
   )
 }
 
