@@ -113,8 +113,8 @@ function CrudCarreras() {
       </Form>
     )}
   </Row>
-    
-      <Table striped bordered hover>
+    <div className="d-flex mb-5">
+    <Table striped bordered hover>
         <thead>
           <tr>
             <th>Nombre</th>
@@ -140,6 +140,8 @@ function CrudCarreras() {
           ))}
         </tbody>
       </Table>
+    </div>
+      
     </>
   );
 }

@@ -12,6 +12,7 @@ import Home from '../screen/Home'
 import Cuadrito from '../components/Cuadrito'
 import Sidebarlateral from "../components/Sidebarlateral"
 import FooterCustom from "../components/FooterCustom"
+import Styles from "../styles/footerStyle.module.css"
 
 
 
@@ -32,7 +33,7 @@ function Rutas() {
     <Route path='/PlanDeEstudio' element={<PlanDeEstudio/>}/>
     <Route path='/Profesores' element={<Profesores/>}/>
      </Routes>
-     <FooterCustom></FooterCustom>
+     <FooterCustom className={` ${Styles["footer-grid"]}`} ></FooterCustom>
      </div>
      
     
