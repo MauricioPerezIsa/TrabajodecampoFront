@@ -9,6 +9,9 @@ import Materias from '../screen/Menu/Materias'
 import PlanDeEstudio from '../screen/Menu/PlanDeEstudio'
 import Profesores from '../screen/Menu/Profesores'
 import Home from '../screen/Home'
+import Cuadrito from '../components/Cuadrito'
+import Sidebarlateral from "../components/Sidebarlateral"
+import FooterCustom from "../components/FooterCustom"
 
 
 
@@ -16,6 +19,8 @@ import Home from '../screen/Home'
 function Rutas() {
   return (
      <BrowserRouter>
+     <Sidebarlateral></Sidebarlateral>
+     <div className="main-content">
      <Routes>
      <Route path='/' element={<Home/>}/>
     <Route path ='/Carreras' element={<Carreras/>}/>
@@ -27,8 +32,10 @@ function Rutas() {
     <Route path='/PlanDeEstudio' element={<PlanDeEstudio/>}/>
     <Route path='/Profesores' element={<Profesores/>}/>
      </Routes>
+     <FooterCustom></FooterCustom>
+     </div>
+     
     
-
     </BrowserRouter>
   )
 }

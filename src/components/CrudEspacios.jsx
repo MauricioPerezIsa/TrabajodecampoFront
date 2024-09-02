@@ -17,13 +17,16 @@ function CrudEspacio() {
       method: "GET",
       redirect: "follow",
     };
-
-    const response = await fetch(
-      "http://localhost:7000/espacio/",
-      requestOptions
-    );
+  
+    const response = await fetch("http://localhost:7000/espacio/", requestOptions);
     const result = await response.json();
-    setAllEspacio(result);
+  
+    if (Array.isArray(result)) {
+      setAllEspacio(result);
+    } else {
+      console.error("La respuesta no es un array:", result);
+      setAllEspacio([]); // O establece un valor por defecto
+    }
   };
 
   const getElementos = async () => {

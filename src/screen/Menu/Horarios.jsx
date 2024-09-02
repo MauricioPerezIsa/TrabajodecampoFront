@@ -5,7 +5,7 @@ function Horarios() {
  
   return (
     <>
-    <Cuadrito/>
+    
     </>
   
   )
