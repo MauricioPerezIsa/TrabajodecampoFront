@@ -192,11 +192,9 @@ function CrudElemento() {
             <tr key={Elemento._id}>
               <td>{Elemento.nombre}</td>
               <td>
-                <Button variant="danger" onClick={() => DeleteElemento(Elemento._id)}>
-                  Borrar
-                </Button>
                 <Button
-                  variant="primary"
+                  
+                  variant="warning"
                   onClick={() => {
                     setShowUpdateModal(true);
                     setUpdateNombreElemento(Elemento.nombre);
@@ -204,6 +202,9 @@ function CrudElemento() {
                   }}
                 >
                   Modificar
+                </Button>
+                <Button style={{ marginLeft: '10px' }} variant="danger" onClick={() => DeleteElemento(Elemento._id)}>
+                  Eliminar
                 </Button>
               </td>
             </tr>

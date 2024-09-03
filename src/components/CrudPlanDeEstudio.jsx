@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import { Table, Button, Modal, Dropdown,Row,Form } from "react-bootstrap";
+import { Table, Button, Modal, Row, Form } from "react-bootstrap";
 
 function CrudPlanDeEstudio() {
   const [allPlanes, setAllPlanes] = useState([]);
@@ -10,20 +10,24 @@ function CrudPlanDeEstudio() {
   const [materiasSeleccionadas, setMateriasSeleccionadas] = useState([]);
 
   const [showCreateForm, setShowCreateForm] = useState(false);
- 
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+
+  const [updateId, setUpdateId] = useState("");
+  const [updateNombrePlan, setUpdateNombrePlan] = useState("");
+  const [updateDescripcionPlan, setUpdateDescripcionPlan] = useState("");
+  const [updateMateriasSeleccionadas, setUpdateMateriasSeleccionadas] = useState([]);
+
   const getplanes = async () => {
     const requestOptions = {
       method: "GET",
       redirect: "follow",
     };
 
-    const response = await fetch(
-      "http://localhost:7000/planDeEstudio/",
-      requestOptions
-    );
+    const response = await fetch("http://localhost:7000/planDeEstudio/", requestOptions);
     const result = await response.json();
     setAllPlanes(result);
   };
+
   const getMaterias = async () => {
     try {
       const response = await fetch("http://localhost:7000/materia/");
@@ -53,12 +57,9 @@ function CrudPlanDeEstudio() {
         body: raw,
         redirect: "follow",
       };
-      const response = await fetch(
-        "http://localhost:7000/planDeEstudio/crear",
-        requestOptions
-      );
+      const response = await fetch("http://localhost:7000/planDeEstudio/crear", requestOptions);
       if (!response.ok) throw new Error("No se pudo crear el plan");
-      setNombrePlan("")
+      setNombrePlan("");
       setDescipcionPlan("");
       setMateriasSeleccionadas([]);
       getplanes();
@@ -67,81 +68,172 @@ function CrudPlanDeEstudio() {
     }
   };
 
+  const DeletePlanDeEstudio = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:7000/planDeEstudio/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error("No se pudo eliminar el plan");
+      getplanes();
+    } catch (error) {
+      console.error(error);
+      alert("Hubo un error al eliminar el plan");
+    }
+  };
+
+  const updatePlanDeEstudio = async () => {
+    try {
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      const raw = JSON.stringify({
+        nombre: updateNombrePlan,
+        descripcion: updateDescripcionPlan,
+        materia: updateMateriasSeleccionadas,
+      });
+
+      const response = await fetch(`http://localhost:7000/planDeEstudio/${updateId}`, {
+        method: "PUT",
+        headers: myHeaders,
+        body: raw,
+      });
+
+      if (!response.ok) throw new Error("No se pudo actualizar el plan");
+      setShowUpdateModal(false);
+      getplanes();
+    } catch (error) {
+      console.error(error);
+      alert("Hubo un error al actualizar el plan");
+    }
+  };
+
+  const handleUpdateSubmit = async () => {
+    try {
+      await updatePlanDeEstudio();
+    } catch (error) {
+      console.error("Error al actualizar el plan:", error);
+      alert("Hubo un error al actualizar el plan");
+    }
+  };
+
   useEffect(() => {
-    getplanes(),
+    getplanes();
     getMaterias();
   }, []);
 
   return (
-    <><Row>
-    <Button onClick={() => setShowCreateForm(prevState => !prevState)}>
-      {showCreateForm ? "Cancelar" : "Nuevo Plan de Estudio"}
-    </Button>
-    {showCreateForm && (
-      <Form>
-        <Form.Group controlId="formBasicNombrePlan">
-          <Form.Label>Nombre</Form.Label>
-          <Form.Control type="text" placeholder="Nombre" value={nombrePlan} onChange={(e) => setNombrePlan(e.target.value)} maxLength={25} />
-        </Form.Group>
-        <Form.Group controlId="formBasicDescripcionPlan">
-          <Form.Label>Descripción</Form.Label>
-          <Form.Control type="text" placeholder="Descripción" value={descripcionPlan} onChange={(e) => setDescipcionPlan(e.target.value)} maxLength={50} />
-        </Form.Group>
-        <Form.Group controlId="formBasicMaterias">
-  <Form.Label>Materias</Form.Label>
-  <div>
-    {allMaterias.map((materia) => (
-      <Form.Check
-        key={materia._id}
-        type="checkbox"
-        id={`checkbox-${materia._id}`}
-        label={`${materia.nombre} - Año: ${materia.anio}`}
-        checked={materiasSeleccionadas.includes(materia._id)}
-        onChange={(e) => {
-          const materiaId = materia._id;
-          if (materiasSeleccionadas.includes(materiaId)) {
-            setMateriasSeleccionadas(materiasSeleccionadas.filter(id => id !== materiaId));
-          } else {
-            setMateriasSeleccionadas([...materiasSeleccionadas, materiaId]);
-          }
-        }}
-      />
-    ))}
-  </div>
-</Form.Group>
-        <Button onClick={CrearPlanDeEstudio} disabled={!nombrePlan || !descripcionPlan || materiasSeleccionadas.length === 0}>Crear Plan de Estudio</Button>
-      </Form>
-    )}
-  </Row>
-    
+    <>
+      <Row>
+        <Button onClick={() => setShowCreateForm(prevState => !prevState)}>
+          {showCreateForm ? "Cancelar" : "Nuevo Plan de Estudio"}
+        </Button>
+        {showCreateForm && (
+          <Form>
+            <Form.Group controlId="formBasicNombrePlan">
+              <Form.Label>Nombre</Form.Label>
+              <Form.Control type="text" placeholder="Nombre" value={nombrePlan} onChange={(e) => setNombrePlan(e.target.value)} maxLength={50} />
+            </Form.Group>
+            <Form.Group controlId="formBasicDescripcionPlan">
+              <Form.Label>Descripción</Form.Label>
+              <Form.Control type="text" placeholder="Descripción" value={descripcionPlan} onChange={(e) => setDescipcionPlan(e.target.value)} maxLength={500} />
+            </Form.Group>
+            <Form.Group controlId="formBasicMaterias">
+              <Form.Label>Materias</Form.Label>
+              <div>
+                {allMaterias.map((materia) => (
+                  <Form.Check
+                    key={materia._id}
+                    type="checkbox"
+                    id={`checkbox-${materia._id}`}
+                    label={`${materia.nombre} - Año: ${materia.anio}`}
+                    checked={materiasSeleccionadas.includes(materia._id)}
+                    onChange={(e) => {
+                      const materiaId = materia._id;
+                      if (materiasSeleccionadas.includes(materiaId)) {
+                        setMateriasSeleccionadas(materiasSeleccionadas.filter(id => id !== materiaId));
+                      } else {
+                        setMateriasSeleccionadas([...materiasSeleccionadas, materiaId]);
+                      }
+                    }}
+                  />
+                ))}
+              </div>
+            </Form.Group>
+            <Button onClick={CrearPlanDeEstudio} disabled={!nombrePlan || !descripcionPlan || materiasSeleccionadas.length === 0}>Crear Plan de Estudio</Button>
+          </Form>
+        )}
+      </Row>
+      
       <Table striped bordered hover>
         <thead>
           <tr>
             <th>Nombre</th>
             <th>Descripción</th>
             <th>Materias</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {allPlanes.map((planesdeestudio) => (
-            <tr key={planesdeestudio._id}>
-              <td>{planesdeestudio.nombre}</td>
-              <td>{planesdeestudio.descripcion}</td>
+          {allPlanes.map((plan) => (
+            <tr key={plan._id}>
+              <td>{plan.nombre}</td>
+              <td>{plan.descripcion}</td>
               <td>
                 <ul>
-                  {planesdeestudio.materia.map((materia) => (
+                  {plan.materia.map((materia) => (
                     <li key={materia._id}>
                       {materia.nombre}, Año: {materia.anio}
                     </li>
                   ))}
                 </ul>
               </td>
+              <td>
+                <Button variant="warning" onClick={() => {
+                  setUpdateId(plan._id);
+                  setUpdateNombrePlan(plan.nombre);
+                  setUpdateDescripcionPlan(plan.descripcion);
+                  setUpdateMateriasSeleccionadas(plan.materia.map(m => m._id));
+                  setShowUpdateModal(true);
+                }}>Modificar</Button>
+                <Button style={{ margin: '10px' }} variant="danger" onClick={() => DeletePlanDeEstudio(plan._id)}>Eliminar</Button>
+              </td>
             </tr>
           ))}
         </tbody>
       </Table>
+
+      <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Modificar Plan de Estudio</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group controlId="formUpdateNombrePlan">
+              <Form.Label>Nombre</Form.Label>
+              <Form.Control type="text" placeholder="Nombre" value={updateNombrePlan} onChange={(e) => setUpdateNombrePlan(e.target.value)} maxLength={50} />
+            </Form.Group>
+            <Form.Group controlId="formUpdateDescripcionPlan">
+              <Form.Label>Descripción</Form.Label>
+              <Form.Control type="text" placeholder="Descripción" value={updateDescripcionPlan} onChange={(e) => setUpdateDescripcionPlan(e.target.value)} maxLength={500} />
+            </Form.Group>
+            <Form.Group controlId="formUpdateMaterias">
+              <Form.Label>Materias</Form.Label>
+              <Form.Control as="select" multiple value={updateMateriasSeleccionadas} onChange={(e) => setUpdateMateriasSeleccionadas(Array.from(e.target.selectedOptions, option => option.value))}>
+                {allMaterias.map((materia) => (
+                  <option key={materia._id} value={materia._id}>{materia.nombre} - Año: {materia.anio}</option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowUpdateModal(false)}>Cancelar</Button>
+          <Button variant="primary" onClick={handleUpdateSubmit}>Guardar Cambios</Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }
 
 export default CrudPlanDeEstudio;
+

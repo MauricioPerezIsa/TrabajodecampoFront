@@ -260,11 +260,9 @@ function CrudProfesores() {
               <td>{profesor.apellido}</td>
               <td>{profesor.dni}</td>
               <td>
-                <Button variant="danger" onClick={() => DeletePersonal(profesor._id)}>
-                  Borrar
-                </Button>
                 <Button
-                  variant="primary"
+                  style={{ marginLeft: '10px' }}
+                  variant="warning"
                   onClick={() => {
                     setShowUpdateModal(true);
                     setUpdateNombrePersonal(profesor.nombre);
@@ -274,6 +272,9 @@ function CrudProfesores() {
                   }}
                 >
                   Modificar
+                </Button>
+                <Button style={{ marginLeft: '10px' }} variant="danger" onClick={() => DeletePersonal(profesor._id)}>
+                  Eliminar
                 </Button>
               </td>
             </tr>

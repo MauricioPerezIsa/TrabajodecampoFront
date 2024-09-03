@@ -64,6 +64,8 @@
           profesor: profesoresSeleccionados,
         });
 
+        console.log("Datos enviados para crear materia:", raw);
+
         const requestOptions = {
           method: "POST",
           headers: myHeaders,
@@ -72,6 +74,7 @@
         };
 
         const response = await fetch("http://localhost:7000/materia/crear", requestOptions);
+        console.log("Respuesta del servidor:", response);
         if (!response.ok) throw new Error("No se pudo crear la materia");
         setNombreMateria("");
         setAnioMateria("");
@@ -170,8 +173,6 @@
     
       if (!updateAnioMateria) {
         newErrores.updateAnioMateria = "El año es Obligatorio";
-      } else if (updateAnioMateria.length !== 2) {
-        newErrores.updateAnioMateria = "El año debe contener dos caracteres";
       }
     
       if (!updateCargaHoraria) {
@@ -279,7 +280,7 @@
                     setUpdateProfesoresSeleccionados(materiass.profesor.map(p => p._id));
                     setShowUpdateModal(true);
                   }}>Modificar</Button>
-                  <Button variant="danger" onClick={() => deleteMateria(materiass._id)}>Eliminar</Button>
+                  <Button style={{ marginLeft: '10px' }} variant="danger" onClick={() => deleteMateria(materiass._id)}>Eliminar</Button>
                 </td>
               </tr>
             ))}

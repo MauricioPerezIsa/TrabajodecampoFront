@@ -10,6 +10,14 @@ function CrudCarreras() {
   const [planesCarrera, setPlanesCarrera] = useState([]);
 
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+
+  const [updateId, setUpdateId] = useState("");
+  const [updateNombreCarrera, setUpdateNombreCarrera] = useState("");
+  const [updateAniosCarrera, setUpdateAniosCarrera] = useState("");
+  const [updatePlanesCarrera, setUpdatePlanesCarrera] = useState([]);
+
+  const [Errores, setErrores] = useState({});
  
   const getCarreras = async () => {
     const requestOptions = {
@@ -67,6 +75,90 @@ function CrudCarreras() {
     }
   };
 
+  const DeleteCarrera = async (_id) => {
+    try {
+      let myHeaders = new Headers();
+      let requestOptions = {
+        method: "DELETE",
+        headers: myHeaders,
+        redirect: "follow",
+      };
+
+      const response = await fetch(
+        "http://localhost:7000/carrera/" + _id,
+        requestOptions
+      );
+      if (!response.ok) throw new Error("No se pudo eliminar la carrera");
+
+      getCarreras();
+    } catch (error) {
+      console.error(error);
+      alert("Hubo un error al eliminar la carrera");
+    }
+  };
+
+  const updateCarrera = async () => {
+    try {
+      let myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      let raw = JSON.stringify({
+        nombre: updateNombreCarrera,
+        anioDictado: updateAniosCarrera,
+        plan: updatePlanesCarrera,
+      });
+
+      let requestOptions = {
+        method: "PUT",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow",
+      };
+
+      const response = await fetch(
+        "http://localhost:7000/carrera/" + updateId,
+        requestOptions
+      );
+      if (!response.ok) throw new Error("No se pudo actualizar la carrera");
+
+      setShowUpdateModal(false);
+      getCarreras();
+    } catch (error) {
+      console.error(error);
+      alert("Hubo un error al actualizar la carrera");
+    }
+  };
+
+  const handleUpdateSubmit = async () => {
+    const newErrores = {};
+  
+    if (!updateNombreCarrera) {
+      newErrores.updateNombreCarrera = 'El nombre es obligatorio';
+    } else if (updateNombreCarrera.length < 3) {
+      newErrores.updateNombreCarrera = "El nombre debe contener al menos 3 caracteres";
+    }
+  
+    if (!updateAniosCarrera) {
+      newErrores.updateAniosCarrera = "El año es Obligatorio";
+    }
+  
+    if (!updatePlanesCarrera || updatePlanesCarrera.length === 0) {
+      newErrores.updatePlanesCarrera = "Debe seleccionar al menos un plan";
+    }
+  
+    setErrores(newErrores);
+  
+    if (Object.keys(newErrores).length === 0) {
+      try {
+        await updateCarrera();
+        setShowUpdateModal(false);
+      } catch (error) {
+        console.error("Error al actualizar la carrera:", error);
+        alert("Hubo un error al actualizar la carrera");
+      }
+    }
+  };
+
   useEffect(() => {
     getCarreras(),
     getPlanes();
@@ -113,13 +205,13 @@ function CrudCarreras() {
       </Form>
     )}
   </Row>
-    <div className="d-flex mb-5">
     <Table striped bordered hover>
         <thead>
           <tr>
             <th>Nombre</th>
             <th>Años</th>
             <th>Planes</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -136,11 +228,57 @@ function CrudCarreras() {
                   ))}
                 </ul>
               </td>
+              <td>
+              <Button variant="warning" onClick={() => {
+                    setUpdateId(carrera._id);
+                    setUpdateNombreCarrera(carrera.nombre);
+                    setUpdateAniosCarrera(carrera.anios);
+                    setUpdatePlanesCarrera(carrera.plan.map(p => p._id));
+                    setShowUpdateModal(true);
+                  }}>Modificar</Button>
+              <Button style={{ marginLeft: '10px' }} variant="danger" onClick={() => DeleteCarrera(carrera._id)}>
+                  Eliminar
+                </Button>
+              </td>
             </tr>
           ))}
         </tbody>
       </Table>
-    </div>
+      <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Modificar Carrera</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group controlId="formUpdateCarrera">
+                <Form.Label>Nombre</Form.Label>
+                <Form.Control type="text" placeholder="Nombre" value={updateNombreCarrera} onChange={(e) => setUpdateNombreCarrera(e.target.value)} maxLength={50} />
+              </Form.Group>
+              <Form.Group controlId="formUpdateAniosCarrera">
+                <Form.Label>Año</Form.Label>
+                <Form.Control 
+  type="number" 
+  placeholder="Año" 
+  value={updateAniosCarrera || ""} // Asegura un valor inicial
+  onChange={(e) => setUpdateAniosCarrera(e.target.value ? Number(e.target.value) : "")} // Convierte el valor a número o vacío
+  min={1} max={5}
+/>
+              </Form.Group>
+              <Form.Group controlId="formUpdatePlanes">
+          <Form.Label>Planes</Form.Label>
+          <Form.Control as="select" multiple value={updatePlanesCarrera} onChange={(e) => setUpdatePlanesCarrera(Array.from(e.target.selectedOptions, option => option.value))}>
+            {allPlanes.map((plan) => (
+              <option key={plan._id} value={plan._id}>{plan.nombre}</option>
+            ))}
+          </Form.Control>
+        </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowUpdateModal(false)}>Cancelar</Button>
+            <Button variant="primary" onClick={handleUpdateSubmit}>Guardar Cambios</Button>
+          </Modal.Footer>
+        </Modal>
       
     </>
   );

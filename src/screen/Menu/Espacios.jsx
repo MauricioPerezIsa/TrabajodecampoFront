@@ -5,7 +5,6 @@ function Espacios() {
   return (
     <div> 
       <CrudEspacio></CrudEspacio>
-      
     </div>
     
   )
