@@ -181,26 +181,24 @@ function CrudCarreras() {
         </Form.Group>
         <Form.Group controlId="formBasicPlanes">
   <Form.Label>Planes</Form.Label>
-  <div>
+  <Form.Control
+    as="select"
+    multiple
+    value={planesCarrera}
+    onChange={(e) => {
+      const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+      setPlanesCarrera(selectedOptions);
+    }}
+  >
     {allPlanes.map((plan) => (
-      <Form.Check
-        key={plan._id}
-        type="checkbox"
-        id={`checkbox-${plan._id}`}
-        label={`${plan.nombre}`}
-        checked={planesCarrera.includes(plan._id)}
-        onChange={(e) => {
-          const planId = plan._id;
-          if (planesCarrera.includes(planId)) {
-            setPlanesCarrera(planesCarrera.filter(id => id !== planId));
-          } else {
-            setPlanesCarrera([...planesCarrera, planId]);
-          }
-        }}
-      />
+      <option key={plan._id} value={plan._id}>
+        {plan.nombre}
+      </option>
     ))}
-  </div>
+  </Form.Control>
 </Form.Group>
+
+
         <Button onClick={CrearCarrera} disabled={!nombreCarrera || !aniosCarrera || planesCarrera.length === 0}>Crear Carrera</Button>
       </Form>
     )}
@@ -265,13 +263,24 @@ function CrudCarreras() {
 />
               </Form.Group>
               <Form.Group controlId="formUpdatePlanes">
-          <Form.Label>Planes</Form.Label>
-          <Form.Control as="select" multiple value={updatePlanesCarrera} onChange={(e) => setUpdatePlanesCarrera(Array.from(e.target.selectedOptions, option => option.value))}>
-            {allPlanes.map((plan) => (
-              <option key={plan._id} value={plan._id}>{plan.nombre}</option>
-            ))}
-          </Form.Control>
-        </Form.Group>
+  <Form.Label>Planes</Form.Label>
+  <Form.Control
+    as="select"
+    multiple
+    value={updatePlanesCarrera}
+    onChange={(e) => {
+      const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+      setUpdatePlanesCarrera(selectedOptions);
+    }}
+  >
+    {allPlanes.map((plan) => (
+      <option key={plan._id} value={plan._id}>
+        {plan.nombre}
+      </option>
+    ))}
+  </Form.Control>
+</Form.Group>
+
             </Form>
           </Modal.Body>
           <Modal.Footer>

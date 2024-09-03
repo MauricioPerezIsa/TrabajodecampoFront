@@ -148,27 +148,22 @@ function CrudEdificio() {
             </Form.Group>
             <Form.Group controlId="formBasicEspacios">
               <Form.Label>Espacios</Form.Label>
-              <div>
+              <Form.Control
+                as="select"
+                multiple
+                value={espaciosEdificio}
+                onChange={(e) => setEspaciosEdificio(Array.from(e.target.selectedOptions, option => option.value))}
+              >
                 {allEspacios.map((espacio) => (
-                  <Form.Check
-                    key={espacio._id}
-                    type="checkbox"
-                    id={`checkbox-${espacio._id}`}
-                    label={`${espacio.nombre}`}
-                    checked={espaciosEdificio.includes(espacio._id)}
-                    onChange={(e) => {
-                      const espacioId = espacio._id;
-                      if (espaciosEdificio.includes(espacioId)) {
-                        setEspaciosEdificio(espaciosEdificio.filter(id => id !== espacioId));
-                      } else {
-                        setEspaciosEdificio([...espaciosEdificio, espacioId]);
-                      }
-                    }}
-                  />
+                  <option key={espacio._id} value={espacio._id}>
+                    {espacio.nombre}
+                  </option>
                 ))}
-              </div>
+              </Form.Control>
             </Form.Group>
-            <Button onClick={CrearEdificio} disabled={!nombreEdificio || espaciosEdificio.length === 0}>Crear Edificio</Button>
+            <Button onClick={CrearEdificio} disabled={!nombreEdificio || espaciosEdificio.length === 0}>
+              Crear Edificio
+            </Button>
           </Form>
         )}
       </Row>
@@ -237,25 +232,18 @@ function CrudEdificio() {
             </Form.Group>
             <Form.Group controlId="formUpdateEspacios">
               <Form.Label>Espacios</Form.Label>
-              <div>
+              <Form.Control
+                as="select"
+                multiple
+                value={updateEspaciosEdificio}
+                onChange={(e) => setUpdateEspaciosEdificio(Array.from(e.target.selectedOptions, option => option.value))}
+              >
                 {allEspacios.map((espacio) => (
-                  <Form.Check
-                    key={espacio._id}
-                    type="checkbox"
-                    id={`update-checkbox-${espacio._id}`}
-                    label={`${espacio.nombre}`}
-                    checked={updateEspaciosEdificio.includes(espacio._id)}
-                    onChange={(e) => {
-                      const espacioId = espacio._id;
-                      if (updateEspaciosEdificio.includes(espacioId)) {
-                        setUpdateEspaciosEdificio(updateEspaciosEdificio.filter(id => id !== espacioId));
-                      } else {
-                        setUpdateEspaciosEdificio([...updateEspaciosEdificio, espacioId]);
-                      }
-                    }}
-                  />
+                  <option key={espacio._id} value={espacio._id}>
+                    {espacio.nombre}
+                  </option>
                 ))}
-              </div>
+              </Form.Control>
             </Form.Group>
           </Form>
         </Modal.Body>
@@ -269,3 +257,4 @@ function CrudEdificio() {
 }
 
 export default CrudEdificio;
+

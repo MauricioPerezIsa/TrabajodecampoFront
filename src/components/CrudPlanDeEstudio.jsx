@@ -139,25 +139,18 @@ function CrudPlanDeEstudio() {
             </Form.Group>
             <Form.Group controlId="formBasicMaterias">
               <Form.Label>Materias</Form.Label>
-              <div>
+              <Form.Control
+                as="select"
+                multiple
+                value={materiasSeleccionadas}
+                onChange={(e) => setMateriasSeleccionadas(Array.from(e.target.selectedOptions, option => option.value))}
+              >
                 {allMaterias.map((materia) => (
-                  <Form.Check
-                    key={materia._id}
-                    type="checkbox"
-                    id={`checkbox-${materia._id}`}
-                    label={`${materia.nombre} - Año: ${materia.anio}`}
-                    checked={materiasSeleccionadas.includes(materia._id)}
-                    onChange={(e) => {
-                      const materiaId = materia._id;
-                      if (materiasSeleccionadas.includes(materiaId)) {
-                        setMateriasSeleccionadas(materiasSeleccionadas.filter(id => id !== materiaId));
-                      } else {
-                        setMateriasSeleccionadas([...materiasSeleccionadas, materiaId]);
-                      }
-                    }}
-                  />
+                  <option key={materia._id} value={materia._id}>
+                    {materia.nombre} - Año: {materia.anio}
+                  </option>
                 ))}
-              </div>
+              </Form.Control>
             </Form.Group>
             <Button onClick={CrearPlanDeEstudio} disabled={!nombrePlan || !descripcionPlan || materiasSeleccionadas.length === 0}>Crear Plan de Estudio</Button>
           </Form>
@@ -218,9 +211,16 @@ function CrudPlanDeEstudio() {
             </Form.Group>
             <Form.Group controlId="formUpdateMaterias">
               <Form.Label>Materias</Form.Label>
-              <Form.Control as="select" multiple value={updateMateriasSeleccionadas} onChange={(e) => setUpdateMateriasSeleccionadas(Array.from(e.target.selectedOptions, option => option.value))}>
+              <Form.Control
+                as="select"
+                multiple
+                value={updateMateriasSeleccionadas}
+                onChange={(e) => setUpdateMateriasSeleccionadas(Array.from(e.target.selectedOptions, option => option.value))}
+              >
                 {allMaterias.map((materia) => (
-                  <option key={materia._id} value={materia._id}>{materia.nombre} - Año: {materia.anio}</option>
+                  <option key={materia._id} value={materia._id}>
+                    {materia.nombre} - Año: {materia.anio}
+                  </option>
                 ))}
               </Form.Control>
             </Form.Group>

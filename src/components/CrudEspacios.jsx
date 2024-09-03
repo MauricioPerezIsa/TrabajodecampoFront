@@ -1,6 +1,5 @@
-import React from "react";
-import { useEffect, useState } from "react";
-import { Table, Button, Modal, Dropdown, Row, Form } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Table, Button, Modal, Row, Form } from "react-bootstrap";
 
 function CrudEspacio() {
   const [allEspacio, setAllEspacio] = useState([]);
@@ -22,19 +21,18 @@ function CrudEspacio() {
   const [Errores, setErrores] = useState({});
 
   const getEspacio = async () => {
-    const requestOptions = {
-      method: "GET",
-      redirect: "follow",
-    };
+    try {
+      const response = await fetch("http://localhost:7000/espacio/");
+      const result = await response.json();
 
-    const response = await fetch("http://localhost:7000/espacio/", requestOptions);
-    const result = await response.json();
-
-    if (Array.isArray(result)) {
-      setAllEspacio(result);
-    } else {
-      console.error("La respuesta no es un array:", result);
-      setAllEspacio([]); // O establece un valor por defecto
+      if (Array.isArray(result)) {
+        setAllEspacio(result);
+      } else {
+        console.error("La respuesta no es un array:", result);
+        setAllEspacio([]);
+      }
+    } catch (error) {
+      console.error("Error al obtener los espacios:", error);
     }
   };
 
@@ -62,16 +60,12 @@ function CrudEspacio() {
         capacidad: capacidadEspacio,
         elemento: elementosEspacio,
       });
-      const requestOptions = {
+
+      const response = await fetch("http://localhost:7000/espacio/crear", {
         method: "POST",
         headers: myHeaders,
         body: raw,
-        redirect: "follow",
-      };
-      const response = await fetch(
-        "http://localhost:7000/espacio/crear",
-        requestOptions
-      );
+      });
 
       if (!response.ok) throw new Error("No se pudo crear el espacio");
       setNombreEspacio("");
@@ -86,17 +80,9 @@ function CrudEspacio() {
 
   const DeleteEspacio = async (_id) => {
     try {
-      let myHeaders = new Headers();
-      let requestOptions = {
+      const response = await fetch(`http://localhost:7000/espacio/${_id}`, {
         method: "DELETE",
-        headers: myHeaders,
-        redirect: "follow",
-      };
-
-      const response = await fetch(
-        "http://localhost:7000/espacio/" + _id,
-        requestOptions
-      );
+      });
       if (!response.ok) throw new Error("No se pudo eliminar el espacio");
 
       getEspacio();
@@ -108,27 +94,21 @@ function CrudEspacio() {
 
   const updateEspacio = async () => {
     try {
-      let myHeaders = new Headers();
+      const myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
 
-      let raw = JSON.stringify({
+      const raw = JSON.stringify({
         nombre: updateNombreEspacio,
         tipo: updateTipoEspacio,
         capacidad: updateCapacidadEspacio,
         elemento: updateElementosEspacio,
       });
 
-      let requestOptions = {
+      const response = await fetch(`http://localhost:7000/espacio/${updateId}`, {
         method: "PUT",
         headers: myHeaders,
         body: raw,
-        redirect: "follow",
-      };
-
-      const response = await fetch(
-        "http://localhost:7000/espacio/" + updateId,
-        requestOptions
-      );
+      });
 
       if (!response.ok) throw new Error("No se pudo actualizar el espacio");
 
@@ -217,27 +197,18 @@ function CrudEspacio() {
             </Form.Group>
             <Form.Group controlId="formBasicElementos">
               <Form.Label>Elementos</Form.Label>
-              <div>
+              <Form.Control
+                as="select"
+                multiple
+                value={elementosEspacio}
+                onChange={(e) => setElementosEspacio(Array.from(e.target.selectedOptions, option => option.value))}
+              >
                 {allElementos.map((elemento) => (
-                  <Form.Check
-                    key={elemento._id}
-                    type="checkbox"
-                    id={`checkbox-${elemento._id}`}
-                    label={`${elemento.nombre}`}
-                    checked={elementosEspacio.includes(elemento._id)}
-                    onChange={(e) => {
-                      const elementoId = elemento._id;
-                      if (elementosEspacio.includes(elementoId)) {
-                        setElementosEspacio(
-                          elementosEspacio.filter((id) => id !== elementoId)
-                        );
-                      } else {
-                        setElementosEspacio([...elementosEspacio, elementoId]);
-                      }
-                    }}
-                  />
+                  <option key={elemento._id} value={elemento._id}>
+                    {elemento.nombre}
+                  </option>
                 ))}
-              </div>
+              </Form.Control>
             </Form.Group>
             <Button
               onClick={CrearEspacio}
@@ -265,14 +236,14 @@ function CrudEspacio() {
           </tr>
         </thead>
         <tbody>
-          {allEspacio.map((espacios) => (
-            <tr key={espacios._id}>
-              <td>{espacios.nombre}</td>
-              <td>{espacios.tipo}</td>
-              <td>{espacios.capacidad}</td>
+          {allEspacio.map((espacio) => (
+            <tr key={espacio._id}>
+              <td>{espacio.nombre}</td>
+              <td>{espacio.tipo}</td>
+              <td>{espacio.capacidad}</td>
               <td>
                 <ul>
-                  {espacios.elemento.map((elemento) => (
+                  {espacio.elemento.map((elemento) => (
                     <li key={elemento._id}>{elemento.nombre}</li>
                   ))}
                 </ul>
@@ -281,19 +252,19 @@ function CrudEspacio() {
                 <Button
                   variant="warning"
                   onClick={() => {
-                    setUpdateId(espacios._id);
-                    setUpdateNombreEspacio(espacios.nombre);
-                    setUpdateTipoEspacio(espacios.tipo);
-                    setUpdateCapacidadEspacio(espacios.capacidad);
+                    setUpdateId(espacio._id);
+                    setUpdateNombreEspacio(espacio.nombre);
+                    setUpdateTipoEspacio(espacio.tipo);
+                    setUpdateCapacidadEspacio(espacio.capacidad);
                     setUpdateElementosEspacio(
-                      espacios.elemento.map((el) => el._id)
+                      espacio.elemento.map((el) => el._id)
                     );
                     setShowUpdateModal(true);
                   }}
                 >
                   Modificar
                 </Button>{" "}
-                <Button variant="danger" onClick={() => DeleteEspacio(espacios._id)}>
+                <Button variant="danger" onClick={() => DeleteEspacio(espacio._id)}>
                   Eliminar
                 </Button>
               </td>
@@ -352,31 +323,19 @@ function CrudEspacio() {
           </Form.Group>
           <Form.Group controlId="formUpdateElementosEspacio">
             <Form.Label>Elementos</Form.Label>
-            <div>
+            <Form.Control
+              as="select"
+              multiple
+              value={updateElementosEspacio}
+              onChange={(e) => setUpdateElementosEspacio(Array.from(e.target.selectedOptions, option => option.value))}
+              isInvalid={Errores.updateElementosEspacio}
+            >
               {allElementos.map((elemento) => (
-                <Form.Check
-                  key={elemento._id}
-                  type="checkbox"
-                  id={`update-checkbox-${elemento._id}`}
-                  label={`${elemento.nombre}`}
-                  checked={updateElementosEspacio.includes(elemento._id)}
-                  onChange={(e) => {
-                    const elementoId = elemento._id;
-                    if (updateElementosEspacio.includes(elementoId)) {
-                      setUpdateElementosEspacio(
-                        updateElementosEspacio.filter((id) => id !== elementoId)
-                      );
-                    } else {
-                      setUpdateElementosEspacio([
-                        ...updateElementosEspacio,
-                        elementoId,
-                      ]);
-                    }
-                  }}
-                  isInvalid={Errores.updateElementosEspacio}
-                />
+                <option key={elemento._id} value={elemento._id}>
+                  {elemento.nombre}
+                </option>
               ))}
-            </div>
+            </Form.Control>
             <Form.Control.Feedback type="invalid">
               {Errores.updateElementosEspacio}
             </Form.Control.Feedback>
@@ -396,3 +355,4 @@ function CrudEspacio() {
 }
 
 export default CrudEspacio;
+
