@@ -121,6 +121,28 @@ function CrudMaterias() {
     }
   };
 
+  const DeleteMateria = async (_id) => {
+    try {
+      let myHeaders = new Headers();
+      let requestOptions = {
+        method: "DELETE",
+        headers: myHeaders,
+        redirect: "follow",
+      };
+
+      const response = await fetch(
+        "http://localhost:7000/materia/" + _id,
+        requestOptions
+      );
+      if (!response.ok) throw new Error("No se pudo eliminar la materia");
+
+      getMaterias();
+    } catch (error) {
+      console.error(error);
+      alert("Hubo un error al eliminar la materia");
+    }
+  };
+
   const handleSubmit = async () => {
     const newErrores = {};
     if (!NombreMateria) {
@@ -347,7 +369,7 @@ function CrudMaterias() {
                 <td>{materia.horarios.map(h => `Día: ${h.dia}, Módulo Inicio: ${h.moduloInicio}, Módulo Fin: ${h.moduloFin}`).join(' | ')}</td>
                 <td>
                   <Button style={{ marginBottom: '7px' }} variant="warning" onClick={() => handleShowUpdateModal(materia)}>Modificar</Button>
-                  <Button style={{ marginLeft: '6px' }} variant="danger" onClick={() => handleDelete(materia._id)}>Eliminar</Button>
+                  <Button style={{ marginLeft: '6px' }} variant="danger" onClick={() => DeleteMateria(materia._id)}>Eliminar</Button>
                 </td>
               </tr>
             ))}
