@@ -148,9 +148,14 @@ function CrudMaterias() {
       if (!response.ok) throw new Error("No se pudo eliminar la materia");
 
       getMaterias();
+
+      setAlertMessage("La materia ha sido eliminada exitosamente");
+      setShowAlert(true);
+
     } catch (error) {
       console.error(error);
-      alert("Hubo un error al eliminar la materia");
+      setAlertMessage("Hubo un error al eliminar la materia");
+      setShowAlert(true);
     }
   };
 

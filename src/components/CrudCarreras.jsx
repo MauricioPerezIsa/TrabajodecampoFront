@@ -102,9 +102,14 @@ function CrudCarreras() {
       if (!response.ok) throw new Error("No se pudo eliminar la carrera");
 
       getCarreras();
+
+      setAlertMessage("La carrera fue eliminada exitosamente");
+      setShowAlert(true);
+    
     } catch (error) {
       console.error(error);
-      alert("Hubo un error al eliminar la carrera");
+      setAlertMessage("Hubo un error al eliminar la carrera");
+      setShowAlert(true);
     }
   };
 

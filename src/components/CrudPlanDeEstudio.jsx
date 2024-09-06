@@ -86,10 +86,16 @@ function CrudPlanDeEstudio() {
         method: "DELETE",
       });
       if (!response.ok) throw new Error("No se pudo eliminar el plan");
+
       getplanes();
+
+      setAlertMessage("El plan ha sido eliminado exitosamente");
+      setShowAlert(true);
+
     } catch (error) {
       console.error(error);
-      alert("Hubo un error al eliminar el plan");
+      setAlertMessage("Hubo un error al eliminar el plan");
+      setShowAlert(true);
     }
   };
 

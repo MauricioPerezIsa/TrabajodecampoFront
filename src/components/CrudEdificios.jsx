@@ -92,9 +92,14 @@ function CrudEdificio() {
       if (!response.ok) throw new Error("No se pudo eliminar el edificio");
 
       getEdificios();
+
+      setAlertMessage("El edificio ha sido eliminado exitosamente");
+      setShowAlert(true);
+
     } catch (error) {
       console.error(error);
-      alert("Hubo un error al eliminar el edificio");
+      setAlertMessage("Hubo un error al eliminar el edificio");
+      setShowAlert(true);
     }
   };
 

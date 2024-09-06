@@ -89,9 +89,14 @@ function CrudProfesores() {
       if (!response.ok) throw new Error("No se pudo eliminar el personal");
 
       getPersonal();
+
+      setAlertMessage("El profesor ha sido eliminado exitosamente");
+      setShowAlert(true);
+
     } catch (error) {
       console.error(error);
-      alert("Hubo un error al eliminar el personal");
+      setAlertMessage("Hubo un error al eliminar el profesor");
+      setShowAlert(true);
     }
   };
 

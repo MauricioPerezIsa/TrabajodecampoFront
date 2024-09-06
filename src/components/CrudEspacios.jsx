@@ -97,9 +97,14 @@ function CrudEspacio() {
       if (!response.ok) throw new Error("No se pudo eliminar el espacio");
 
       getEspacio();
+
+      setAlertMessage("El espacio ha sido eliminado exitosamente");
+      setShowAlert(true);
+
     } catch (error) {
       console.error(error);
-      alert("Hubo un error al eliminar el espacio");
+      setAlertMessage("Hubo un error al eliminar el espacio");
+      setShowAlert(true);
     }
   };
 

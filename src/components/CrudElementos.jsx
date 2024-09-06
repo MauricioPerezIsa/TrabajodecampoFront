@@ -81,9 +81,14 @@ function CrudElemento() {
       if (!response.ok) throw new Error("No se pudo eliminar el elemento");
 
       getElemento();
+
+      setAlertMessage("El elemento ha sido eliminado exitosamente");
+      setShowAlert(true);
+
     } catch (error) {
       console.error(error);
-      alert("Hubo un error al eliminar el elemento");
+      setAlertMessage("Hubo un error al eliminar el elemento");
+      setShowAlert(true);
     }
   };
 
