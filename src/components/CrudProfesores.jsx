@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Container, Table, Button, Form, Row, Modal, Col, ModalFooter } from "react-bootstrap";
 import AlertCreado from "./AlertCreado";
+import ModalConfirmacion from "./ModalConfirmacion";
 
 function CrudProfesores() {
   const [allPersonal, setAllPersonal] = useState([]);
@@ -17,6 +18,9 @@ function CrudProfesores() {
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+
+  const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   const getPersonal = async () => {
     try {
@@ -73,6 +77,11 @@ function CrudProfesores() {
     }
   };
 
+  const handleDeleteClick = (id) => {
+    setDeleteId(id);
+    setShowConfirmDeleteModal(true);
+  };
+
   const DeletePersonal = async (_id) => {
     try {
       let myHeaders = new Headers();
@@ -97,6 +106,8 @@ function CrudProfesores() {
       console.error(error);
       setAlertMessage("Hubo un error al eliminar el profesor");
       setShowAlert(true);
+    } finally {
+      setShowConfirmDeleteModal(false);
     }
   };
 
@@ -267,6 +278,12 @@ function CrudProfesores() {
 
       <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
 
+      <ModalConfirmacion
+        show={showConfirmDeleteModal}
+        handleClose={() => setShowConfirmDeleteModal(false)}
+        handleConfirm={() => DeletePersonal(deleteId)}              
+      />
+
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -296,7 +313,7 @@ function CrudProfesores() {
                 >
                   Modificar
                 </Button>
-                <Button style={{ marginLeft: '10px' }} variant="danger" onClick={() => DeletePersonal(profesor._id)}>
+                <Button style={{ marginLeft: '10px' }} variant="danger" onClick={() => handleDeleteClick(profesor._id)}>
                   Eliminar
                 </Button>
               </td>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, Modal, Row, Form } from "react-bootstrap";
 import AlertCreado from "./AlertCreado";
+import ModalConfirmacion from "./ModalConfirmacion";
 
 function CrudEspacio() {
   const [allEspacio, setAllEspacio] = useState([]);
@@ -15,6 +16,9 @@ function CrudEspacio() {
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+
+  const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   const [updateId, setUpdateId] = useState("");
   const [updateNombreEspacio, setUpdateNombreEspacio] = useState("");
@@ -89,6 +93,12 @@ function CrudEspacio() {
     }
   };
 
+  
+  const handleDeleteClick = (id) => {
+    setDeleteId(id);
+    setShowConfirmDeleteModal(true);
+  };
+
   const DeleteEspacio = async (_id) => {
     try {
       const response = await fetch(`http://localhost:7000/espacio/${_id}`, {
@@ -105,6 +115,8 @@ function CrudEspacio() {
       console.error(error);
       setAlertMessage("Hubo un error al eliminar el espacio");
       setShowAlert(true);
+    } finally {
+      setShowConfirmDeleteModal(false);
     }
   };
 
@@ -249,6 +261,12 @@ function CrudEspacio() {
 
       <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
 
+      <ModalConfirmacion
+        show={showConfirmDeleteModal}
+        handleClose={() => setShowConfirmDeleteModal(false)}
+        handleConfirm={() => DeleteEspacio(deleteId)}              
+      />
+
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -288,7 +306,7 @@ function CrudEspacio() {
                 >
                   Modificar
                 </Button>{" "}
-                <Button variant="danger" onClick={() => DeleteEspacio(espacio._id)}>
+                <Button variant="danger" onClick={() => handleDeleteClick(espacio._id)}>
                   Eliminar
                 </Button>
               </td>

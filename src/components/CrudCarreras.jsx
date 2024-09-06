@@ -2,6 +2,8 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { Table, Button, Modal, Dropdown,Row,Form } from "react-bootstrap";
 import AlertCreado from "./AlertCreado";
+import ModalConfirmacion from "./ModalConfirmacion";
+
 
 function CrudCarreras() {
   const [allCarreras, setAllCarreras] = useState([]);
@@ -15,6 +17,9 @@ function CrudCarreras() {
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+
+  const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   const [updateId, setUpdateId] = useState("");
   const [updateNombreCarrera, setUpdateNombreCarrera] = useState("");
@@ -86,6 +91,11 @@ function CrudCarreras() {
     }
   };
 
+  const handleDeleteClick = (id) => {
+    setDeleteId(id);
+    setShowConfirmDeleteModal(true);
+  };
+
   const DeleteCarrera = async (_id) => {
     try {
       let myHeaders = new Headers();
@@ -110,6 +120,8 @@ function CrudCarreras() {
       console.error(error);
       setAlertMessage("Hubo un error al eliminar la carrera");
       setShowAlert(true);
+    } finally {
+      setShowConfirmDeleteModal(false);
     }
   };
 
@@ -228,6 +240,12 @@ function CrudCarreras() {
 
   <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
 
+  <ModalConfirmacion
+        show={showConfirmDeleteModal}
+        handleClose={() => setShowConfirmDeleteModal(false)}
+        handleConfirm={() => DeleteCarrera(deleteId)}
+      />
+
     <Table striped bordered hover>
         <thead>
           <tr>
@@ -259,7 +277,7 @@ function CrudCarreras() {
                     setUpdatePlanesCarrera(carrera.plan.map(p => p._id));
                     setShowUpdateModal(true);
                   }}>Modificar</Button>
-              <Button style={{ marginLeft: '10px' }} variant="danger" onClick={() => DeleteCarrera(carrera._id)}>
+              <Button style={{ marginLeft: '10px' }} variant="danger" onClick={() => handleDeleteClick(carrera._id)}>
                   Eliminar
                 </Button>
               </td>

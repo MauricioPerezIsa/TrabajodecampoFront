@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { Table, Button, Modal, Row, Form } from "react-bootstrap";
 import AlertCreado from "./AlertCreado";
+import ModalConfirmacion from "./ModalConfirmacion";
 
 function CrudEdificio() {
   const [allEdificios, setAllEdificios] = useState([]);
@@ -14,6 +15,9 @@ function CrudEdificio() {
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+
+  const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   const [updateId, setUpdateId] = useState("");
   const [updateNombreEdificio, setUpdateNombreEdificio] = useState("");
@@ -79,6 +83,11 @@ function CrudEdificio() {
     }
   };
 
+  const handleDeleteClick = (id) => {
+    setDeleteId(id);
+    setShowConfirmDeleteModal(true);
+  };
+
   const DeleteEdificio = async (_id) => {
     try {
       let myHeaders = new Headers();
@@ -100,6 +109,8 @@ function CrudEdificio() {
       console.error(error);
       setAlertMessage("Hubo un error al eliminar el edificio");
       setShowAlert(true);
+    } finally {
+      setShowConfirmDeleteModal(false);
     }
   };
 
@@ -192,6 +203,12 @@ function CrudEdificio() {
       </Row>
 
       <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
+
+      <ModalConfirmacion
+        show={showConfirmDeleteModal}
+        handleClose={() => setShowConfirmDeleteModal(false)}
+        handleConfirm={() => DeleteEdificio(deleteId)}              
+      />
       
       <Table striped bordered hover>
         <thead>
@@ -229,7 +246,7 @@ function CrudEdificio() {
                 <Button
                   style={{ marginLeft: '10px' }}
                   variant="danger"
-                  onClick={() => DeleteEdificio(edificio._id)}
+                  onClick={() => handleDeleteClick(edificio._id)}
                 >
                   Eliminar
                 </Button>

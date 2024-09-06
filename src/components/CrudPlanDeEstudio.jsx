@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { Table, Button, Modal, Row, Form } from "react-bootstrap";
 import AlertCreado from "./AlertCreado";
+import ModalConfirmacion from "./ModalConfirmacion";
 
 function CrudPlanDeEstudio() {
   const [allPlanes, setAllPlanes] = useState([]);
@@ -15,6 +16,9 @@ function CrudPlanDeEstudio() {
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+
+  const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   const [updateId, setUpdateId] = useState("");
   const [updateNombrePlan, setUpdateNombrePlan] = useState("");
@@ -80,6 +84,11 @@ function CrudPlanDeEstudio() {
     }
   };
 
+  const handleDeleteClick = (id) => {
+    setDeleteId(id);
+    setShowConfirmDeleteModal(true);
+  };
+
   const DeletePlanDeEstudio = async (id) => {
     try {
       const response = await fetch(`http://localhost:7000/planDeEstudio/${id}`, {
@@ -96,7 +105,9 @@ function CrudPlanDeEstudio() {
       console.error(error);
       setAlertMessage("Hubo un error al eliminar el plan");
       setShowAlert(true);
-    }
+    } finally {
+          setShowConfirmDeleteModal(false);
+        }
   };
 
   const updatePlanDeEstudio = async () => {
@@ -182,6 +193,12 @@ function CrudPlanDeEstudio() {
       </Row>
 
       <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
+
+      <ModalConfirmacion
+        show={showConfirmDeleteModal}
+        handleClose={() => setShowConfirmDeleteModal(false)}
+        handleConfirm={() => DeletePlanDeEstudio(deleteId)}              
+      />
       
       <Table striped bordered hover>
         <thead>
@@ -214,7 +231,7 @@ function CrudPlanDeEstudio() {
                   setUpdateMateriasSeleccionadas(plan.materia.map(m => m._id));
                   setShowUpdateModal(true);
                 }}>Modificar</Button>
-                <Button style={{ margin: '10px' }} variant="danger" onClick={() => DeletePlanDeEstudio(plan._id)}>Eliminar</Button>
+                <Button style={{ margin: '10px' }} variant="danger" onClick={() => handleDeleteClick(plan._id)}>Eliminar</Button>
               </td>
             </tr>
           ))}

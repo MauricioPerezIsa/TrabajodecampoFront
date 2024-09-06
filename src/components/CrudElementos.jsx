@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Container, Table, Button, Form, Row, Modal, Col, ModalFooter } from "react-bootstrap";
 import AlertCreado from "./AlertCreado";
+import ModalConfirmacion from "./ModalConfirmacion";
 
 function CrudElemento() {
   const [allElemento, setAllElemento] = useState([]);
@@ -13,6 +14,9 @@ function CrudElemento() {
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+
+  const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   const getElemento = async () => {
     try {
@@ -65,6 +69,11 @@ function CrudElemento() {
     }
   };
 
+  const handleDeleteClick = (id) => {
+    setDeleteId(id);
+    setShowConfirmDeleteModal(true);
+  };
+
   const DeleteElemento = async (_id) => {
     try {
       let myHeaders = new Headers();
@@ -89,6 +98,8 @@ function CrudElemento() {
       console.error(error);
       setAlertMessage("Hubo un error al eliminar el elemento");
       setShowAlert(true);
+    } finally {
+      setShowConfirmDeleteModal(false);
     }
   };
 
@@ -203,6 +214,12 @@ function CrudElemento() {
 
       <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
 
+      <ModalConfirmacion
+        show={showConfirmDeleteModal}
+        handleClose={() => setShowConfirmDeleteModal(false)}
+        handleConfirm={() => DeleteElemento(deleteId)}              
+      />
+
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -226,7 +243,7 @@ function CrudElemento() {
                 >
                   Modificar
                 </Button>
-                <Button style={{ marginLeft: '10px' }} variant="danger" onClick={() => DeleteElemento(Elemento._id)}>
+                <Button style={{ marginLeft: '10px' }} variant="danger" onClick={() => handleDeleteClick(Elemento._id)}>
                   Eliminar
                 </Button>
               </td>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Container, Table, Button, Form, Row, Modal } from "react-bootstrap";
 import AlertCreado from "./AlertCreado";
+import ModalConfirmacion from "./ModalConfirmacion";
 
 function CrudMaterias() {
   const [allPersonal, setAllPersonal] = useState([]);
@@ -23,6 +24,8 @@ function CrudMaterias() {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
 
+  const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   const [updateId, setUpdateId] = useState("");
   const [updateNombreMateria, setUpdateNombreMateria] = useState("");
@@ -132,6 +135,11 @@ function CrudMaterias() {
     }
   };
 
+  const handleDeleteClick = (id) => {
+    setDeleteId(id);
+    setShowConfirmDeleteModal(true);
+  };
+
   const DeleteMateria = async (_id) => {
     try {
       let myHeaders = new Headers();
@@ -156,6 +164,8 @@ function CrudMaterias() {
       console.error(error);
       setAlertMessage("Hubo un error al eliminar la materia");
       setShowAlert(true);
+    } finally {
+      setShowConfirmDeleteModal(false);
     }
   };
 
@@ -366,6 +376,12 @@ function CrudMaterias() {
         )}
         <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
 
+        <ModalConfirmacion
+        show={showConfirmDeleteModal}
+        handleClose={() => setShowConfirmDeleteModal(false)}
+        handleConfirm={() => DeleteMateria(deleteId)}
+      />
+
         <Table striped bordered hover>
           <thead>
             <tr>
@@ -393,7 +409,7 @@ function CrudMaterias() {
                 <td>{materia.horarios.map(h => `Día: ${h.dia}, Módulo Inicio: ${h.moduloInicio}, Módulo Fin: ${h.moduloFin}`).join(' | ')}</td>
                 <td>
                   <Button style={{ marginBottom: '7px' }} variant="warning" onClick={() => handleShowUpdateModal(materia)}>Modificar</Button>
-                  <Button style={{ marginLeft: '6px' }} variant="danger" onClick={() => DeleteMateria(materia._id)}>Eliminar</Button>
+                  <Button style={{ marginLeft: '6px' }} variant="danger" onClick={() => handleDeleteClick(materia._id)}>Eliminar</Button>
                 </td>
               </tr>
             ))}
