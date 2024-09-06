@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Table, Button, Form, Row, Modal } from "react-bootstrap";
+import AlertCreado from "./AlertCreado";
 
 function CrudMaterias() {
   const [allPersonal, setAllPersonal] = useState([]);
@@ -18,6 +19,10 @@ function CrudMaterias() {
 
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
 
   const [updateId, setUpdateId] = useState("");
   const [updateNombreMateria, setUpdateNombreMateria] = useState("");
@@ -116,8 +121,14 @@ function CrudMaterias() {
       setProfesoresSeleccionados([]);
 
       getMaterias();
+
+      setAlertMessage("La materia fue creada y agregada exitosamente");
+      setShowAlert(true);
+
     } catch (error) {
       console.error(error);
+      setAlertMessage("Hubo un error al crear la materia");
+      setShowAlert(true);
     }
   };
 
@@ -200,10 +211,16 @@ function CrudMaterias() {
       if (!response.ok) throw new Error("No se pudo actualizar la materia");
 
       setShowUpdateModal(false);
+
       getMaterias();
+
+      setAlertMessage("Los cambios se han guardado correctamente");
+      setShowAlert(true);
+
     } catch (error) {
       console.error(error);
-      alert("Hubo un error al actualizar la materia");
+      setAlertMessage("Hubo un error al guardar los cambios");
+      setShowAlert(true);
     }
   };
 
@@ -280,6 +297,7 @@ function CrudMaterias() {
             <Form.Group controlId="formBasicSemestreMateria">
               <Form.Label>Semestre</Form.Label>
               <Form.Control as="select" value={SemestreMateria} onChange={(e) => setSemestreMateria(e.target.value)}>
+                <option value="">Seleccionar Semestre</option>
                 <option value="Anual">Anual</option>
                 <option value="Primer Cuatrimestre">Primer Cuatrimestre</option>
                 <option value="Segundo Cuatrimestre">Segundo Cuatrimestre</option>
@@ -341,6 +359,7 @@ function CrudMaterias() {
             <Button variant="primary" onClick={handleSubmit}>Crear Materia</Button>
           </Form>
         )}
+        <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
 
         <Table striped bordered hover>
           <thead>
@@ -400,7 +419,8 @@ function CrudMaterias() {
             </Form.Group>
             <Form.Group controlId="formUpdateSemestreMateria">
               <Form.Label>Semestre</Form.Label>
-              <Form.Control as="select" value={SemestreMateria} onChange={(e) => setSemestreMateria(e.target.value)}>
+              <Form.Control as="select" value={updateSemestreMateria} onChange={(e) => setUpdateSemestreMateria(e.target.value)}>
+                <option value="">Seleccionar</option>
                 <option value="Anual">Anual</option>
                 <option value="Primer Cuatrimestre">Primer Cuatrimestre</option>
                 <option value="Segundo Cuatrimestre">Segundo Cuatrimestre</option>
@@ -465,6 +485,7 @@ function CrudMaterias() {
             <Button variant="primary" onClick={handleUpdateSubmit}>Guardar Cambios</Button>
           </Modal.Footer>
       </Modal>
+      <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
     </>
   );
 }

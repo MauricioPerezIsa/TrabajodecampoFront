@@ -1,6 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { Table, Button, Modal, Row, Form } from "react-bootstrap";
+import AlertCreado from "./AlertCreado";
 
 function CrudEdificio() {
   const [allEdificios, setAllEdificios] = useState([]);
@@ -10,6 +11,9 @@ function CrudEdificio() {
 
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
 
   const [updateId, setUpdateId] = useState("");
   const [updateNombreEdificio, setUpdateNombreEdificio] = useState("");
@@ -61,9 +65,17 @@ function CrudEdificio() {
 
       setNombreEdificio("");
       setEspaciosEdificio([]);
+
       getEdificios();
+
+      setAlertMessage("El edificio fue creado y agregado exitosamente");
+      setShowAlert(true);
+
+
     } catch (error) {
       console.error(error);
+      setAlertMessage("Hubo un error al crear el edificio");
+      setShowAlert(true);
     }
   };
 
@@ -107,10 +119,16 @@ function CrudEdificio() {
       if (!response.ok) throw new Error("No se pudo actualizar el edificio");
 
       setShowUpdateModal(false);
+
       getEdificios();
+
+      setAlertMessage("Los cambios se han guardado correctamente");
+      setShowAlert(true);
+
     } catch (error) {
       console.error(error);
-      alert("Hubo un error al actualizar el edificio");
+      setAlertMessage("Hubo un error al guardar los cambios");
+      setShowAlert(true);
     }
   };
 
@@ -167,6 +185,8 @@ function CrudEdificio() {
           </Form>
         )}
       </Row>
+
+      <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
       
       <Table striped bordered hover>
         <thead>
@@ -252,6 +272,7 @@ function CrudEdificio() {
           <Button variant="primary" onClick={handleUpdateSubmit}>Guardar Cambios</Button>
         </Modal.Footer>
       </Modal>
+      <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
     </>
   );
 }

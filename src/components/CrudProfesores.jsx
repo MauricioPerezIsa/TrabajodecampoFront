@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Container, Table, Button, Form, Row, Modal, Col } from "react-bootstrap";
+import { Container, Table, Button, Form, Row, Modal, Col, ModalFooter } from "react-bootstrap";
+import AlertCreado from "./AlertCreado";
 
 function CrudProfesores() {
   const [allPersonal, setAllPersonal] = useState([]);
@@ -13,6 +14,9 @@ function CrudProfesores() {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [Errores, setErrores] = useState({});
+
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
 
   const getPersonal = async () => {
     try {
@@ -56,10 +60,16 @@ function CrudProfesores() {
       setApellidoPersonal("");
       setDNIPersonal("");
       setShowCreateForm(false);
+
       getPersonal();
+
+      setAlertMessage("El profesor ha sido creado y agregado exitosamente");
+      setShowAlert(true);
+
     } catch (error) {
       console.error(error);
-      alert("Hubo un error al crear el Profesor");
+      setAlertMessage("Hubo un error al crear el profesor");
+      setShowAlert(true);
     }
   };
 
@@ -110,10 +120,16 @@ function CrudProfesores() {
       if (!response.ok) throw new Error("No se pudo actualizar el personal");
 
       setShowUpdateModal(false);
+
       getPersonal();
+
+      setAlertMessage("Los cambios se han guardado correctamente");
+      setShowAlert(true);
+
     } catch (error) {
       console.error(error);
-      alert("Hubo un error al actualizar el personal");
+      setAlertMessage("Hubo un error al guardar los cambios");
+      setShowAlert(true);
     }
   };
 
@@ -238,11 +254,13 @@ function CrudProfesores() {
               onClick={handleSubmit}
               disabled={!NombrePersonal || !ApellidoPersonal || !DNIPersonal}
             >
-              Cargar Personal
+              Crear Profesor
             </Button>
           </Form>
         )}
       </Row>
+
+      <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
 
       <Table striped bordered hover>
         <thead>
@@ -337,10 +355,15 @@ function CrudProfesores() {
                 <span className="text-danger">{Errores.updateDNIPersonal}</span>
               )}
             </Form.Group>
-            <Button onClick={handleUpdatePersonal}>Modificar</Button>
+            
           </Form>
         </Modal.Body>
+        <ModalFooter>
+        <Button variant="secondary" onClick={() => setShowUpdateModal(false)}>Cancelar</Button>
+          <Button onClick={handleUpdatePersonal}>Guardar Cambios</Button>
+        </ModalFooter>
       </Modal>
+      <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
     </Container>
   );
 }

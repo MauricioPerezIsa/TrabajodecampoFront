@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Container, Table, Button, Form, Row, Modal, Col } from "react-bootstrap";
+import { Container, Table, Button, Form, Row, Modal, Col, ModalFooter } from "react-bootstrap";
+import AlertCreado from "./AlertCreado";
 
 function CrudElemento() {
   const [allElemento, setAllElemento] = useState([]);
@@ -9,6 +10,9 @@ function CrudElemento() {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [Errores, setErrores] = useState({});
+
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
 
   const getElemento = async () => {
     try {
@@ -48,10 +52,16 @@ function CrudElemento() {
 
       setNombreElemento("");
       setShowCreateForm(false);
+
       getElemento();
+
+      setAlertMessage("El elemento fue creado y agregado exitosamente");
+      setShowAlert(true);
+
     } catch (error) {
       console.error(error);
-      alert("Hubo un error al crear el Profesor");
+      setAlertMessage("Hubo un error al crear el elemento");
+      setShowAlert(true);
     }
   };
 
@@ -100,10 +110,16 @@ function CrudElemento() {
       if (!response.ok) throw new Error("No se pudo actualizar el elemento");
 
       setShowUpdateModal(false);
+
       getElemento();
+
+      setAlertMessage("Los cambios se han guardado correctamente");
+      setShowAlert(true);
+
     } catch (error) {
       console.error(error);
-      alert("Hubo un error al actualizar el Elemento");
+      setAlertMessage("Hubo un error al guardar los cambios");
+      setShowAlert(true);
     }
   };
 
@@ -174,11 +190,13 @@ function CrudElemento() {
               onClick={handleSubmit}
               disabled={!NombreElemento}
             >
-              Cargar Elemento
+              Crear Elemento
             </Button>
           </Form>
         )}
       </Row>
+
+      <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
 
       <Table striped bordered hover>
         <thead>
@@ -234,10 +252,15 @@ function CrudElemento() {
                 <span className="text-danger">{Errores.updateNombreElemento}</span>
               )}
             </Form.Group>
-            <Button onClick={handleUpdateElemento}>Modificar</Button>
+            
           </Form>
         </Modal.Body>
+        <ModalFooter>
+        <Button variant="secondary" onClick={() => setShowUpdateModal(false)}>Cancelar</Button>
+        <Button onClick={handleUpdateElemento}>Guardar Cambios</Button>
+        </ModalFooter>
       </Modal>
+      <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
     </Container>
   );
 }

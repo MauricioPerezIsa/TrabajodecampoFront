@@ -1,6 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { Table, Button, Modal, Dropdown,Row,Form } from "react-bootstrap";
+import AlertCreado from "./AlertCreado";
 
 function CrudCarreras() {
   const [allCarreras, setAllCarreras] = useState([]);
@@ -11,6 +12,9 @@ function CrudCarreras() {
 
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
 
   const [updateId, setUpdateId] = useState("");
   const [updateNombreCarrera, setUpdateNombreCarrera] = useState("");
@@ -69,9 +73,16 @@ function CrudCarreras() {
       setNombreCarrera("")
       setAniosCarrera("");
       setPlanesCarrera([]);
+
       getCarreras();
+
+      setAlertMessage("La carrera fue creada y agregada exitosamente");
+      setShowAlert(true);
+
     } catch (error) {
       console.error(error);
+      setAlertMessage("Hubo un error al crear la carrera");
+      setShowAlert(true);
     }
   };
 
@@ -122,10 +133,16 @@ function CrudCarreras() {
       if (!response.ok) throw new Error("No se pudo actualizar la carrera");
 
       setShowUpdateModal(false);
+
       getCarreras();
+
+      setAlertMessage("Los cambios se han guardado correctamente");
+      setShowAlert(true);
+
     } catch (error) {
       console.error(error);
-      alert("Hubo un error al actualizar la carrera");
+      setAlertMessage("Hubo un error al guardar los cambios");
+      setShowAlert(true);
     }
   };
 
@@ -203,6 +220,9 @@ function CrudCarreras() {
       </Form>
     )}
   </Row>
+
+  <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
+
     <Table striped bordered hover>
         <thead>
           <tr>
@@ -288,7 +308,7 @@ function CrudCarreras() {
             <Button variant="primary" onClick={handleUpdateSubmit}>Guardar Cambios</Button>
           </Modal.Footer>
         </Modal>
-      
+        <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
     </>
   );
 }

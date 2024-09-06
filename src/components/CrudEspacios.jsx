@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, Modal, Row, Form } from "react-bootstrap";
+import AlertCreado from "./AlertCreado";
 
 function CrudEspacio() {
   const [allEspacio, setAllEspacio] = useState([]);
@@ -11,6 +12,9 @@ function CrudEspacio() {
 
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
 
   const [updateId, setUpdateId] = useState("");
   const [updateNombreEspacio, setUpdateNombreEspacio] = useState("");
@@ -72,9 +76,16 @@ function CrudEspacio() {
       setTipoEspacio("");
       setCapacidadEspacio("");
       setElementosEspacio([]);
+
       getEspacio();
+
+      setAlertMessage("El espacio ha sido creado y agregado exitosamente");
+      setShowAlert(true);
+
     } catch (error) {
       console.error(error);
+      setAlertMessage("Hubo un error al crear el espacio");
+      setShowAlert(true);
     }
   };
 
@@ -113,10 +124,16 @@ function CrudEspacio() {
       if (!response.ok) throw new Error("No se pudo actualizar el espacio");
 
       setShowUpdateModal(false);
+
       getEspacio();
+
+      setAlertMessage("Los cambios se han guardado correctamente");
+      setShowAlert(true);
+
     } catch (error) {
       console.error(error);
-      alert("Hubo un error al actualizar el espacio");
+      setAlertMessage("Hubo un error al guardar los cambios");
+      setShowAlert(true);
     }
   };
 
@@ -224,6 +241,8 @@ function CrudEspacio() {
           </Form>
         )}
       </Row>
+
+      <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
 
       <Table striped bordered hover>
         <thead>
@@ -350,6 +369,7 @@ function CrudEspacio() {
           </Button>
         </Modal.Footer>
       </Modal>
+      <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
     </>
   );
 }

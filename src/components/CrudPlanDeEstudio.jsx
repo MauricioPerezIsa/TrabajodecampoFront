@@ -1,6 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { Table, Button, Modal, Row, Form } from "react-bootstrap";
+import AlertCreado from "./AlertCreado";
 
 function CrudPlanDeEstudio() {
   const [allPlanes, setAllPlanes] = useState([]);
@@ -11,6 +12,9 @@ function CrudPlanDeEstudio() {
 
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
 
   const [updateId, setUpdateId] = useState("");
   const [updateNombrePlan, setUpdateNombrePlan] = useState("");
@@ -62,9 +66,17 @@ function CrudPlanDeEstudio() {
       setNombrePlan("");
       setDescipcionPlan("");
       setMateriasSeleccionadas([]);
+
       getplanes();
+
+      setAlertMessage("El plan de estudio ha sido creado y agregado exitosamente");
+      setShowAlert(true);
+
+
     } catch (error) {
       console.error(error);
+      setAlertMessage("Hubo un error al crear el plan");
+      setShowAlert(true);
     }
   };
 
@@ -100,10 +112,16 @@ function CrudPlanDeEstudio() {
 
       if (!response.ok) throw new Error("No se pudo actualizar el plan");
       setShowUpdateModal(false);
+
       getplanes();
+
+      setAlertMessage("Los cambios se han guardado correctamente");
+      setShowAlert(true);
+
     } catch (error) {
       console.error(error);
-      alert("Hubo un error al actualizar el plan");
+      setAlertMessage("Hubo un error al guardar los cambios");
+      setShowAlert(true);
     }
   };
 
@@ -156,6 +174,8 @@ function CrudPlanDeEstudio() {
           </Form>
         )}
       </Row>
+
+      <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
       
       <Table striped bordered hover>
         <thead>
@@ -231,6 +251,7 @@ function CrudPlanDeEstudio() {
           <Button variant="primary" onClick={handleUpdateSubmit}>Guardar Cambios</Button>
         </Modal.Footer>
       </Modal>
+      <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
     </>
   );
 }
