@@ -406,7 +406,7 @@ function CrudMaterias() {
                 <td>{materia.elementos.map(e => allElementos.find(el => el._id === e)?.nombre).join(', ')}</td>
                 <td>{materia.cantidadAlumnos}</td>
                 <td>{materia.profesor.map(prof => prof.nombre).join(", ")}</td>
-                <td>{materia.horarios.map(h => `Día: ${h.dia}, Módulo Inicio: ${h.moduloInicio}, Módulo Fin: ${h.moduloFin}`).join(' | ')}</td>
+                <td>| {materia.horarios.map(h => `Día: ${h.dia}, Módulo Inicio: ${h.moduloInicio}, Módulo Fin: ${h.moduloFin}`).join(' | ')} | </td>
                 <td>
                   <Button style={{ marginBottom: '7px' }} variant="warning" onClick={() => handleShowUpdateModal(materia)}>Modificar</Button>
                   <Button style={{ marginLeft: '6px' }} variant="danger" onClick={() => handleDeleteClick(materia._id)}>Eliminar</Button>
