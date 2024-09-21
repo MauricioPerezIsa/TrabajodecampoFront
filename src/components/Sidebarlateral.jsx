@@ -8,7 +8,7 @@ function Sidebarlateral() {
             <div className={`d-flex flex-column align-items-center ${styles['container-links']}`}>
                 <div className={`m-1 ${styles['wrapper-link']}`}>
                     <Link to="/" >
-                        <button className={`font-monospace text-decoration-none ${styles['links-custom']}`}>Home</button>
+                        <button className={`font-monospace text-decoration-none ${styles['links-custom']}`}>Menú Principal</button>
                     </Link>
                 </div>
                 <div className={`m-1 ${styles['wrapper-link']}`}>
