@@ -13,9 +13,7 @@ function CrudMaterias() {
   const [SemestreMateria, setSemestreMateria] = useState("");
   const [Elementos, setElementos] = useState([]);
   const [CantidadAlumnos, setCantidadAlumnos] = useState("");
-  const [HorarioDia, setHorarioDia] = useState("");
-  const [HorarioModuloInicio, setHorarioModuloInicio] = useState("");
-  const [HorarioModuloFin, setHorarioModuloFin] = useState("");
+  const [horarios, setHorarios] = useState([{ dia: "", moduloInicio: 1, moduloFin: 1 }]);
   const [profesoresSeleccionados, setProfesoresSeleccionados] = useState([]);
 
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -34,9 +32,7 @@ function CrudMaterias() {
   const [updateSemestreMateria, setUpdateSemestreMateria] = useState("");
   const [updateElementos, setUpdateElementos] = useState([]);
   const [updateCantidadAlumnos, setUpdateCantidadAlumnos] = useState("");
-  const [updateHorarioDia, setUpdateHorarioDia] = useState("");
-  const [updateHorarioModuloInicio, setUpdateHorarioModuloInicio] = useState("");
-  const [updateHorarioModuloFin, setUpdateHorarioModuloFin] = useState("");
+  const [updateHorarios, setUpdateHorarios] = useState([{ dia: "", moduloInicio: 1, moduloFin: 1 }])
   const [updateProfesoresSeleccionados, setUpdateProfesoresSeleccionados] = useState([]);
 
   const [Errores, setErrores] = useState({});
@@ -81,7 +77,6 @@ function CrudMaterias() {
       alert("Hubo un error al obtener los elementos");
     }
   };
-
   
 
   const createMateria = async () => {
@@ -96,9 +91,7 @@ function CrudMaterias() {
         semestre: SemestreMateria,
         elementos: Elementos,
         cantidadAlumnos: CantidadAlumnos,
-        horarios: [
-          { dia: HorarioDia, moduloInicio: HorarioModuloInicio, moduloFin: HorarioModuloFin }
-        ],
+        horarios: horarios,
         profesor: profesoresSeleccionados,
       });
 
@@ -118,9 +111,7 @@ function CrudMaterias() {
       setSemestreMateria("");
       setElementos([]);
       setCantidadAlumnos("");
-      setHorarioDia("");
-      setHorarioModuloInicio("");
-      setHorarioModuloFin("");
+      setHorarios([{ dia: "", moduloInicio: 1, moduloFin: 1 }]); // Reiniciar el array de horarios
       setProfesoresSeleccionados([]);
 
       getMaterias();
@@ -180,8 +171,20 @@ function CrudMaterias() {
     if (!AnioMateria) {
       newErrores.AnioMateria = "El año es obligatorio";
     }
-    if (!HorarioDia || !HorarioModuloInicio || !HorarioModuloFin) {
-      newErrores.Horario = "El horario es obligatorio";
+    if (horarios.length === 0) {
+      newErrores.Horarios = "Debe agregar al menos un horario";
+    } else {
+      horarios.forEach((horario, index) => {
+        if (!horario.dia) {
+          newErrores[`HorarioDia_${index}`] = `El día del horario ${index + 1} es obligatorio`;
+        }
+        if (!horario.moduloInicio) {
+          newErrores[`HorarioModuloInicio_${index}`] = `El módulo de inicio del horario ${index + 1} es obligatorio`;
+        }
+        if (!horario.moduloFin) {
+          newErrores[`HorarioModuloFin_${index}`] = `El módulo de fin del horario ${index + 1} es obligatorio`;
+        }
+      });
     }
     if (Elementos.length === 0) {
       newErrores.Elementos = "Debe seleccionar al menos un elemento";
@@ -209,9 +212,7 @@ function CrudMaterias() {
         semestre: updateSemestreMateria,
         elementos: updateElementos,
         cantidadAlumnos: updateCantidadAlumnos,
-        horarios: [
-          { dia: updateHorarioDia, moduloInicio: updateHorarioModuloInicio, moduloFin: updateHorarioModuloFin }
-        ],
+        horarios: updateHorarios,
         profesor: updateProfesoresSeleccionados,
       });
 
@@ -251,8 +252,20 @@ function CrudMaterias() {
     if (!updateAnioMateria) {
       newErrores.updateAnioMateria = "El año es obligatorio";
     }
-    if (!updateHorarioDia || !updateHorarioModuloInicio || !updateHorarioModuloFin) {
-      newErrores.updateHorario = "El horario es obligatorio";
+    if (updateHorarios.length === 0) {
+      newErrores.updateHorarios = "Debe agregar al menos un horario";
+    } else {
+      updateHorarios.forEach((horario, index) => {
+        if (!horario.dia) {
+          newErrores[`updateHorarioDia_${index}`] = `El día del horario ${index + 1} es obligatorio`;
+        }
+        if (!horario.moduloInicio) {
+          newErrores[`updateHorarioModuloInicio_${index}`] = `El módulo de inicio del horario ${index + 1} es obligatorio`;
+        }
+        if (!horario.moduloFin) {
+          newErrores[`updateHorarioModuloFin_${index}`] = `El módulo de fin del horario ${index + 1} es obligatorio`;
+        }
+      });
     }
     if (updateElementos.length === 0) {
       newErrores.updateElementos = "Debe seleccionar al menos un elemento";
@@ -276,9 +289,11 @@ function CrudMaterias() {
     setUpdateSemestreMateria(materia.semestre);
     setUpdateElementos(materia.elementos);
     setUpdateCantidadAlumnos(materia.cantidadAlumnos);
-    setUpdateHorarioDia(materia.horarios[0]?.dia || "");
-    setUpdateHorarioModuloInicio(materia.horarios[0]?.moduloInicio || "");
-    setUpdateHorarioModuloFin(materia.horarios[0]?.moduloFin || "");
+    setUpdateHorarios(materia.horarios.map(horario => ({
+      dia: horario.dia || "",
+      moduloInicio: horario.moduloInicio || 1,
+      moduloFin: horario.moduloFin || 1
+    })));
     setUpdateProfesoresSeleccionados(materia.profesor.map(prof => prof._id));
     setShowUpdateModal(true);
   };
@@ -292,7 +307,7 @@ function CrudMaterias() {
   return (
     <>
       <Row>
-        <Button onClick={() => setShowCreateForm(prevState => !prevState)}>
+        <Button style={{marginTop: "20px", marginBottom: "20px" }} onClick={() => setShowCreateForm(prevState => !prevState)}>
           {showCreateForm ? "Cancelar" : "Nueva Materia"}
         </Button>
         {showCreateForm && (
@@ -331,37 +346,86 @@ function CrudMaterias() {
               <Form.Label>Cantidad de Alumnos</Form.Label>
               <Form.Control type="number" value={CantidadAlumnos} onChange={(e) => setCantidadAlumnos(e.target.value)} />
             </Form.Group>
-            <Form.Group controlId="formBasicHorarioDia">
-              <Form.Label>Día</Form.Label>
-              <Form.Control as="select" value={HorarioDia} onChange={(e) => setHorarioDia(e.target.value)}>
-                <option value="">Seleccionar Día</option>
-                {/* Aquí puedes agregar las opciones para los días de la semana */}
-                <option value="Lunes">Lunes</option>
-                <option value="Martes">Martes</option>
-                <option value="Miércoles">Miércoles</option>
-                <option value="Jueves">Jueves</option>
-                <option value="Viernes">Viernes</option>
-              </Form.Control>
-              {Errores.Horario && <Form.Text className="text-danger">{Errores.Horario}</Form.Text>}
-            </Form.Group>
-            <Form.Group controlId="formBasicHorarioModuloInicio">
-              <Form.Label>Módulo de Inicio</Form.Label>
-              <Form.Control as="select" value={HorarioModuloInicio} onChange={(e) => setHorarioModuloInicio(e.target.value)}>
-                <option value="">Seleccionar Módulo de Inicio</option>
-                {[...Array(17).keys()].map(modulo => (
-                  <option key={modulo + 1} value={modulo + 1}>{modulo + 1}</option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-            <Form.Group controlId="formBasicHorarioModuloFin">
-              <Form.Label>Módulo de Fin</Form.Label>
-              <Form.Control as="select" value={HorarioModuloFin} onChange={(e) => setHorarioModuloFin(e.target.value)}>
-                <option value="">Seleccionar Módulo de Fin</option>
-                {[...Array(17).keys()].map(modulo => (
-                  <option key={modulo + 1} value={modulo + 1}>{modulo + 1}</option>
-                ))}
-              </Form.Control>
-            </Form.Group>
+           
+          <Form.Group controlId="formBasicHorarios">
+            <Form.Label style={{margin: "10px"}}>Horarios</Form.Label>
+             {horarios.map((horario, index) => (
+              <div key={index} className="mb-3">
+                <Row>
+                  <Form.Group controlId={`formBasicHorarioDia_${index}`}>
+                    <Form.Label>Día</Form.Label>
+                    <Form.Control 
+                      as="select" 
+                      value={horario.dia} 
+                      onChange={(e) => {
+                        const newHorarios = [...horarios];
+                        newHorarios[index].dia = e.target.value;
+                        setHorarios(newHorarios);
+                      }}
+                    >
+                      <option value="">Seleccionar Día</option>
+                      <option value="Lunes">Lunes</option>
+                      <option value="Martes">Martes</option>
+                      <option value="Miércoles">Miércoles</option>
+                      <option value="Jueves">Jueves</option>
+                      <option value="Viernes">Viernes</option>
+                    </Form.Control>
+                    {Errores[`horarioDia_${index}`] && <Form.Text className="text-danger">{Errores[`horarioDia_${index}`]}</Form.Text>}
+                  </Form.Group>
+                  <Form.Group controlId={`formBasicHorarioModuloInicio_${index}`}>
+                  <Form.Label>Módulo de Inicio</Form.Label>
+                  <Form.Control 
+                    as="select" 
+                    value={horario.moduloInicio} 
+                    onChange={(e) => {
+                      const newHorarios = [...horarios];
+                      newHorarios[index].moduloInicio = Number(e.target.value); // Convertir a número
+                      setHorarios(newHorarios);
+                    }}
+                  >
+                    <option value="">Seleccionar Módulo de Inicio</option>
+                    {[...Array(17).keys()].map(modulo => (
+                      <option key={modulo + 1} value={modulo + 1}>{modulo + 1}</option>
+                    ))}
+                  </Form.Control>
+                  {Errores[`horarioModuloInicio_${index}`] && <Form.Text className="text-danger">{Errores[`horarioModuloInicio_${index}`]}</Form.Text>}
+                </Form.Group>
+
+                <Form.Group controlId={`formBasicHorarioModuloFin_${index}`}>
+                  <Form.Label>Módulo de Fin</Form.Label>
+                  <Form.Control 
+                    as="select" 
+                    value={horario.moduloFin} 
+                    onChange={(e) => {
+                      const newHorarios = [...horarios];
+                      newHorarios[index].moduloFin = Number(e.target.value); // Convertir a número
+                      setHorarios(newHorarios);
+                    }}
+                  >
+                    <option value="">Seleccionar Módulo de Fin</option>
+                    {[...Array(17).keys()].map(modulo => (
+                      <option key={modulo + 1} value={modulo + 1}>{modulo + 1}</option>
+                    ))}
+                  </Form.Control>
+                  {Errores[`horarioModuloFin_${index}`] && <Form.Text className="text-danger">{Errores[`horarioModuloFin_${index}`]}</Form.Text>}
+                </Form.Group>
+                </Row>
+                {index > 0 && (
+                  <Button variant="danger" onClick={() => {
+                    const newHorarios = horarios.filter((_, i) => i !== index);
+                    setHorarios(newHorarios);
+                  }}>
+                    Eliminar Horario
+                  </Button>
+                )}
+              </div>
+            ))}
+            <Button variant="primary" onClick={() => setHorarios([...horarios, { dia: "", moduloInicio: 1, moduloFin: 1 }])}>
+              Agregar Horario
+            </Button>
+            {Errores.horarios && <Form.Text className="text-danger">{Errores.horarios}</Form.Text>}
+          </Form.Group>
+
             <Form.Group controlId="formBasicProfesores">
               <Form.Label>Profesores</Form.Label>
               <Form.Control as="select" multiple value={profesoresSeleccionados} onChange={(e) => setProfesoresSeleccionados([...e.target.selectedOptions].map(option => option.value))}>
@@ -371,7 +435,12 @@ function CrudMaterias() {
               </Form.Control>
               {Errores.profesoresSeleccionados && <Form.Text className="text-danger">{Errores.profesoresSeleccionados}</Form.Text>}
             </Form.Group>
-            <Button variant="primary" onClick={handleSubmit}>Crear Materia</Button>
+            <div style={{display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'}} >
+            <Button style={{margin: "28px"}} variant="primary" onClick={handleSubmit}>Crear Materia</Button>
+            </div>
+           
           </Form>
         )}
         <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
@@ -382,7 +451,7 @@ function CrudMaterias() {
         handleConfirm={() => DeleteMateria(deleteId)}
       />
 
-        <Table striped bordered hover>
+        <Table striped bordered hover style={{marginBottom: "150px"}}>
           <thead>
             <tr>
               <th>Nombre</th>
@@ -406,7 +475,12 @@ function CrudMaterias() {
                 <td>{materia.elementos.map(e => allElementos.find(el => el._id === e)?.nombre).join(', ')}</td>
                 <td>{materia.cantidadAlumnos}</td>
                 <td>{materia.profesor.map(prof => prof.nombre).join(", ")}</td>
-                <td>| {materia.horarios.map(h => `Día: ${h.dia}, Módulo Inicio: ${h.moduloInicio}, Módulo Fin: ${h.moduloFin}`).join(' | ')} | </td>
+                <td>{materia.horarios.map((h, index) => (
+                    <div key={index}>
+                    |  Día: {h.dia}, Módulo Inicio: {h.moduloInicio}, Módulo Fin: {h.moduloFin}
+                    </div>
+                  ))}
+                </td>
                 <td>
                   <Button style={{ marginBottom: '7px' }} variant="warning" onClick={() => handleShowUpdateModal(materia)}>Modificar</Button>
                   <Button style={{ marginLeft: '6px' }} variant="danger" onClick={() => handleDeleteClick(materia._id)}>Eliminar</Button>
@@ -460,36 +534,86 @@ function CrudMaterias() {
               <Form.Label>Cantidad de Alumnos</Form.Label>
               <Form.Control type="number" value={updateCantidadAlumnos} onChange={(e) => setUpdateCantidadAlumnos(e.target.value)} />
             </Form.Group>
-            <Form.Group controlId="formUpdateHorarioDia">
-              <Form.Label>Día</Form.Label>
-              <Form.Control as="select" value={updateHorarioDia} onChange={(e) => setUpdateHorarioDia(e.target.value)}>
-                <option value="">Seleccionar Día</option>
-                <option value="Lunes">Lunes</option>
-                <option value="Martes">Martes</option>
-                <option value="Miércoles">Miércoles</option>
-                <option value="Jueves">Jueves</option>
-                <option value="Viernes">Viernes</option>
-              </Form.Control>
-              {Errores.updateHorario && <Form.Text className="text-danger">{Errores.updateHorario}</Form.Text>}
-            </Form.Group>
-            <Form.Group controlId="formUpdateHorarioModuloInicio">
-              <Form.Label>Módulo de Inicio</Form.Label>
-              <Form.Control as="select" value={updateHorarioModuloInicio} onChange={(e) => setUpdateHorarioModuloInicio(e.target.value)}>
-                <option value="">Seleccionar Módulo de Inicio</option>
-                {[...Array(17).keys()].map(modulo => (
-                  <option key={modulo + 1} value={modulo + 1}>{modulo + 1}</option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-            <Form.Group controlId="formUpdateHorarioModuloFin">
-              <Form.Label>Módulo de Fin</Form.Label>
-              <Form.Control as="select" value={updateHorarioModuloFin} onChange={(e) => setUpdateHorarioModuloFin(e.target.value)}>
-                <option value="">Seleccionar Módulo de Fin</option>
-                {[...Array(17).keys()].map(modulo => (
-                  <option key={modulo + 1} value={modulo + 1}>{modulo + 1}</option>
-                ))}
-              </Form.Control>
-            </Form.Group>
+            <Form.Group controlId="formUpdateHorarios">
+            <Form.Label style={{margin: "10px"}} >Horarios</Form.Label>
+            {updateHorarios.map((horario, index) => (
+              <div key={index} className="mb-3">
+                <Row>
+                  <Form.Group controlId={`formUpdateHorarioDia_${index}`}>
+                    <Form.Label>Día</Form.Label>
+                    <Form.Control 
+                      as="select" 
+                      value={horario.dia} 
+                      onChange={(e) => {
+                        const newHorarios = [...updateHorarios];
+                        newHorarios[index].dia = e.target.value;
+                        setUpdateHorarios(newHorarios);
+                      }}
+                    >
+                      <option value="">Seleccionar Día</option>
+                      <option value="Lunes">Lunes</option>
+                      <option value="Martes">Martes</option>
+                      <option value="Miércoles">Miércoles</option>
+                      <option value="Jueves">Jueves</option>
+                      <option value="Viernes">Viernes</option>
+                    </Form.Control>
+                    {Errores[`updateHorarioDia_${index}`] && <Form.Text className="text-danger">{Errores[`updateHorarioDia_${index}`]}</Form.Text>}
+                  </Form.Group>
+                  <Form.Group controlId={`formUpdateHorarioModuloInicio_${index}`}>
+                    <Form.Label>Módulo de Inicio</Form.Label>
+                    <Form.Control 
+                      as="select" 
+                      value={horario.moduloInicio} 
+                      onChange={(e) => {
+                        const newHorarios = [...updateHorarios];
+                        newHorarios[index].moduloInicio = e.target.value;
+                        setUpdateHorarios(newHorarios);
+                      }}
+                    >
+                      <option value="">Seleccionar Módulo de Inicio</option>
+                      {[...Array(17).keys()].map(modulo => (
+                        <option key={modulo + 1} value={modulo + 1}>{modulo + 1}</option>
+                      ))}
+                    </Form.Control>
+                    {Errores[`updateHorarioModuloInicio_${index}`] && <Form.Text className="text-danger">{Errores[`updateHorarioModuloInicio_${index}`]}</Form.Text>}
+                  </Form.Group>
+                  <Form.Group controlId={`formUpdateHorarioModuloFin_${index}`}>
+                    <Form.Label>Módulo de Fin</Form.Label>
+                    <Form.Control 
+                      as="select" 
+                      value={horario.moduloFin} 
+                      onChange={(e) => {
+                        const newHorarios = [...updateHorarios];
+                        newHorarios[index].moduloFin = e.target.value;
+                        setUpdateHorarios(newHorarios);
+                      }}
+                    >
+                      <option value="">Seleccionar Módulo de Fin</option>
+                      {[...Array(17).keys()].map(modulo => (
+                        <option key={modulo + 1} value={modulo + 1}>{modulo + 1}</option>
+                      ))}
+                    </Form.Control>
+                    {Errores[`updateHorarioModuloFin_${index}`] && <Form.Text className="text-danger">{Errores[`updateHorarioModuloFin_${index}`]}</Form.Text>}
+                  </Form.Group>
+                  <Button style={{width: "auto", marginLeft: "12px", marginTop: "10px"}} variant="danger" 
+                    onClick={() => {
+                      const newHorarios = updateHorarios.filter((_, i) => i !== index);
+                      setUpdateHorarios(newHorarios);
+                    }}
+                  >
+                    Eliminar Horario
+                  </Button>
+                </Row>
+              </div>
+            ))}
+            <Button 
+              style={{marginBottom: "10px"}}
+              variant="primary" 
+              onClick={() => setUpdateHorarios([...updateHorarios, { dia: "", moduloInicio: "", moduloFin: "" }])}
+              >
+              Agregar Horario
+            </Button>
+          </Form.Group>
             <Form.Group controlId="formUpdateProfesores">
               <Form.Label>Profesores</Form.Label>
               <Form.Control as="select" multiple value={updateProfesoresSeleccionados} onChange={(e) => setUpdateProfesoresSeleccionados([...e.target.selectedOptions].map(option => option.value))}>
