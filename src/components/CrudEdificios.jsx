@@ -165,7 +165,7 @@ function CrudEdificio() {
   return (
     <>
       <Row>
-        <Button onClick={() => setShowCreateForm(prevState => !prevState)}>
+        <Button style={{marginTop: "20px", marginBottom: "20px" }} onClick={() => setShowCreateForm(prevState => !prevState)}>
           {showCreateForm ? "Cancelar" : "Nuevo Edificio"}
         </Button>
         {showCreateForm && (
@@ -195,9 +195,14 @@ function CrudEdificio() {
                 ))}
               </Form.Control>
             </Form.Group>
-            <Button onClick={CrearEdificio} disabled={!nombreEdificio || espaciosEdificio.length === 0}>
+            <div style={{display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'}} >
+            <Button style={{margin: "28px"}} onClick={CrearEdificio} disabled={!nombreEdificio || espaciosEdificio.length === 0}>
               Crear Edificio
             </Button>
+            </div>
+            
           </Form>
         )}
       </Row>

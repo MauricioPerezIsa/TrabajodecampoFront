@@ -200,7 +200,7 @@ function CrudCarreras() {
 
   return (
     <><Row>
-    <Button onClick={() => setShowCreateForm(prevState => !prevState)}>
+    <Button style={{marginTop: "20px", marginBottom: "20px" }} onClick={() => setShowCreateForm(prevState => !prevState)}>
       {showCreateForm ? "Cancelar" : "Nueva Carrera"}
     </Button>
     {showCreateForm && (
@@ -232,8 +232,12 @@ function CrudCarreras() {
   </Form.Control>
 </Form.Group>
 
-
-        <Button onClick={CrearCarrera} disabled={!nombreCarrera || !aniosCarrera || planesCarrera.length === 0}>Crear Carrera</Button>
+        <div style={{display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'}} >
+          <Button style={{margin: "28px"}} onClick={CrearCarrera} disabled={!nombreCarrera || !aniosCarrera || planesCarrera.length === 0}>Crear Carrera</Button>
+        </div>
+        
       </Form>
     )}
   </Row>

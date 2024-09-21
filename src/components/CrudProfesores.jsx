@@ -212,7 +212,7 @@ function CrudProfesores() {
   return (
     <Container>
       <Row>
-        <Button onClick={() => setShowCreateForm((prevState) => !prevState)}>
+        <Button style={{marginTop: "20px", marginBottom: "20px" }} onClick={() => setShowCreateForm((prevState) => !prevState)}>
           {showCreateForm ? "Cancelar" : "Nuevo Profesor"}
         </Button>
         {showCreateForm && (
@@ -266,12 +266,17 @@ function CrudProfesores() {
                 <span className="text-danger">{Errores.DNIPersonal}</span>
               )}
             </Form.Group>
+            <div style={{display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'}} >
             <Button
+              style={{margin: "28px"}}
               onClick={handleSubmit}
               disabled={!NombrePersonal || !ApellidoPersonal || !DNIPersonal}
             >
               Crear Profesor
             </Button>
+            </div>
           </Form>
         )}
       </Row>

@@ -180,7 +180,7 @@ function CrudElemento() {
   return (
     <Container>
       <Row>
-        <Button onClick={() => setShowCreateForm((prevState) => !prevState)}>
+        <Button style={{marginTop: "20px", marginBottom: "20px" }} onClick={() => setShowCreateForm((prevState) => !prevState)}>
           {showCreateForm ? "Cancelar" : "Nuevo Elemento"}
         </Button>
         {showCreateForm && (
@@ -202,12 +202,18 @@ function CrudElemento() {
               )}
             </Form.Group>
             
+            <div style={{display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'}} >
             <Button
+              style={{margin: "28px"}}
               onClick={handleSubmit}
               disabled={!NombreElemento}
             >
               Crear Elemento
             </Button>
+            </div>
+            
           </Form>
         )}
       </Row>

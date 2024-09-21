@@ -194,7 +194,7 @@ function CrudEspacio() {
   return (
     <>
       <Row>
-        <Button onClick={() => setShowCreateForm((prevState) => !prevState)}>
+        <Button style={{marginTop: "20px", marginBottom: "20px" }} onClick={() => setShowCreateForm((prevState) => !prevState)}>
           {showCreateForm ? "Cancelar" : "Nuevo Espacio"}
         </Button>
         {showCreateForm && (
@@ -244,7 +244,11 @@ function CrudEspacio() {
                 ))}
               </Form.Control>
             </Form.Group>
+            <div style={{display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'}} >
             <Button
+              style={{margin: "28px"}}
               onClick={CrearEspacio}
               disabled={
                 !nombreEspacio ||
@@ -255,6 +259,8 @@ function CrudEspacio() {
             >
               Crear Espacio
             </Button>
+            </div>
+            
           </Form>
         )}
       </Row>
