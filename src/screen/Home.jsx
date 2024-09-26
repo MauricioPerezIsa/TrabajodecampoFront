@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import logo from "../assets/logo.png";
+import logo from "../assets/ISO_UNSTA.png"
 import { Button, Table, Form } from 'react-bootstrap';
-import styles from "../styles/botones.css";
 
 function Home() {
 
@@ -33,7 +32,7 @@ function Home() {
 
       {/* Sección Edificios */}
       <div className="mb-4 text-center">
-        <h5>Seleccione el edificio</h5>
+        <h6>Seleccione el edificio cuyos espacios quiera mostrar en la tabla</h6>
         <Form.Group controlId="selectEdificio">
           <Form.Control as="select">
             {/* Mapeo de los edificios obtenidos del backend */}
@@ -50,20 +49,9 @@ function Home() {
         </Form.Group>
       </div>
 
-      {/* Sección Materias */}
-      <div className="mb-4 text-center">
-        <h5>Materias</h5>
-        <div className="d-flex justify-content-center flex-wrap">
-          <Button className="m-2" >Asignación Automática</Button>
-          <Button className="m-2" variant="primary">Asignación Manual</Button>
-          <Button className="m-2" variant="primary">Desasignación Automática</Button>
-          <Button className="m-2" variant="primary">Desasignación Manual</Button>
-        </div>
-      </div>
-
       {/* Sección Días */}
       <div className="mb-4 text-center">
-        <h5>Seleccione el día de la semana</h5>
+        <h6>Seleccione el día de la semana</h6>
         <Form.Group id='selectDias'>
         <Form.Control as="select">
             <option>Lunes</option>
@@ -74,6 +62,19 @@ function Home() {
         </Form.Control>
       </Form.Group>
       </div>
+
+
+      {/* Sección Materias */}
+      <div className="mb-5 text-center">
+        <h6>Seleccione la acción que desea realizar</h6>
+        <div className="d-flex justify-content-center flex-wrap">
+          <Button className="m-2" style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }}>Asignar Automáticamente</Button>
+          <Button className="m-2" style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }}>Asignar Manualmente</Button>
+          <Button className="m-2"style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }}>Desasignar Automáticamente</Button>
+          <Button className="m-2" style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }}>Desasignar Manualmente</Button>
+        </div>
+      </div>
+
 
       {/* Tablas */}
       <div className="mb-5 text-center">

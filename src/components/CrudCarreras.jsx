@@ -200,7 +200,7 @@ function CrudCarreras() {
 
   return (
     <><Row>
-    <Button style={{marginTop: "20px", marginBottom: "20px" }} onClick={() => setShowCreateForm(prevState => !prevState)}>
+    <Button style={{marginTop: "20px", marginBottom: "20px", backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={() => setShowCreateForm(prevState => !prevState)}>
       {showCreateForm ? "Cancelar" : "Nueva Carrera"}
     </Button>
     {showCreateForm && (
@@ -235,7 +235,7 @@ function CrudCarreras() {
         <div style={{display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center'}} >
-          <Button style={{margin: "28px"}} onClick={CrearCarrera} disabled={!nombreCarrera || !aniosCarrera || planesCarrera.length === 0}>Crear Carrera</Button>
+          <Button style={{margin: "28px", backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF'}} onClick={CrearCarrera} disabled={!nombreCarrera || !aniosCarrera || planesCarrera.length === 0}>Crear Carrera</Button>
         </div>
         
       </Form>
@@ -274,14 +274,14 @@ function CrudCarreras() {
                 </ul>
               </td>
               <td>
-              <Button variant="warning" onClick={() => {
+              <Button style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={() => {
                     setUpdateId(carrera._id);
                     setUpdateNombreCarrera(carrera.nombre);
                     setUpdateAniosCarrera(carrera.anios);
                     setUpdatePlanesCarrera(carrera.plan.map(p => p._id));
                     setShowUpdateModal(true);
                   }}>Modificar</Button>
-              <Button style={{ marginLeft: '10px' }} variant="danger" onClick={() => handleDeleteClick(carrera._id)}>
+              <Button style={{ marginLeft: '10px' , backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={() => handleDeleteClick(carrera._id)}>
                   Eliminar
                 </Button>
               </td>
@@ -332,7 +332,7 @@ function CrudCarreras() {
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={() => setShowUpdateModal(false)}>Cancelar</Button>
-            <Button variant="primary" onClick={handleUpdateSubmit}>Guardar Cambios</Button>
+            <Button style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={handleUpdateSubmit}>Guardar Cambios</Button>
           </Modal.Footer>
         </Modal>
         <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
