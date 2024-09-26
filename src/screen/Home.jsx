@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import logo from "../assets/logo.png";
 import { Button, Table, Form } from 'react-bootstrap';
+import styles from "../styles/botones.css";
 
 function Home() {
 
@@ -32,7 +33,7 @@ function Home() {
 
       {/* Sección Edificios */}
       <div className="mb-4 text-center">
-        <h5>Edificios</h5>
+        <h5>Seleccione el edificio</h5>
         <Form.Group controlId="selectEdificio">
           <Form.Control as="select">
             {/* Mapeo de los edificios obtenidos del backend */}
@@ -53,7 +54,7 @@ function Home() {
       <div className="mb-4 text-center">
         <h5>Materias</h5>
         <div className="d-flex justify-content-center flex-wrap">
-          <Button className="m-2" variant="primary">Asignación Automática</Button>
+          <Button className="m-2" >Asignación Automática</Button>
           <Button className="m-2" variant="primary">Asignación Manual</Button>
           <Button className="m-2" variant="primary">Desasignación Automática</Button>
           <Button className="m-2" variant="primary">Desasignación Manual</Button>
@@ -62,14 +63,16 @@ function Home() {
 
       {/* Sección Días */}
       <div className="mb-4 text-center">
-        <h5>Días</h5>
-        <div className="d-flex justify-content-center flex-wrap">
-          <Button className="m-2" variant="secondary">Lunes</Button>
-          <Button className="m-2" variant="secondary">Martes</Button>
-          <Button className="m-2" variant="secondary">Miércoles</Button>
-          <Button className="m-2" variant="secondary">Jueves</Button>
-          <Button className="m-2" variant="secondary">Viernes</Button>
-        </div>
+        <h5>Seleccione el día de la semana</h5>
+        <Form.Group id='selectDias'>
+        <Form.Control as="select">
+            <option>Lunes</option>
+            <option>Martes</option>
+            <option>Miércoles</option>
+            <option>Jueves</option>
+            <option>Viernes</option>
+        </Form.Control>
+      </Form.Group>
       </div>
 
       {/* Tablas */}
@@ -121,7 +124,7 @@ function Home() {
     </div>
 
   );
-  
+
 }
 
 export default Home;
