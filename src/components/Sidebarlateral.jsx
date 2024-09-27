@@ -12,11 +12,6 @@ function Sidebarlateral() {
                     </Link>
                 </div>
                 <div className={`m-1 ${styles['wrapper-link']}`}>
-                    <Link to="/Horarios" className={`text-decoration-none ${styles['']}`}>
-                        <button className={`font-monospace text-decoration-none ${styles['links-custom']}`}>Horarios</button>
-                    </Link>
-                </div>
-                <div className={`m-1 ${styles['wrapper-link']}`}>
                     <Link to="/Carreras" className={`text-decoration-none ${styles['']}`}>
                         <button className={`font-monospace text-decoration-none ${styles['links-custom']}`}>Carreras</button>
                     </Link>
