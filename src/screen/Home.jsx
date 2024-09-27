@@ -47,20 +47,17 @@ function Home() {
             )}
           </Form.Control>
         </Form.Group>
-      </div>
-
-      {/* Sección Días */}
-      <div className="mb-4 text-center">
-        <h6>Seleccione el día de la semana</h6>
         <Form.Group id='selectDias'>
+        <h6 className='mt-4' >Seleccione el día de la semana</h6>
         <Form.Control as="select">
             <option>Lunes</option>
             <option>Martes</option>
-            <option>Miércoles</option>
+            <option>Miercoles</option>
             <option>Jueves</option>
             <option>Viernes</option>
         </Form.Control>
       </Form.Group>
+        <Button className="m-4" style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }}>Buscar</Button>
       </div>
 
 
@@ -83,7 +80,7 @@ function Home() {
           <thead>
             <tr>
               <th>Espacios</th>
-              {Array.from({ length: 9 }).map((_, index) => (
+              {Array.from({ length: 17 }).map((_, index) => (
                 <th key={index}>Módulo {index + 1}</th>
               ))}
             </tr>
@@ -92,7 +89,7 @@ function Home() {
             {Array.from({ length: 5 }).map((_, rowIndex) => (
               <tr key={rowIndex}>
                 <td>Espacio {rowIndex + 1}</td>
-                {Array.from({ length: 9 }).map((_, colIndex) => (
+                {Array.from({ length: 17 }).map((_, colIndex) => (
                   <td key={colIndex}></td>
                 ))}
               </tr>
@@ -100,27 +97,6 @@ function Home() {
           </tbody>
         </Table>
 
-        {/* Segunda Tabla: Módulos 10 a 17 */}
-        <Table bordered>
-          <thead>
-            <tr>
-              <th>Espacios</th>
-              {Array.from({ length: 8 }).map((_, index) => (
-                <th key={index}>Módulo {index + 10}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {Array.from({ length: 5 }).map((_, rowIndex) => (
-              <tr key={rowIndex}>
-                <td>Espacio {rowIndex + 1}</td>
-                {Array.from({ length: 8 }).map((_, colIndex) => (
-                  <td key={colIndex}></td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </Table>
       </div>
     </div>
 
