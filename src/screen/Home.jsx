@@ -78,7 +78,7 @@ function Home() {
 
       {/* Tablas */}
       <div className="mb-5 text-center">
-        {/* Primera Tabla: Módulos 1 a 9 */}
+        {/* Primera Tabla: Módulos 1 al 9 */}
         <Table className='mb-5' bordered>
           <thead>
             <tr>
