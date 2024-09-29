@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import logo from "../assets/ISO_UNSTA.png"
 import { Button, Table, Form, Modal, ModalHeader, ModalTitle, ModalBody, FormGroup } from 'react-bootstrap';
+import styles from "../styles/detalles.module.css"
 
 function Home() {
 
@@ -418,26 +419,28 @@ function Home() {
                     </tr>
                   </thead>
                   <tbody>
-                    {espacios.map((espacio, rowIndex) => (
-                      <tr key={rowIndex}>
-                        <td>{espacio.nombre}</td>
-                        {Array.from({ length: 9 }).map((_, colIndex) => {
-                          const horario = espacio.horarios[colIndex];
-                          return (
-                            <td
-                              key={colIndex}
-                              onClick={() =>
-                                horario?.materia?.length > 0 && handleCellClick(horario.materia[0])
-                              }
-                              style={{ cursor: horario?.materia?.length > 0 ? "pointer" : "default" }}
-                            >
-                              {horario?.materia?.length > 0 ? horario.materia[0].nombre : "Disponible"}
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    ))}
-                  </tbody>
+                      {espacios.map((espacio, rowIndex) => (
+                        <tr key={rowIndex}>
+                          <td>{espacio.nombre}</td>
+                          {Array.from({ length: 9 }).map((_, colIndex) => {
+                            const horario = espacio.horarios[colIndex];
+                            const tieneMateria = horario?.materia?.length > 0;
+
+                            return (
+                              <td
+                                key={colIndex}
+                                onClick={() => tieneMateria && handleCellClick(horario.materia[0])}
+                                className={tieneMateria ? styles.hoverMateria : ""}
+                                style={{ cursor: tieneMateria ? "pointer" : "default" }}
+                              >
+                                {tieneMateria ? horario.materia[0].nombre : "Disponible"}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+
                 </Table>
 
                 {/* Segunda Tabla: Módulos 10 a 17 */}
@@ -457,12 +460,14 @@ function Home() {
                           <td>{espacio.nombre}</td>
                           {Array.from({ length: 8 }).map((_, colIndex) => {
                             const horario = espacio.horarios[colIndex + 9]; // Obtener el horario correspondiente
+                            const tieneMateria = horario?.materia?.length > 0;
                             return (
                               <td
                                 key={colIndex}
                                 onClick={() =>
                                   horario?.materia?.length > 0 && handleCellClick(horario.materia[0])
                                 }
+                                className={tieneMateria ? styles.hoverMateria : ""}
                                 style={{ cursor: horario?.materia?.length > 0 ? "pointer" : "default" }}
                               >
                                 {horario?.materia?.length > 0 ? horario.materia[0].nombre : "Disponible"}

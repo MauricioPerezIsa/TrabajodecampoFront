@@ -1,0 +1,10 @@
+/* Aplica el hover solo en las celdas que tienen la clase 'hover-materia' */
+.hoverMateria {
+    transition: background-color 0.5s ease;
+  }
+  
+  .hoverMateria:hover {
+    background-color: rgb(223, 122, 122); /* Cambia el color de fondo a un azul claro translúcido */
+    color: black; /* Mantén el texto en negro */
+  }
+  
