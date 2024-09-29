@@ -11,6 +11,7 @@ function Home() {
   const [selectedEdificio, setSelectedEdificio] = useState('');
   const [selectedDia, setSelectedDia] = useState('Lunes');
   const [espacios, setEspacios] = useState([]);
+  const [materiaInfo, setMateriaInfo] = useState(null);
 
   const [selectedCarrera, setSelectedCarrera] = useState('');
   const [selectedMateria, setSelectedMateria] = useState('');
@@ -19,6 +20,7 @@ function Home() {
   const [horarios, setHorarios] = useState([{ dia: 'Lunes', moduloInicio: 1, moduloFin: 1 }]);
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
+  const [showMateriaModal, setShowMateriaModal] = useState(false);
 
   {/* Horarios correspondientes a cada módulo */}
   const horariosModulos1a9 = [
@@ -113,6 +115,16 @@ function Home() {
     const newHorarios = [...horarios];
     newHorarios[index][field] = value;
     setHorarios(newHorarios);
+  };
+
+  const handleCellClick = (materia) => {
+    setMateriaInfo(materia);
+    setShowMateriaModal(true);
+  };
+  
+  const handleCloseMateriaModal = () => {
+    setShowMateriaModal(false);
+    setMateriaInfo(null);
   };
 
   const fetchEspacios = async () => {
@@ -320,14 +332,41 @@ function Home() {
             )}
           </Form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={handleClose}>Asignar</Button>
-          <Button variant="secondary" onClick={handleClose}>Cancelar</Button>
-        </Modal.Footer>
-      </Modal>
-    </>
-        </div>
-      </div>
+            <Modal.Footer>
+              <Button style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={handleClose}>Asignar</Button>
+              <Button variant="secondary" onClick={handleClose}>Cancelar</Button>
+            </Modal.Footer>
+          </Modal>
+        </>
+            </div>
+          </div>
+
+            {/* Modal para mostrar información de la materia */}
+            <Modal show={showMateriaModal} onHide={handleCloseMateriaModal}>
+              <ModalHeader closeButton>
+                <ModalTitle>Información de la Materia</ModalTitle>
+              </ModalHeader>
+              <ModalBody>
+                {materiaInfo ? (
+                  <div>
+                    {console.log(materiaInfo)}
+                    <p><strong>Nombre:</strong> {materiaInfo.nombre}</p>
+                    <p><strong>Año:</strong> {materiaInfo.anio}</p>
+                    <p><strong>Semestre:</strong> {materiaInfo.semestre}</p>
+                    <p><strong>Profesor:</strong> {materiaInfo.profesor}</p>
+                    <p><strong>Cantidad de Alumnos:</strong> {materiaInfo.cantidadAlumnos}</p>
+                    <p><strong>Código:</strong> {materiaInfo.codigo}</p>
+                  </div>
+                ) : (
+                  <p>No se ha seleccionado ninguna materia.</p>
+                )}
+              </ModalBody>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={handleCloseMateriaModal}>
+                  Cerrar
+                </Button>
+              </Modal.Footer>
+            </Modal>
 
   
               {/* Tablas */ }
@@ -343,23 +382,25 @@ function Home() {
                     </tr>
                   </thead>
                   <tbody>
-                    {espacios.map((espacio, rowIndex) => {
-                      return (
-                        <tr key={rowIndex}>
-                          <td>{espacio.nombre}</td>
-                          {Array.from({ length: 9 }).map((_, colIndex) => {
-                            const horario = espacio.horarios[colIndex]; // Obtener el horario correspondiente
-                            return (
-                              <td key={colIndex}>
-                                {horario && horario.materia && horario.materia.length > 0 
-                                  ? horario.materia[0].nombre // Acceder al nombre de la materia
-                                  : "Disponible"}<br />
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      );
-                    })}
+                    {espacios.map((espacio, rowIndex) => (
+                      <tr key={rowIndex}>
+                        <td>{espacio.nombre}</td>
+                        {Array.from({ length: 9 }).map((_, colIndex) => {
+                          const horario = espacio.horarios[colIndex];
+                          return (
+                            <td
+                              key={colIndex}
+                              onClick={() =>
+                                horario?.materia?.length > 0 && handleCellClick(horario.materia[0])
+                              }
+                              style={{ cursor: horario?.materia?.length > 0 ? "pointer" : "default" }}
+                            >
+                              {horario?.materia?.length > 0 ? horario.materia[0].nombre : "Disponible"}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
                   </tbody>
                 </Table>
 
@@ -381,10 +422,14 @@ function Home() {
                           {Array.from({ length: 8 }).map((_, colIndex) => {
                             const horario = espacio.horarios[colIndex + 9]; // Obtener el horario correspondiente
                             return (
-                              <td key={colIndex}>
-                                {horario && horario.materia && horario.materia.length > 0 
-                                  ? horario.materia[0].nombre // Acceder al nombre de la materia
-                                  : "Disponible"}<br />
+                              <td
+                                key={colIndex}
+                                onClick={() =>
+                                  horario?.materia?.length > 0 && handleCellClick(horario.materia[0])
+                                }
+                                style={{ cursor: horario?.materia?.length > 0 ? "pointer" : "default" }}
+                              >
+                                {horario?.materia?.length > 0 ? horario.materia[0].nombre : "Disponible"}
                               </td>
                             );
                           })}
