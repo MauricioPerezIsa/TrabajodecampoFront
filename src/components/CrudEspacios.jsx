@@ -194,7 +194,7 @@ function CrudEspacio() {
   return (
     <>
       <Row>
-        <Button style={{marginTop: "20px", marginBottom: "20px" }} onClick={() => setShowCreateForm((prevState) => !prevState)}>
+        <Button style={{marginTop: "20px", marginBottom: "20px", backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={() => setShowCreateForm((prevState) => !prevState)}>
           {showCreateForm ? "Cancelar" : "Nuevo Espacio"}
         </Button>
         {showCreateForm && (
@@ -248,7 +248,7 @@ function CrudEspacio() {
                         justifyContent: 'center',
                         alignItems: 'center'}} >
             <Button
-              style={{margin: "28px"}}
+              style={{margin: "28px", backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF'}}
               onClick={CrearEspacio}
               disabled={
                 !nombreEspacio ||
@@ -298,7 +298,7 @@ function CrudEspacio() {
               </td>
               <td>
                 <Button
-                  variant="warning"
+                  style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }}
                   onClick={() => {
                     setUpdateId(espacio._id);
                     setUpdateNombreEspacio(espacio.nombre);
@@ -312,7 +312,7 @@ function CrudEspacio() {
                 >
                   Modificar
                 </Button>{" "}
-                <Button variant="danger" onClick={() => handleDeleteClick(espacio._id)}>
+                <Button style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={() => handleDeleteClick(espacio._id)}>
                   Eliminar
                 </Button>
               </td>
@@ -393,7 +393,7 @@ function CrudEspacio() {
           <Button variant="secondary" onClick={() => setShowUpdateModal(false)}>
             Cancelar
           </Button>
-          <Button variant="primary" onClick={handleUpdateSubmit}>
+          <Button style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={handleUpdateSubmit}>
             Guardar Cambios
           </Button>
         </Modal.Footer>

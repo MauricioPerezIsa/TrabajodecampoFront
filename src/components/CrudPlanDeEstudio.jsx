@@ -159,7 +159,7 @@ function CrudPlanDeEstudio() {
   return (
     <>
       <Row>
-        <Button style={{marginTop: "20px", marginBottom: "20px" }} onClick={() => setShowCreateForm(prevState => !prevState)}>
+        <Button style={{marginTop: "20px", marginBottom: "20px", backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={() => setShowCreateForm(prevState => !prevState)}>
           {showCreateForm ? "Cancelar" : "Nuevo Plan de Estudio"}
         </Button>
         {showCreateForm && (
@@ -190,7 +190,7 @@ function CrudPlanDeEstudio() {
             <div style={{display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center'}} >
-            <Button style={{margin: "28px"}} onClick={CrearPlanDeEstudio} disabled={!nombrePlan || !descripcionPlan || materiasSeleccionadas.length === 0}>Crear Plan de Estudio</Button>
+            <Button style={{margin: "28px", backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF'}} onClick={CrearPlanDeEstudio} disabled={!nombrePlan || !descripcionPlan || materiasSeleccionadas.length === 0}>Crear Plan de Estudio</Button>
             </div>
           </Form>
         )}
@@ -228,14 +228,14 @@ function CrudPlanDeEstudio() {
                 </ul>
               </td>
               <td>
-                <Button variant="warning" onClick={() => {
+                <Button style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={() => {
                   setUpdateId(plan._id);
                   setUpdateNombrePlan(plan.nombre);
                   setUpdateDescripcionPlan(plan.descripcion);
                   setUpdateMateriasSeleccionadas(plan.materia.map(m => m._id));
                   setShowUpdateModal(true);
                 }}>Modificar</Button>
-                <Button style={{ margin: '10px' }} variant="danger" onClick={() => handleDeleteClick(plan._id)}>Eliminar</Button>
+                <Button style={{ margin: '10px', backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={() => handleDeleteClick(plan._id)}>Eliminar</Button>
               </td>
             </tr>
           ))}
@@ -275,7 +275,7 @@ function CrudPlanDeEstudio() {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowUpdateModal(false)}>Cancelar</Button>
-          <Button variant="primary" onClick={handleUpdateSubmit}>Guardar Cambios</Button>
+          <Button style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={handleUpdateSubmit}>Guardar Cambios</Button>
         </Modal.Footer>
       </Modal>
       <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />

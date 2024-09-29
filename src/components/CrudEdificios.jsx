@@ -165,7 +165,7 @@ function CrudEdificio() {
   return (
     <>
       <Row>
-        <Button style={{marginTop: "20px", marginBottom: "20px" }} onClick={() => setShowCreateForm(prevState => !prevState)}>
+        <Button style={{marginTop: "20px", marginBottom: "20px", backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={() => setShowCreateForm(prevState => !prevState)}>
           {showCreateForm ? "Cancelar" : "Nuevo Edificio"}
         </Button>
         {showCreateForm && (
@@ -198,7 +198,7 @@ function CrudEdificio() {
             <div style={{display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center'}} >
-            <Button style={{margin: "28px"}} onClick={CrearEdificio} disabled={!nombreEdificio || espaciosEdificio.length === 0}>
+            <Button style={{margin: "28px", backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF'}} onClick={CrearEdificio} disabled={!nombreEdificio || espaciosEdificio.length === 0}>
               Crear Edificio
             </Button>
             </div>
@@ -238,7 +238,7 @@ function CrudEdificio() {
               </td>
               <td>
                 <Button
-                  variant="warning"
+                  style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }}
                   onClick={() => {
                     setUpdateId(edificio._id);
                     setUpdateNombreEdificio(edificio.nombre);
@@ -249,7 +249,7 @@ function CrudEdificio() {
                   Modificar
                 </Button>
                 <Button
-                  style={{ marginLeft: '10px' }}
+                  style={{ marginLeft: '10px', backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }}
                   variant="danger"
                   onClick={() => handleDeleteClick(edificio._id)}
                 >
@@ -296,7 +296,7 @@ function CrudEdificio() {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowUpdateModal(false)}>Cancelar</Button>
-          <Button variant="primary" onClick={handleUpdateSubmit}>Guardar Cambios</Button>
+          <Button style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={handleUpdateSubmit}>Guardar Cambios</Button>
         </Modal.Footer>
       </Modal>
       <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />

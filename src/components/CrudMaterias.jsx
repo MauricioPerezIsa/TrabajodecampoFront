@@ -307,7 +307,7 @@ function CrudMaterias() {
   return (
     <>
       <Row>
-        <Button style={{marginTop: "20px", marginBottom: "20px" }} onClick={() => setShowCreateForm(prevState => !prevState)}>
+        <Button style={{marginTop: "20px", marginBottom: "20px", backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={() => setShowCreateForm(prevState => !prevState)}>
           {showCreateForm ? "Cancelar" : "Nueva Materia"}
         </Button>
         {showCreateForm && (
@@ -411,7 +411,7 @@ function CrudMaterias() {
                 </Form.Group>
                 </Row>
                 {index > 0 && (
-                  <Button variant="danger" onClick={() => {
+                  <Button style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={() => {
                     const newHorarios = horarios.filter((_, i) => i !== index);
                     setHorarios(newHorarios);
                   }}>
@@ -420,7 +420,7 @@ function CrudMaterias() {
                 )}
               </div>
             ))}
-            <Button variant="primary" onClick={() => setHorarios([...horarios, { dia: "", moduloInicio: 1, moduloFin: 1 }])}>
+            <Button style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={() => setHorarios([...horarios, { dia: "", moduloInicio: 1, moduloFin: 1 }])}>
               Agregar Horario
             </Button>
             {Errores.horarios && <Form.Text className="text-danger">{Errores.horarios}</Form.Text>}
@@ -438,7 +438,7 @@ function CrudMaterias() {
             <div style={{display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center'}} >
-            <Button style={{margin: "28px"}} variant="primary" onClick={handleSubmit}>Crear Materia</Button>
+            <Button style={{margin: "28px", backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF'}} variant="primary" onClick={handleSubmit}>Crear Materia</Button>
             </div>
            
           </Form>
@@ -482,8 +482,8 @@ function CrudMaterias() {
                   ))}
                 </td>
                 <td>
-                  <Button style={{ marginBottom: '7px' }} variant="warning" onClick={() => handleShowUpdateModal(materia)}>Modificar</Button>
-                  <Button style={{ marginLeft: '6px' }} variant="danger" onClick={() => handleDeleteClick(materia._id)}>Eliminar</Button>
+                  <Button style={{ marginBottom: '7px', backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} variant="warning" onClick={() => handleShowUpdateModal(materia)}>Modificar</Button>
+                  <Button style={{ marginLeft: '6px', backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} variant="danger" onClick={() => handleDeleteClick(materia._id)}>Eliminar</Button>
                 </td>
               </tr>
             ))}
@@ -595,7 +595,7 @@ function CrudMaterias() {
                     </Form.Control>
                     {Errores[`updateHorarioModuloFin_${index}`] && <Form.Text className="text-danger">{Errores[`updateHorarioModuloFin_${index}`]}</Form.Text>}
                   </Form.Group>
-                  <Button style={{width: "auto", marginLeft: "12px", marginTop: "10px"}} variant="danger" 
+                  <Button style={{width: "auto", marginLeft: "12px", marginTop: "10px", backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF'}} variant="danger" 
                     onClick={() => {
                       const newHorarios = updateHorarios.filter((_, i) => i !== index);
                       setUpdateHorarios(newHorarios);
@@ -607,8 +607,7 @@ function CrudMaterias() {
               </div>
             ))}
             <Button 
-              style={{marginBottom: "10px"}}
-              variant="primary" 
+              style={{marginBottom: "10px", backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF'}} 
               onClick={() => setUpdateHorarios([...updateHorarios, { dia: "", moduloInicio: "", moduloFin: "" }])}
               >
               Agregar Horario
@@ -627,7 +626,7 @@ function CrudMaterias() {
         </Modal.Body>
         <Modal.Footer>
             <Button variant="secondary" onClick={() => setShowUpdateModal(false)}>Cancelar</Button>
-            <Button variant="primary" onClick={handleUpdateSubmit}>Guardar Cambios</Button>
+            <Button style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={handleUpdateSubmit}>Guardar Cambios</Button>
           </Modal.Footer>
       </Modal>
       <AlertCreado showAlert={showAlert} message={alertMessage} onClose={() => setShowAlert(false)} />
