@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import logo from "../assets/ISO_UNSTA.png"
-import { Button, Table, Form, Modal } from 'react-bootstrap';
+import { Button, Table, Form, Modal, ModalHeader, ModalTitle, ModalBody, FormGroup } from 'react-bootstrap';
 
 function Home() {
 
@@ -15,8 +15,10 @@ function Home() {
   const [selectedCarrera, setSelectedCarrera] = useState('');
   const [selectedMateria, setSelectedMateria] = useState('');
   const [selectedPlan, setSelectedPlan] = useState('');
+  const [selectedCuatrimestre, setSelectedCuatrimestre] = useState("");
   const [horarios, setHorarios] = useState([{ dia: 'Lunes', moduloInicio: 1, moduloFin: 1 }]);
   const [showModal, setShowModal] = useState(false);
+  const [showModal2, setShowModal2] = useState(false);
 
   {/* Horarios correspondientes a cada módulo */}
   const horariosModulos1a9 = [
@@ -93,6 +95,8 @@ function Home() {
 
   const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
+  const handleShow2 = () => setShowModal2(true);
+  const handleClose2 = () => setShowModal2(false);
 
   const agregarDia = () => {
     setHorarios([...horarios, { dia: 'Lunes', moduloInicio: 1, moduloFin: 1 }]);
@@ -185,13 +189,58 @@ function Home() {
       <div className="mb-5 text-center">
       <h6>Seleccione la asignación que desea realizar</h6>
       <div className="d-flex justify-content-center flex-wrap">
-      <Button className="m-2" style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }}>Asignar Automáticamente</Button>
+      <Button className="m-2" style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={handleShow2} >Asignar Automáticamente</Button>
       <>
       <Button className="m-2" style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={handleShow}>
         Asignar Manualmente
       </Button>
 
-      {/* Modal */}
+
+      {/* Modal Asignar Manual */}
+      <Modal show={showModal2} onHide={handleClose2} >
+            <ModalHeader closeButton >
+              <ModalTitle>Elegir Cuatrimestre</ModalTitle>
+            </ModalHeader>
+            <ModalBody>
+              <Form>
+                <FormGroup className="mb-3" >
+                    <Form.Check
+                      type="checkbox"
+                      id="primerCuatrimestre"
+                      label="Primer Cuatrimestre"
+                      checked={selectedCuatrimestre === "Primer Cuatrimestre"}
+                      onChange={() =>
+                        setSelectedCuatrimestre(
+                          selectedCuatrimestre === "Primer Cuatrimestre"
+                            ? ""
+                            : "Primer Cuatrimestre"
+                        )
+                      }
+                    />
+                    <Form.Check
+                      type="checkbox"
+                      id="segundoCuatrimestre"
+                      label="Segundo Cuatrimestre"
+                      checked={selectedCuatrimestre === "Segundo Cuatrimestre"}
+                      onChange={() =>
+                        setSelectedCuatrimestre(
+                          selectedCuatrimestre === "Segundo Cuatrimestre"
+                            ? ""
+                            : "Segundo Cuatrimestre"
+                        )
+                      }
+                    />
+                </FormGroup>
+              </Form>
+            </ModalBody>
+            <Modal.Footer>
+          <Button disabled={!selectedCuatrimestre} style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={handleClose2}>Asignar</Button>
+          <Button variant="secondary" onClick={handleClose2}>Cancelar</Button>
+        </Modal.Footer>
+      </Modal>
+
+
+      {/* Modal Asignar Manual */}
       <Modal show={showModal} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Complete los campos</Modal.Title>
