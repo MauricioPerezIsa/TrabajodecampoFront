@@ -29,7 +29,7 @@ function CrudEdificio() {
       redirect: "follow",
     };
 
-    const response = await fetch("http://localhost:7000/edificio/", requestOptions);
+    const response = await fetch("http://localhost:7000/edificio/buscar", requestOptions);
     const result = await response.json();
     setAllEdificios(result);
   };

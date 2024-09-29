@@ -7,14 +7,28 @@ function Home() {
   const [allEdificios, setAllEdificios] = useState([]);
   const [allCarreras, setAllCarreras] = useState([]);
   const [allMaterias, setAllMaterias] = useState([]);
+  const [allPlanes, setAllPlanes] = useState([]);
   const [selectedEdificio, setSelectedEdificio] = useState('');
   const [selectedDia, setSelectedDia] = useState('Lunes');
   const [espacios, setEspacios] = useState([]);
 
   const [selectedCarrera, setSelectedCarrera] = useState('');
   const [selectedMateria, setSelectedMateria] = useState('');
+  const [selectedPlan, setSelectedPlan] = useState('');
   const [horarios, setHorarios] = useState([{ dia: 'Lunes', moduloInicio: 1, moduloFin: 1 }]);
   const [showModal, setShowModal] = useState(false);
+
+  {/* Horarios correspondientes a cada módulo */}
+  const horariosModulos1a9 = [
+    '8:00 a 8:45', '8:50 a 9:35', '9:40 a 10:25', '10:30 a 11:15', 
+    '11:20 a 12:05', '12:10 a 12:55', '13:00 a 13:45', '13:50 a 14:35', 
+    '15:00 a 15:45'
+  ];
+  
+  const horariosModulos10a17 = [
+    '15:50 a 16:35', '16:40 a 17:25', '17:30 a 18:15', '18:20 a 19:05', 
+    '19:10 a 19:55', '20:00 a 20:45', '20:50 a 21:35', '21:40 a 22:25'
+  ];
 
   const getEdificios = async () => {
     const requestOptions = {
@@ -60,6 +74,21 @@ function Home() {
 
   useEffect(() => {
     getMaterias();
+  }, []);
+
+  const getPlanes = async () => {
+    const requestOptions = {
+      method: "GET",
+      redirect: "follow",
+    };
+
+    const response = await fetch("http://localhost:7000/planDeEstudio/", requestOptions);
+    const result = await response.json();
+    setAllPlanes(result);
+  };
+
+  useEffect(() => {
+    getPlanes();
   }, []);
 
   const handleShow = () => setShowModal(true);
@@ -180,6 +209,17 @@ function Home() {
               </Form.Select>
             </Form.Group>
 
+            {/* Select de Plenes */}
+            <Form.Group className="mb-3">
+              <Form.Label>Plan de Estudio</Form.Label>
+              <Form.Select value={selectedPlan} onChange={(e) => setSelectedPlan(e.target.value)}>
+                <option value="">Seleccione un Plan de Estudio</option>
+                {allPlanes.map((plan) => (
+                  <option key={plan._id} value={plan._id}>{plan.nombre}</option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+
             {/* Select de Materias */}
             <Form.Group className="mb-3">
               <Form.Label>Materia</Form.Label>
@@ -241,74 +281,71 @@ function Home() {
       </div>
 
   
-          {/* Tablas */}
-          <div className="mb-5 text-center">
-            {/* Primera Tabla: Módulos 1 a 9 */}
-            <Table className='mb-5' bordered>
-              <thead>
-                <tr>
-                  <th>Espacio</th>
-                  {Array.from({ length: 9 }).map((_, index) => (
-                    <th key={index}>Módulo {index + 1} 8am - 9am</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {espacios.map((espacio, rowIndex) => {
-                  console.log(espacio.horarios); // Log de espacio.horarios aquí
-                  return (
-                    <tr key={rowIndex}>
-                      <td>{espacio.nombre}</td>
-                      {Array.from({ length: 9 }).map((_, colIndex) => {
-                        const horario = espacio.horarios[colIndex]; // Obtener el horario correspondiente
-                        return (
-                          <td key={colIndex}>
-                            {horario && horario.materia && horario.materia.length > 0 
-                              ? horario.materia[0].nombre // Acceder al nombre de la materia
-                              : "Disponible"}
-                          </td>
-                        );
-                      })}
+              {/* Tablas */ }
+              <div className="mb-5 text-center">
+                {/* Primera Tabla: Módulos 1 a 9 */}
+                <Table className='mb-5' bordered>
+                  <thead>
+                    <tr>
+                      <th>Espacio</th>
+                      {Array.from({ length: 9 }).map((_, index) => (
+                        <th key={index}>Módulo {index + 1}<br />{horariosModulos1a9[index]}</th>
+                      ))}
                     </tr>
-                  );
-                })}
-              </tbody>
-            </Table>
+                  </thead>
+                  <tbody>
+                    {espacios.map((espacio, rowIndex) => {
+                      return (
+                        <tr key={rowIndex}>
+                          <td>{espacio.nombre}</td>
+                          {Array.from({ length: 9 }).map((_, colIndex) => {
+                            const horario = espacio.horarios[colIndex]; // Obtener el horario correspondiente
+                            return (
+                              <td key={colIndex}>
+                                {horario && horario.materia && horario.materia.length > 0 
+                                  ? horario.materia[0].nombre // Acceder al nombre de la materia
+                                  : "Disponible"}<br />
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </Table>
 
-            {/* Segunda Tabla: Módulos 10 a 17 */}
-            <Table bordered>
-              <thead>
-                <tr>
-                  <th>Espacio</th>
-                  {Array.from({ length: 8 }).map((_, index) => (
-                    <th key={index}>Módulo {index + 10}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {espacios.map((espacio, rowIndex) => {
-                  console.log(espacio.horarios); // Log de espacio.horarios aquí
-                  return (
-                    <tr key={rowIndex}>
-                      <td>{espacio.nombre}</td>
-                      {Array.from({ length: 8 }).map((_, colIndex) => {
-                        const horario = espacio.horarios[colIndex + 9]; // Obtener el horario correspondiente
-                        return (
-                          <td key={colIndex}>
-                            {horario && horario.materia && horario.materia.length > 0 
-                              ? horario.materia[0].nombre // Acceder al nombre de la materia
-                              : "Disponible"}
-                          </td>
-                        );
-                      })}
+                {/* Segunda Tabla: Módulos 10 a 17 */}
+                <Table bordered>
+                  <thead>
+                    <tr>
+                      <th>Espacio</th>
+                      {Array.from({ length: 8 }).map((_, index) => (
+                        <th key={index}>Módulo {index + 10}<br />{horariosModulos10a17[index]}</th>
+                      ))}
                     </tr>
-                  );
-                })}
-              </tbody>
-            </Table>
+                  </thead>
+                  <tbody>
+                    {espacios.map((espacio, rowIndex) => {
+                      return (
+                        <tr key={rowIndex}>
+                          <td>{espacio.nombre}</td>
+                          {Array.from({ length: 8 }).map((_, colIndex) => {
+                            const horario = espacio.horarios[colIndex + 9]; // Obtener el horario correspondiente
+                            return (
+                              <td key={colIndex}>
+                                {horario && horario.materia && horario.materia.length > 0 
+                                  ? horario.materia[0].nombre // Acceder al nombre de la materia
+                                  : "Disponible"}<br />
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </Table>
+              </div>
 
-
-          </div>
 
               <div className="mb-5 text-center">
                 <h6>Click aquí para desasignar automáticamente</h6>
