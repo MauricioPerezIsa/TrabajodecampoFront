@@ -100,6 +100,11 @@ function Home() {
   const handleShow2 = () => setShowModal2(true);
   const handleClose2 = () => setShowModal2(false);
 
+  const handleCheckboxChange = (e) => {
+    // Actualiza el estado según el checkbox seleccionado
+    setSelectedCuatrimestre(e.target.value);
+  };
+
   const agregarDia = () => {
     setHorarios([...horarios, { dia: 'Lunes', moduloInicio: 1, moduloFin: 1 }]);
   };
@@ -143,6 +148,28 @@ function Home() {
       } catch (error) {
         console.error('Error al obtener espacios:', error);
       }
+    }
+  };
+
+  const handleAutomatico = async () => {
+    try {
+      const response = await fetch("http://localhost:7000/materia/asignar", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ semestre:selectedCuatrimestre }), // Envía el semestre seleccionado en el body
+      });
+
+      if (!response.ok) {
+        throw new Error('Error en la respuesta del servidor');
+      }
+
+      const data = await response.json();
+      console.log('Asignación automática realizada:', data);
+      setShowModal2(false);
+    } catch (error) {
+      console.error('Error en la asignación automática:', error);
     }
   };
 
@@ -216,40 +243,32 @@ function Home() {
             <ModalBody>
               <Form>
                 <FormGroup className="mb-3" >
-                    <Form.Check
-                      type="checkbox"
-                      id="primerCuatrimestre"
-                      label="Primer Cuatrimestre"
-                      checked={selectedCuatrimestre === "Primer Cuatrimestre"}
-                      onChange={() =>
-                        setSelectedCuatrimestre(
-                          selectedCuatrimestre === "Primer Cuatrimestre"
-                            ? ""
-                            : "Primer Cuatrimestre"
-                        )
-                      }
-                    />
-                    <Form.Check
-                      type="checkbox"
-                      id="segundoCuatrimestre"
-                      label="Segundo Cuatrimestre"
-                      checked={selectedCuatrimestre === "Segundo Cuatrimestre"}
-                      onChange={() =>
-                        setSelectedCuatrimestre(
-                          selectedCuatrimestre === "Segundo Cuatrimestre"
-                            ? ""
-                            : "Segundo Cuatrimestre"
-                        )
-                      }
-                    />
-                </FormGroup>
-              </Form>
-            </ModalBody>
-            <Modal.Footer>
-          <Button disabled={!selectedCuatrimestre} style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={handleClose2}>Asignar</Button>
-          <Button variant="secondary" onClick={handleClose2}>Cancelar</Button>
-        </Modal.Footer>
-      </Modal>
+                     {/* Radio para Primer Cuatrimestre */}
+              <Form.Check
+                type="radio"
+                label="Primer Cuatrimestre"
+                name="cuatrimestre" // Asegurarse de que ambos radios pertenecen al mismo grupo
+                value="Primer Cuatrimestre"
+                checked={selectedCuatrimestre === 'Primer Cuatrimestre'}
+                onChange={handleCheckboxChange}
+              />
+              {/* Radio para Segundo Cuatrimestre */}
+              <Form.Check
+                type="radio"
+                label="Segundo Cuatrimestre"
+                name="cuatrimestre" // Asegurarse de que ambos radios pertenecen al mismo grupo
+                value="Segundo Cuatrimestre"
+                checked={selectedCuatrimestre === 'Segundo Cuatrimestre'}
+                onChange={handleCheckboxChange}
+              />
+                      </FormGroup>
+                    </Form>
+                  </ModalBody>
+                  <Modal.Footer>
+                <Button disabled={!selectedCuatrimestre} style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={handleAutomatico}>Asignar</Button>
+                <Button variant="secondary" onClick={handleClose2}>Cancelar</Button>
+              </Modal.Footer>
+        </Modal>
 
 
       {/* Modal Asignar Manual */}
