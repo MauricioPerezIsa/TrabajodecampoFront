@@ -173,6 +173,23 @@ function Home() {
     }
   };
 
+  const handleDesignarTodo = async () => {
+    try {
+      const response = await fetch('http://localhost:7000/materia/desasignarMaterias', {
+        method: 'POST', // O GET dependiendo de cómo esté tu backend
+      });
+
+      if (!response.ok) {
+        throw new Error('Error en la respuesta del servidor');
+      }
+
+      const data = await response.json();
+      console.log('Designación completada:', data);
+    } catch (error) {
+      console.error('Error al designar todo:', error);
+    }
+  };
+
   useEffect(() => {
     fetchEspacios();
   }, [selectedEdificio, selectedDia]);
@@ -463,7 +480,7 @@ function Home() {
               <div className="mb-5 text-center">
                 <h6>Click aquí para desasignar automáticamente</h6>
                 <div className="d-flex justify-content-center flex-wrap">
-                  <Button className="m-2"style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }}>Desasignar Automáticamente</Button>
+                  <Button className="m-2"style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={handleDesignarTodo} >Desasignar Automáticamente</Button>
                 </div>
               </div>
 
