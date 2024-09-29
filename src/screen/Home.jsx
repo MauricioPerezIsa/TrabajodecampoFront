@@ -353,7 +353,7 @@ function Home() {
                     <p><strong>Nombre:</strong> {materiaInfo.nombre}</p>
                     <p><strong>Año:</strong> {materiaInfo.anio}</p>
                     <p><strong>Semestre:</strong> {materiaInfo.semestre}</p>
-                    <p><strong>Profesor:</strong> {materiaInfo.profesor}</p>
+                    <p><strong>Profesor:</strong> {materiaInfo.profesor[0].nombre} {materiaInfo.profesor[0].apellido}</p>
                     <p><strong>Cantidad de Alumnos:</strong> {materiaInfo.cantidadAlumnos}</p>
                     <p><strong>Código:</strong> {materiaInfo.codigo}</p>
                   </div>
