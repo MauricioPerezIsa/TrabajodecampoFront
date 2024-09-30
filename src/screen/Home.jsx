@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import logo from "../assets/ISO_UNSTA.png"
 import { Button, Table, Form, Modal, ModalHeader, ModalTitle, ModalBody, FormGroup } from 'react-bootstrap';
 import styles from "../styles/detalles.module.css"
+import ModalConfirmacion from "../components/ModalConfirmacion.jsx"
 
 function Home() {
 
@@ -22,6 +23,15 @@ function Home() {
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
   const [showMateriaModal, setShowMateriaModal] = useState(false);
+  const [showModalConfirmacion, setShowModalConfirmacion] = useState(false);
+  const [showDesasignarBtn, setShowDesasignarBtn] = useState(false);
+
+  useEffect(() => {
+    const estadoAsignacion = localStorage.getItem('estadoAsignacion');
+    if (estadoAsignacion === 'asignado') {
+      setShowDesasignarBtn(true); // Mostrar botón de desasignar si ya se asignaron materias
+    }
+  }, []);
 
   {/* Horarios correspondientes a cada módulo */}
   const horariosModulos1a9 = [
@@ -168,6 +178,8 @@ function Home() {
 
       const data = await response.json();
       console.log('Asignación automática realizada:', data);
+      setShowDesasignarBtn(true);
+      localStorage.setItem('estadoAsignacion', 'asignado'); // Guarda el estado en localStorage
       setShowModal2(false);
     } catch (error) {
       console.error('Error en la asignación automática:', error);
@@ -201,6 +213,16 @@ function Home() {
 
   const handleDiaChange = (e) => {
     setSelectedDia(e.target.value);
+  };
+
+  const handleShowModalConfirmacion = () => setShowModalConfirmacion(true);
+  const handleCloseModalConfirmacion = () => setShowModalConfirmacion(false);
+
+  const handleConfirmarDesasignar = () => {
+    handleDesignarTodo(); // Ejecuta la función de desasignar
+    setShowDesasignarBtn(false); // Muestra el botón de asignar automáticamente de nuevo
+    localStorage.setItem('estadoAsignacion', 'noAsignado'); // Actualiza el estado en localStorage
+    handleCloseModalConfirmacion(); // Cierra el modal después de ejecutar la acción
   };
 
   return (
@@ -243,17 +265,55 @@ function Home() {
 
       {/* Botones Asignación */}
 
-      <div className="mb-5 text-center">
-      <h6>Seleccione la asignación que desea realizar</h6>
-      <div className="d-flex justify-content-center flex-wrap">
-      <Button className="m-2" style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={handleShow2} >Asignar Automáticamente</Button>
+      <div className="d-flex justify-content-between" >
+        <h6>Presionar aquí para ejecutar la acción</h6>
+        <h6>Presionar aquí para ejecutar la acción</h6>
+      </div>
+
+      <div className="text-center">
+      <div className="d-flex justify-content-between" >
+      {!showDesasignarBtn && (
+          <Button
+            className="m-2"
+            style={{
+              backgroundColor: 'rgb(114, 16, 16)',
+              color: '#FFF',
+              borderColor: '#FFF'
+            }}
+            onClick={handleShow2}
+          >
+            Asignar Automáticamente
+          </Button>
+        )}
+
+        {showDesasignarBtn && (
+          <Button
+            className="m-2"
+            style={{
+              backgroundColor: 'rgb(114, 16, 16)',
+              color: '#FFF',
+              borderColor: '#FFF'
+            }}
+            onClick={handleShowModalConfirmacion}
+          >
+            Desasignar Automáticamente
+          </Button>
+        )}
+
       <>
       <Button className="m-2" style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={handleShow}>
         Asignar Manualmente
       </Button>
 
+      
+      {/* Modal de Confirmación */}
+      <ModalConfirmacion
+        show={showModalConfirmacion}
+        handleClose={handleCloseModalConfirmacion}
+        handleConfirm={handleConfirmarDesasignar}
+      />
 
-      {/* Modal Asignar Manual */}
+      {/* Modal Asignar Automaticamente */}
       <Modal show={showModal2} onHide={handleClose2} >
             <ModalHeader closeButton >
               <ModalTitle>Elegir Cuatrimestre</ModalTitle>
@@ -375,8 +435,8 @@ function Home() {
             </Modal.Footer>
           </Modal>
         </>
-            </div>
-          </div>
+      </div>
+    </div>
 
             {/* Modal para mostrar información de la materia */}
             <Modal show={showMateriaModal} onHide={handleCloseMateriaModal}>
@@ -479,14 +539,6 @@ function Home() {
                     })}
                   </tbody>
                 </Table>
-              </div>
-
-
-              <div className="mb-5 text-center">
-                <h6>Click aquí para desasignar automáticamente</h6>
-                <div className="d-flex justify-content-center flex-wrap">
-                  <Button className="m-2"style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={handleDesignarTodo} >Desasignar Automáticamente</Button>
-                </div>
               </div>
 
             </div>

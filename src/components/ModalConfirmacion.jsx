@@ -6,7 +6,7 @@ function ModalConfirmacion({ show, handleClose, handleConfirm }) {
   return (
     <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Confirmar Eliminación</Modal.Title>
+        <Modal.Title>Confirmar Acción</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         ¿Estás seguro de querer realizar esta acción?
