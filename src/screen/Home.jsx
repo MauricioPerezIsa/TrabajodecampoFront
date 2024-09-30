@@ -25,6 +25,7 @@ function Home() {
   const [showMateriaModal, setShowMateriaModal] = useState(false);
   const [showModalConfirmacion, setShowModalConfirmacion] = useState(false);
   const [showDesasignarBtn, setShowDesasignarBtn] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // Estado de carga
 
   useEffect(() => {
     const estadoAsignacion = localStorage.getItem('estadoAsignacion');
@@ -162,29 +163,45 @@ function Home() {
     }
   };
 
+  // Simulación de una operación asíncrona
+  const fakeAsyncOperation = () => {
+    return new Promise((resolve) => {
+      setTimeout(resolve, 2000); // Simular una espera de 2 segundos
+    });
+  };
+
   const handleAutomatico = async () => {
+    setIsLoading(true); // Mostrar el modal de carga al instante
+    setShowDesasignarBtn(true);
+    localStorage.setItem('estadoAsignacion', 'asignado'); // Guarda el estado en localStorage
+    setShowModal2(false); // Cierra el modal de asignar automáticamente
+  
     try {
       const response = await fetch("http://localhost:7000/materia/asignar", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ semestre:selectedCuatrimestre }), // Envía el semestre seleccionado en el body
+        body: JSON.stringify({ semestre: selectedCuatrimestre }), // Envía el semestre seleccionado en el body
       });
-
+  
       if (!response.ok) {
         throw new Error('Error en la respuesta del servidor');
       }
-
+  
       const data = await response.json();
       console.log('Asignación automática realizada:', data);
-      setShowDesasignarBtn(true);
-      localStorage.setItem('estadoAsignacion', 'asignado'); // Guarda el estado en localStorage
-      setShowModal2(false);
+  
+      await fakeAsyncOperation(); // Simulación de asignación automática
+  
+      
     } catch (error) {
       console.error('Error en la asignación automática:', error);
+    } finally {
+      setIsLoading(false); // Ocultar el modal de carga al finalizar, incluso si hay un error
     }
   };
+  
 
   const handleDesignarTodo = async () => {
     try {
@@ -218,11 +235,14 @@ function Home() {
   const handleShowModalConfirmacion = () => setShowModalConfirmacion(true);
   const handleCloseModalConfirmacion = () => setShowModalConfirmacion(false);
 
-  const handleConfirmarDesasignar = () => {
-    handleDesignarTodo(); // Ejecuta la función de desasignar
-    setShowDesasignarBtn(false); // Muestra el botón de asignar automáticamente de nuevo
-    localStorage.setItem('estadoAsignacion', 'noAsignado'); // Actualiza el estado en localStorage
+  const handleConfirmarDesasignar = async () => {
+    setIsLoading(true); // Mostrar el modal de carga
     handleCloseModalConfirmacion(); // Cierra el modal después de ejecutar la acción
+    setShowDesasignarBtn(false); // Muestra el botón de asignar automáticamente de nuevo
+    await handleDesignarTodo(); // Ejecuta la función de desasignar
+    await fakeAsyncOperation(); // Simulación de desasignación
+    setIsLoading(false); // Ocultar el modal de carga
+    localStorage.setItem('estadoAsignacion', 'noAsignado'); // Actualiza el estado en localStorage
   };
 
   return (
@@ -348,6 +368,14 @@ function Home() {
               </Modal.Footer>
         </Modal>
 
+        {/* Modal Cargando... */}
+      <Modal show={isLoading} backdrop="static" keyboard={false} centered>
+        <Modal.Body style={{ backgroundColor: 'rgb(114, 16, 16)'}}>
+          <div className="text-center">
+            <h5 className='text-light' >Cargando...</h5>
+          </div>
+        </Modal.Body>
+      </Modal>
 
       {/* Modal Asignar Manual */}
       <Modal show={showModal} onHide={handleClose}>
