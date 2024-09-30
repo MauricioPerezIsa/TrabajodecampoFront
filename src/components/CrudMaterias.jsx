@@ -366,7 +366,7 @@ function CrudMaterias() {
                       <option value="">Seleccionar Día</option>
                       <option value="Lunes">Lunes</option>
                       <option value="Martes">Martes</option>
-                      <option value="Miércoles">Miércoles</option>
+                      <option value="Miercoles">Miercoles</option>
                       <option value="Jueves">Jueves</option>
                       <option value="Viernes">Viernes</option>
                     </Form.Control>
@@ -430,7 +430,7 @@ function CrudMaterias() {
               <Form.Label>Profesores</Form.Label>
               <Form.Control as="select" multiple value={profesoresSeleccionados} onChange={(e) => setProfesoresSeleccionados([...e.target.selectedOptions].map(option => option.value))}>
                 {allPersonal.map(profesor => (
-                  <option key={profesor._id} value={profesor._id}>{profesor.nombre}</option>
+                  <option key={profesor._id} value={profesor._id}>{profesor.nombre} {profesor.apellido}</option>
                 ))}
               </Form.Control>
               {Errores.profesoresSeleccionados && <Form.Text className="text-danger">{Errores.profesoresSeleccionados}</Form.Text>}
@@ -474,7 +474,7 @@ function CrudMaterias() {
                 <td>{materia.semestre}</td>
                 <td>{materia.elementos.map(e => allElementos.find(el => el._id === e)?.nombre).join(', ')}</td>
                 <td>{materia.cantidadAlumnos}</td>
-                <td>{materia.profesor.map(prof => prof.nombre).join(", ")}</td>
+                <td>{materia.profesor.map(prof => `${prof.nombre} ${prof.apellido}`).join(", ")}</td>
                 <td>{materia.horarios.map((h, index) => (
                     <div key={index}>
                     |  Día: {h.dia}, Módulo Inicio: {h.moduloInicio}, Módulo Fin: {h.moduloFin}
@@ -553,7 +553,7 @@ function CrudMaterias() {
                       <option value="">Seleccionar Día</option>
                       <option value="Lunes">Lunes</option>
                       <option value="Martes">Martes</option>
-                      <option value="Miércoles">Miércoles</option>
+                      <option value="Miercoles">Miercoles</option>
                       <option value="Jueves">Jueves</option>
                       <option value="Viernes">Viernes</option>
                     </Form.Control>
@@ -617,7 +617,7 @@ function CrudMaterias() {
               <Form.Label>Profesores</Form.Label>
               <Form.Control as="select" multiple value={updateProfesoresSeleccionados} onChange={(e) => setUpdateProfesoresSeleccionados([...e.target.selectedOptions].map(option => option.value))}>
                 {allPersonal.map(profesor => (
-                  <option key={profesor._id} value={profesor._id}>{profesor.nombre}</option>
+                  <option key={profesor._id} value={profesor._id}>{profesor.nombre} {profesor.apellido}</option>
                 ))}
               </Form.Control>
               {Errores.updateProfesoresSeleccionados && <Form.Text className="text-danger">{Errores.updateProfesoresSeleccionados}</Form.Text>}
