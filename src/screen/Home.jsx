@@ -26,6 +26,8 @@ function Home() {
   const [showModalConfirmacion, setShowModalConfirmacion] = useState(false);
   const [showDesasignarBtn, setShowDesasignarBtn] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // Estado de carga
+  const [showEspacioModal, setShowEspacioModal] = useState(false);
+  const [espacioInfo, setEspacioInfo] = useState(null);
 
   useEffect(() => {
     const estadoAsignacion = localStorage.getItem('estadoAsignacion');
@@ -182,6 +184,27 @@ function Home() {
   const handleCloseMateriaModal = () => {
     setShowMateriaModal(false);
     setMateriaInfo(null);
+  };
+
+  const handleEspacioCellClick = async (espacioId) => {
+    try {
+      const response = await fetch(`http://localhost:7000/espacio/${espacioId}`);
+      
+      if (!response.ok) {
+        throw new Error('Error al obtener la información del espacio');
+      }
+  
+      const data = await response.json();
+      setEspacioInfo(data); // Guardar la información del espacio en el estado
+      setShowEspacioModal(true); // Mostrar el modal con la información
+    } catch (error) {
+      console.error('Error al obtener el espacio:', error);
+    }
+  };
+
+  const handleCloseEspacioModal = () => {
+    setShowEspacioModal(false);
+    setEspacioInfo(null); // Limpiar la información al cerrar el modal
   };
 
   // Simulación de una operación asíncrona
@@ -538,23 +561,50 @@ function Home() {
               </Modal.Footer>
             </Modal>
 
+            {/* Modal para mostrar información del espacio */}
+            <Modal show={showEspacioModal} onHide={handleCloseEspacioModal}>
+                  <ModalHeader closeButton>
+                    <ModalTitle>Información del Espacio</ModalTitle>
+                  </ModalHeader>
+                  <ModalBody>
+                    {espacioInfo ? (
+                      <div>
+                        {console.log("Espacio: ",espacioInfo)}
+                        <p><strong>Nombre:</strong> {espacioInfo.nombre}</p>
+                        <p><strong>Tipo:</strong> {espacioInfo.tipo}</p>
+                        <p><strong>Capacidad:</strong> {espacioInfo.capacidad}</p>
+                        <p><strong>Elementos:</strong> {espacioInfo.elemento?.map(el => el.nombre).join(', ')}</p>
+                      </div>
+                    ) : (
+                      <p>No se ha seleccionado ningún espacio.</p>
+                    )}
+                  </ModalBody>
+                  <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseEspacioModal}>
+                      Cerrar
+                    </Button>
+                  </Modal.Footer>
+                </Modal>
+
   
-              {/* Tablas */ }
-              <div className="mb-5 text-center">
-                {/* Primera Tabla: Módulos 1 a 9 */}
-                <Table className='mb-5' bordered>
-                  <thead>
-                    <tr>
-                      <th>Espacio</th>
-                      {Array.from({ length: 9 }).map((_, index) => (
-                        <th key={index}>Módulo {index + 1}<br />{horariosModulos1a9[index]}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
+                <div className="mb-5 text-center">
+                  {/* Primera Tabla: Módulos 1 a 9 */}
+                  <Table className='mb-5' bordered>
+                    <thead>
+                      <tr>
+                        <th>Espacio</th>
+                        {Array.from({ length: 9 }).map((_, index) => (
+                          <th key={index}>Módulo {index + 1}<br />{horariosModulos1a9[index]}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
                       {espacios.map((espacio, rowIndex) => (
                         <tr key={rowIndex}>
-                          <td>{espacio.nombre}</td>
+                          {/* Hacer que el nombre del espacio sea clickable */}
+                          <td className={styles.hoverMateria} onClick={() => handleEspacioCellClick(espacio._id)} style={{ cursor: "pointer" }}>
+                            {espacio.nombre}
+                          </td>
                           {Array.from({ length: 9 }).map((_, colIndex) => {
                             const horario = espacio.horarios[colIndex];
                             const tieneMateria = horario?.materia?.length > 0;
@@ -573,46 +623,45 @@ function Home() {
                         </tr>
                       ))}
                     </tbody>
+                  </Table>
 
-                </Table>
-
-                {/* Segunda Tabla: Módulos 10 a 17 */}
-                <Table bordered>
-                  <thead>
-                    <tr>
-                      <th>Espacio</th>
-                      {Array.from({ length: 8 }).map((_, index) => (
-                        <th key={index}>Módulo {index + 10}<br />{horariosModulos10a17[index]}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {espacios.map((espacio, rowIndex) => {
-                      return (
+                  {/* Segunda Tabla: Módulos 10 a 17 */}
+                  <Table bordered>
+                    <thead>
+                      <tr>
+                        <th>Espacio</th>
+                        {Array.from({ length: 8 }).map((_, index) => (
+                          <th key={index}>Módulo {index + 10}<br />{horariosModulos10a17[index]}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {espacios.map((espacio, rowIndex) => (
                         <tr key={rowIndex}>
-                          <td>{espacio.nombre}</td>
+                          {/* Hacer que el nombre del espacio sea clickable */}
+                          <td className={styles.hoverMateria} onClick={() => handleEspacioCellClick(espacio._id)} style={{ cursor: "pointer" }}>
+                            {espacio.nombre}
+                          </td>
                           {Array.from({ length: 8 }).map((_, colIndex) => {
                             const horario = espacio.horarios[colIndex + 9]; // Obtener el horario correspondiente
                             const tieneMateria = horario?.materia?.length > 0;
+
                             return (
                               <td
                                 key={colIndex}
-                                onClick={() =>
-                                  horario?.materia?.length > 0 && handleCellClick(horario.materia[0])
-                                }
+                                onClick={() => tieneMateria && handleCellClick(horario.materia[0])}
                                 className={tieneMateria ? styles.hoverMateria : ""}
-                                style={{ cursor: horario?.materia?.length > 0 ? "pointer" : "default" }}
+                                style={{ cursor: tieneMateria ? "pointer" : "default" }}
                               >
-                                {horario?.materia?.length > 0 ? horario.materia[0].nombre : "Disponible"}
+                                {tieneMateria ? horario.materia[0].nombre : "Disponible"}
                               </td>
                             );
                           })}
                         </tr>
-                      );
-                    })}
-                  </tbody>
-                </Table>
-              </div>
+                      ))}
+                    </tbody>
+                  </Table>
+                </div>
 
             </div>
 
