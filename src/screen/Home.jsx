@@ -57,9 +57,49 @@ function Home() {
     setAllEdificios(result);
   };
 
-  useEffect(() => {
-    getEdificios();
-  }, []);
+  const fetchEspacios = async () => {
+    if (selectedEdificio && selectedDia) {
+      try {
+        const response = await fetch(`http://localhost:7000/edificio/filtrar/${selectedDia}/${selectedEdificio}`);
+        console.log("Aqui1",response)
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+  
+        const data = await response.json();
+        setEspacios(data);
+        console.log("Data fetched:", data); // Asegúrate de que los datos son los esperados
+      } catch (error) {
+        console.error('Error al obtener espacios:', error);
+      }
+    }
+  };
+
+        // useEffect para hacer fetch de los edificios al cargar la página
+        useEffect(() => {
+          const inicializarDatos = async () => {
+            await getEdificios(); // Obtener la lista de edificios
+          };
+
+          inicializarDatos();
+        }, []); // Se ejecuta solo al montar el componente
+
+        // useEffect para seleccionar el primer edificio cuando allEdificios cambie
+        useEffect(() => {
+          if (allEdificios.length > 0 && !selectedEdificio) { // Si hay edificios y no hay uno seleccionado
+            const primerEdificio = allEdificios[0]._id; // Selecciona el primer edificio
+            setSelectedEdificio(primerEdificio);
+          }
+        }, [allEdificios]); // Se ejecuta cuando se obtienen los edificios
+
+        // useEffect para cargar los espacios cada vez que cambie el edificio o el día
+        useEffect(() => {
+          if (selectedEdificio) {
+            fetchEspacios(selectedEdificio, selectedDia); // Cargar espacios con el edificio y el día actualizados
+          }
+        }, [selectedEdificio, selectedDia]); // Se ejecuta cuando cambian el edificio o el día
+
 
 
   const getCarreras = async () => {
@@ -144,25 +184,6 @@ function Home() {
     setMateriaInfo(null);
   };
 
-  const fetchEspacios = async () => {
-    if (selectedEdificio && selectedDia) {
-      try {
-        const response = await fetch(`http://localhost:7000/edificio/filtrar/${selectedDia}/${selectedEdificio}`);
-        console.log("Aqui1",response)
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-  
-        const data = await response.json();
-        setEspacios(data);
-        console.log("Data fetched:", data); // Asegúrate de que los datos son los esperados
-      } catch (error) {
-        console.error('Error al obtener espacios:', error);
-      }
-    }
-  };
-
   // Simulación de una operación asíncrona
   const fakeAsyncOperation = () => {
     return new Promise((resolve) => {
@@ -171,12 +192,10 @@ function Home() {
   };
 
   const handleAutomatico = async () => {
-    setIsLoading(true); // Mostrar el modal de carga al instante
-    setShowDesasignarBtn(true);
-    localStorage.setItem('estadoAsignacion', 'asignado'); // Guarda el estado en localStorage
-    setShowModal2(false); // Cierra el modal de asignar automáticamente
-  
     try {
+      setShowDesasignarBtn(true);
+      setShowModal2(false);
+      setIsLoading(true); // Mostrar el modal de carga
       const response = await fetch("http://localhost:7000/materia/asignar", {
         method: 'POST',
         headers: {
@@ -192,33 +211,58 @@ function Home() {
       const data = await response.json();
       console.log('Asignación automática realizada:', data);
   
-      await fakeAsyncOperation(); // Simulación de asignación automática
-  
+      // Simulación de asignación automática (puedes eliminar esto si no es necesario)
+      await fakeAsyncOperation(); 
       
+      // Ocultar el modal de carga
+      setIsLoading(false); 
+      
+      // Actualizar las tablas con los espacios
+      await fetchEspacios(selectedEdificio, selectedDia); // Llama a fetchEspacios para actualizar las celdas
+      
+      // Guardar el estado en localStorage
+      localStorage.setItem('estadoAsignacion', 'asignado'); 
+
     } catch (error) {
       console.error('Error en la asignación automática:', error);
-    } finally {
-      setIsLoading(false); // Ocultar el modal de carga al finalizar, incluso si hay un error
+      setIsLoading(false); // En caso de error, asegúrate de ocultar el modal de carga
     }
   };
+  
   
 
   const handleDesignarTodo = async () => {
     try {
+      setIsLoading(true); // Mostrar el modal de carga
+  
       const response = await fetch('http://localhost:7000/materia/desasignarMaterias', {
         method: 'POST', // O GET dependiendo de cómo esté tu backend
       });
-
+  
       if (!response.ok) {
         throw new Error('Error en la respuesta del servidor');
       }
-
+  
       const data = await response.json();
-      console.log('Designación completada:', data);
+      console.log('Desasignación completa realizada:', data);
+  
+      // Simulación de desasignación (si es necesario, puedes eliminar esta línea)
+      await fakeAsyncOperation(); 
+  
+      // Ocultar el modal de carga
+      setIsLoading(false);
+  
+      // Actualizar las tablas con los espacios
+      await fetchEspacios(selectedEdificio, selectedDia); // Llamar a fetchEspacios para actualizar las tablas
+  
+      setShowDesasignarBtn(false); // O actualizar el estado si lo necesitas para otros elementos de la UI
+      setShowModal2(false); // Cerrar el modal en caso de que se esté utilizando
     } catch (error) {
-      console.error('Error al designar todo:', error);
-    }
-  };
+      console.error('Error al desasignar todo:', error);
+      setIsLoading(false); // Asegurarse de ocultar el modal de carga en caso de error
+    }
+  };
+  
 
   useEffect(() => {
     fetchEspacios();
@@ -230,6 +274,7 @@ function Home() {
 
   const handleDiaChange = (e) => {
     setSelectedDia(e.target.value);
+    fetchEspacios(); // Refresca los espacios cuando cambia el día
   };
 
   const handleShowModalConfirmacion = () => setShowModalConfirmacion(true);
