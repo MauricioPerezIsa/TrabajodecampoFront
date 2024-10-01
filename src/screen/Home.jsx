@@ -35,14 +35,18 @@ function Home() {
   ]);
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
+  const [showModal3, setShowModal3] = useState(false);
   const [showMateriaModal, setShowMateriaModal] = useState(false);
   const [showModalConfirmacion, setShowModalConfirmacion] = useState(false);
   const [showModalConfirmacion2, setShowModalConfirmacion2] = useState(false);
+  const [showModalConfirmacion3, setShowModalConfirmacion3] = useState(false);
   const [showDesasignarBtn, setShowDesasignarBtn] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // Estado de carga
   const [showEspacioModal, setShowEspacioModal] = useState(false);
   const [espacioInfo, setEspacioInfo] = useState(null);
   const [selectedEspacio, setSelectedEspacio] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   const [formData, setFormData] = useState({
     espacioId: "",
@@ -262,6 +266,8 @@ function Home() {
   const handleClose = () => setShowModal(false);
   const handleShow2 = () => setShowModal2(true);
   const handleClose2 = () => setShowModal2(false);
+  const handleShow3 = () => setShowModal3(true);
+  const handleClose3 = () => setShowModal3(false);
 
   const handleCheckboxChange = (e) => {
     // Actualiza el estado según el checkbox seleccionado
@@ -417,7 +423,14 @@ function Home() {
     setShowMateriaModal(false);
     setShowModalConfirmacion2(true);
   };
+
   const handleCloseModalConfirmacion2 = () => setShowModalConfirmacion2(false);
+
+  const handleShowModalConfirmacion3 = () => {
+    setShowModal3(false);
+    setShowModalConfirmacion2(true);
+  };
+  const handleCloseModalConfirmacion3 = () => setShowModalConfirmacion3(false);
 
   const handleConfirmarDesasignar = async () => {
     setIsLoading(true); // Mostrar el modal de carga
@@ -427,6 +440,15 @@ function Home() {
     await fakeAsyncOperation(); // Simulación de desasignación
     setIsLoading(false); // Ocultar el modal de carga
     localStorage.setItem("estadoAsignacion", "noAsignado"); // Actualiza el estado en localStorage
+  };
+
+  const handleConfirmarDesasignar2 = async () => {
+    
+    setShowModalConfirmacion2(false); // Cierra el modal después de ejecutar la acción
+    setIsLoading(true);
+    await handleEliminar(); // Ejecuta la función de desasignar
+    await fetchEspacios(selectedEdificio, selectedDia);
+    setIsLoading(false);
   };
 
   // funcion para asignar una materia a un espacio
@@ -451,6 +473,18 @@ function Home() {
       const result = await response.json();
       console.log(result); // Maneja la respuesta de la API según necesites
       setShowModal(false);
+      setIsLoading(true);
+      await fetchEspacios(selectedEdificio, selectedDia);
+      setIsLoading(false);
+
+      if (response.ok) {
+        setErrorMessage(result.mensaje)
+        setShowErrorModal(true);
+      } else {
+        
+        setErrorMessage(result.mensaje || "Hubo un error al asignar la materia."); // Personaliza el mensaje
+        setShowErrorModal(true); // Mostrar el modal de error
+      }
     } catch (error) {
       console.error("Error:", error);
     }
@@ -488,7 +522,14 @@ function Home() {
       ); // Cambia el endpoint por el correcto
       const result = await response.json();
       console.log(result); // Maneja la respuesta de la API según necesites
-      setShowModal(false);
+      if (response.ok) {
+        setErrorMessage(result.mensaje)
+        setShowErrorModal(true);
+      } else {
+        
+        setErrorMessage(result.mensaje || "Hubo un error al eliminar la materia."); // Personaliza el mensaje
+        setShowErrorModal(true); // Mostrar el modal de error
+      }
     } catch (error) {
       console.error("Error:", error);
     }
@@ -503,7 +544,10 @@ function Home() {
           alt="Logo"
           style={{ width: "70px", height: "70px", marginRight: "20px" }}
         />
-        <h1 style={{ fontFamily: "Crimson Text, serif" }}>Menú Principal</h1>
+        <h1 style={{ fontFamily: "Crimson Text, serif" }}>AulaSMART</h1>
+      </div>
+      <div>
+        <h2 className="d-flex align-items-center justify-content-center my-4" style={{ fontFamily: "Crimson Text, serif" }} >Menú Principal</h2>
       </div>
 
       {/* Sección Edificios */}
@@ -582,6 +626,18 @@ function Home() {
             </Button>
           )}
 
+          <Button
+            className="m-2"
+            style={{
+              backgroundColor: "rgb(114, 16, 16)",
+              color: "#FFF",
+              borderColor: "#FFF",
+            }}
+            onClick={handleShow3}
+          >
+            Eliminar Asignación
+          </Button>
+
           <>
             <Button
               className="m-2"
@@ -595,6 +651,23 @@ function Home() {
               Asignar Manualmente
             </Button>
 
+              {/* Modal de Alert*/}
+            <Modal show={showErrorModal} onHide={() => setShowErrorModal(false)}>
+              <Modal.Header closeButton>
+                <Modal.Title>Mensaje</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <h5>{errorMessage}</h5>
+
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={() => setShowErrorModal(false)}>
+                  Cerrar
+                </Button>
+              </Modal.Footer>
+            </Modal>
+
+
             {/* Modal de Confirmación 1*/}
             <ModalConfirmacion
               show={showModalConfirmacion}
@@ -606,6 +679,7 @@ function Home() {
             <ModalConfirmacion
               show={showModalConfirmacion2}
               handleClose={handleCloseModalConfirmacion2}
+              handleConfirm={handleConfirmarDesasignar2}
             />
 
             {/* Modal Asignar Automaticamente */}
@@ -850,6 +924,193 @@ function Home() {
                 </Button>
               </Modal.Footer>
             </Modal>
+
+            {/* Modal Eliminar Asignación */}
+            <Modal show={showModal3} onHide={handleClose3}>
+              <Modal.Header closeButton>
+                <Modal.Title>Complete los campos</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Form>
+                  {/* Select de Carreras */}
+                  <Form.Group className="mb-3">
+                    <Form.Label>Carrera</Form.Label>
+                    <Form.Select
+                      value={selectedCarrera}
+                      onChange={handleCarreraChange}
+                    >
+                      <option value="">Seleccione una carrera</option>
+                      {allCarreras.map((carrera) => (
+                        <option key={carrera._id} value={carrera._id}>
+                          {carrera.nombre}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+
+                  {/* Select de Planes */}
+                  <Form.Group className="mb-3">
+                    <Form.Label>Plan de Estudio</Form.Label>
+                    <Form.Select
+                      value={selectedPlan}
+                      onChange={handlePlanChange}
+                      disabled={!planes.length}
+                    >
+                      <option value="">Seleccione un Plan de Estudio</option>
+                      {planes.map((plan) => (
+                        <option key={plan._id} value={plan._id}>
+                          {plan.nombre}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+
+                  {/* Select de Materias */}
+                  <Form.Group className="mb-3">
+                    <Form.Label>Materia</Form.Label>
+                    <Form.Select
+                      value={selectedMateria}
+                      onChange={handleMateriaChange}
+                      disabled={!materias.length}
+                    >
+                      <option value="">Seleccione una materia</option>
+                      {materias.map((materia) => (
+                        <option key={materia._id} value={materia._id}>
+                          {materia.nombre}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+
+                  {/*Espacios */}
+                  <Form.Group className="mb-3">
+                    <Form.Label>Espacios</Form.Label>
+                    <Form.Select
+                      value={selectedEspacio} // Usamos el estado seleccionado
+                      onChange={handleEspacioChange} // Asignamos el manejador
+                      disabled={espaciosmodal.length === 0} // Deshabilitar si no hay espacios
+                    >
+                      <option value="">Seleccione un espacio</option>
+                      {espaciosmodal.map((espacio) => (
+                        <option key={espacio._id} value={espacio._id}>
+                          {espacio.nombre}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+
+                  {/* Horarios */}
+                  {horarios.map((horario, index) => (
+                    <div key={index} className="mb-3">
+                      <Form.Group className="mb-3">
+                        <Form.Label>Día</Form.Label>
+                        <Form.Select
+                          value={horario.dia}
+                          onChange={(e) =>
+                            handleHorarioChange(index, "dia", e.target.value)
+                          }
+                        >
+                          <option value="Lunes">Lunes</option>
+                          <option value="Martes">Martes</option>
+                          <option value="Miércoles">Miércoles</option>
+                          <option value="Jueves">Jueves</option>
+                          <option value="Viernes">Viernes</option>
+                        </Form.Select>
+                      </Form.Group>
+
+                      <Form.Group className="mb-3">
+                        <Form.Label>Módulo Inicio</Form.Label>
+                        <Form.Select
+                          value={horario.moduloInicio}
+                          onChange={(e) =>
+                            handleHorarioChange(
+                              index,
+                              "moduloInicio",
+                              e.target.value
+                            )
+                          }
+                        >
+                          {Array.from({ length: 17 }, (_, i) => i + 1).map(
+                            (modulo) => (
+                              <option key={modulo} value={modulo}>
+                                {modulo}
+                              </option>
+                            )
+                          )}
+                        </Form.Select>
+                      </Form.Group>
+
+                      <Form.Group className="mb-3">
+                        <Form.Label>Módulo Fin</Form.Label>
+                        <Form.Select
+                          value={horario.moduloFin}
+                          onChange={(e) =>
+                            handleHorarioChange(
+                              index,
+                              "moduloFin",
+                              e.target.value
+                            )
+                          }
+                        >
+                          {Array.from({ length: 17 }, (_, i) => i + 1).map(
+                            (modulo) => (
+                              <option key={modulo} value={modulo}>
+                                {modulo}
+                              </option>
+                            )
+                          )}
+                        </Form.Select>
+                      </Form.Group>
+                    </div>
+                  ))}
+
+                  <Button
+                    style={{
+                      backgroundColor: "rgb(114, 16, 16)",
+                      color: "#FFF",
+                      borderColor: "#FFF",
+                    }}
+                    onClick={agregarDia}
+                  >
+                    Agregar Día
+                  </Button>
+                  {horarios.length > 1 && (
+                    <Button
+                      style={{
+                        backgroundColor: "rgb(114, 16, 16)",
+                        color: "#FFF",
+                        borderColor: "#FFF",
+                      }}
+                      className="ms-3"
+                      onClick={eliminarDia}
+                    >
+                      Eliminar Día
+                    </Button>
+                  )}
+                </Form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  style={{
+                    backgroundColor: "rgb(114, 16, 16)",
+                    color: "#FFF",
+                    borderColor: "#FFF",
+                  }}
+                  onClick={handleShowModalConfirmacion3}
+                  disabled={
+                    !selectedCarrera ||
+                    !selectedEspacio ||
+                    !selectedPlan ||
+                    !selectedMateria
+                  }
+                >
+                  Eliminar Asignación
+                </Button>
+                <Button variant="secondary" onClick={handleClose3}>
+                  Cancelar
+                </Button>
+              </Modal.Footer>
+            </Modal>
           </>
         </div>
       </div>
@@ -889,16 +1150,6 @@ function Home() {
           )}
         </ModalBody>
         <Modal.Footer>
-          <Button
-            style={{
-              backgroundColor: "rgb(114, 16, 16)",
-              color: "#FFF",
-              borderColor: "#FFF",
-            }}
-            onClick={handleShowModalConfirmacion2}
-          >
-            Eliminar Asignación
-          </Button>
           <Button variant="secondary" onClick={handleCloseMateriaModal}>
             Cerrar
           </Button>
