@@ -451,7 +451,7 @@ function CrudMaterias() {
         handleConfirm={() => DeleteMateria(deleteId)}
       />
 
-        <Table striped bordered hover style={{marginBottom: "150px"}}>
+        <Table striped bordered hover style={{marginBottom: "350px"}}>
           <thead>
             <tr>
               <th>Nombre</th>

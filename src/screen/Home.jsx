@@ -24,6 +24,7 @@ function Home() {
   const [showModal2, setShowModal2] = useState(false);
   const [showMateriaModal, setShowMateriaModal] = useState(false);
   const [showModalConfirmacion, setShowModalConfirmacion] = useState(false);
+  const [showModalConfirmacion2, setShowModalConfirmacion2] = useState(false);
   const [showDesasignarBtn, setShowDesasignarBtn] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // Estado de carga
   const [showEspacioModal, setShowEspacioModal] = useState(false);
@@ -303,6 +304,12 @@ function Home() {
   const handleShowModalConfirmacion = () => setShowModalConfirmacion(true);
   const handleCloseModalConfirmacion = () => setShowModalConfirmacion(false);
 
+  const handleShowModalConfirmacion2 = () => {
+    setShowMateriaModal(false);
+    setShowModalConfirmacion2(true);
+  }
+  const handleCloseModalConfirmacion2 = () => setShowModalConfirmacion2(false);
+
   const handleConfirmarDesasignar = async () => {
     setIsLoading(true); // Mostrar el modal de carga
     handleCloseModalConfirmacion(); // Cierra el modal después de ejecutar la acción
@@ -315,7 +322,7 @@ function Home() {
 
   return (
 
-    <div className="container">
+    <div className="container" style={{marginBottom: "150px"}} >
       {/* Título y Logo */}
       <div className='d-flex align-items-center justify-content-center my-5'>
         <img src={logo} alt="Logo" style={{ width: '70px', height: '70px', marginRight: '20px' }} />
@@ -394,11 +401,18 @@ function Home() {
       </Button>
 
       
-      {/* Modal de Confirmación */}
+      {/* Modal de Confirmación 1*/}
       <ModalConfirmacion
         show={showModalConfirmacion}
         handleClose={handleCloseModalConfirmacion}
         handleConfirm={handleConfirmarDesasignar}
+      />
+
+      {/* Modal de Confirmación 2*/}
+      <ModalConfirmacion
+        show={showModalConfirmacion2}
+        handleClose={handleCloseModalConfirmacion2}
+        
       />
 
       {/* Modal Asignar Automaticamente */}
@@ -463,7 +477,7 @@ function Home() {
               </Form.Select>
             </Form.Group>
 
-            {/* Select de Plenes */}
+            {/* Select de Planes */}
             <Form.Group className="mb-3">
               <Form.Label>Plan de Estudio</Form.Label>
               <Form.Select value={selectedPlan} onChange={(e) => setSelectedPlan(e.target.value)}>
@@ -555,6 +569,16 @@ function Home() {
                 )}
               </ModalBody>
               <Modal.Footer>
+                <Button
+                  style={{
+                    backgroundColor: 'rgb(114, 16, 16)',
+                    color: '#FFF',
+                    borderColor: '#FFF'
+                  }}
+                  onClick={handleShowModalConfirmacion2}
+                >
+                  Eliminar Asignación
+                </Button>
                 <Button variant="secondary" onClick={handleCloseMateriaModal}>
                   Cerrar
                 </Button>
