@@ -453,11 +453,17 @@ function Home() {
 
   // funcion para asignar una materia a un espacio
   const handlemanualsubmit = async () => {
+    const horariosConvertidos = horarios.map((horario) => ({
+      dia: horario.dia,
+      moduloInicio: Number(horario.moduloInicio), // Convertir a número
+      moduloFin: Number(horario.moduloFin), // Convertir a número
+    }));
     const dataToSend = {
       espacioId: selectedEspacio, // ID del espacio seleccionado
       materiaId: selectedMateria, // ID de la materia seleccionada
-      dias: horarios, // Los horarios capturados
+      dias: horariosConvertidos, // Los horarios capturados
     };
+    console.log("Datos a enviar:", dataToSend);
 
     const requestOptions = {
       method: "POST",
@@ -480,6 +486,7 @@ function Home() {
       if (response.ok) {
         setErrorMessage(result.mensaje)
         setShowErrorModal(true);
+
       } else {
         
         setErrorMessage(result.mensaje || "Hubo un error al asignar la materia."); // Personaliza el mensaje
