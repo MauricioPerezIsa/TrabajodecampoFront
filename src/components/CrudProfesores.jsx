@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Container, Table, Button, Form, Row, Modal, Col, ModalFooter } from "react-bootstrap";
 import AlertCreado from "./AlertCreado";
 import ModalConfirmacion from "./ModalConfirmacion";
+import logo from "../assets/ISO_UNSTA.png";
 
 function CrudProfesores() {
   const [allPersonal, setAllPersonal] = useState([]);
@@ -211,10 +212,22 @@ function CrudProfesores() {
 
   return (
     <Container>
+
+      <div className="d-flex align-items-center justify-content-center my-4" >
+        <img
+            src={logo}
+            alt="Logo"
+            style={{ width: "70px", height: "70px", marginRight: "20px" }}
+          />
+          <h1 style={{ fontFamily: "Crimson Text, serif" }}>AulaSMART - Profesores</h1>
+      </div>
+
       <Row>
-        <Button style={{marginTop: "20px", marginBottom: "20px", backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={() => setShowCreateForm((prevState) => !prevState)}>
-          {showCreateForm ? "Cancelar" : "Nuevo Profesor"}
-        </Button>
+          <div className="d-flex justify-content-center">
+            <Button style={{width: "600px",  marginTop: "10px", marginBottom: "10px", backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF'}} onClick={() => setShowCreateForm(prevState => !prevState)}>
+              {showCreateForm ? "Cancelar" : "Nuevo Profesor"}
+            </Button>
+          </div>
         {showCreateForm && (
           <Form>
             <Form.Group controlId="formBasicNameAlum">
