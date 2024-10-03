@@ -25,6 +25,7 @@ function Home() {
   const [espacios, setEspacios] = useState([]);
   const [materiaInfo, setMateriaInfo] = useState(null);
   const [espaciosmodal, setEspaciosmodal] = useState([]);
+  const [selectedPlan1,SetSelectedPlan1]=useState("")
 
   const [selectedCarrera, setSelectedCarrera] = useState("");
   const [selectedMateria, setSelectedMateria] = useState("");
@@ -207,11 +208,13 @@ function Home() {
   const handlePlanChange = (e) => {
     const planId = e.target.value;
     setSelectedPlan(planId);
+   
 
     // Buscar las materias del plan seleccionado
     const selectedPlanObj = planes.find((plan) => plan._id === planId);
     if (selectedPlanObj) {
       setMaterias(selectedPlanObj.materia); // Guardar materias asociadas al plan
+      
     }
   };
 
@@ -333,7 +336,6 @@ function Home() {
 
   const handleAutomatico = async () => {
     try {
-      setShowDesasignarBtn(true);
       setShowModal2(false);
       setIsLoading(true); // Mostrar el modal de carga
       const response = await fetch("http://localhost:7000/materia/asignar", {
@@ -341,8 +343,9 @@ function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ semestre: selectedCuatrimestre }), // Envía el semestre seleccionado en el body
+        body: JSON.stringify({ semestre: selectedCuatrimestre, carreraId: selectedCarrera, planEstudioId : selectedPlan,}), // Envía el semestre seleccionado en el body  
       });
+      console.log(selectedCarrera,selectedPlan,selectedCuatrimestre)
 
       if (!response.ok) {
         throw new Error("Error en la respuesta del servidor");
@@ -434,7 +437,7 @@ function Home() {
 
   const handleConfirmarDesasignar = async () => {
     setIsLoading(true); // Mostrar el modal de carga
-    handleCloseModalConfirmacion(); // Cierra el modal después de ejecutar la acción
+    handeCloseModalConfirmacion(); // Cierra el modal después de ejecutar la acción
     setShowDesasignarBtn(false); // Muestra el botón de asignar automáticamente de nuevo
     await handleDesignarTodo(); // Ejecuta la función de desasignar
     await fakeAsyncOperation(); // Simulación de desasignación
@@ -621,6 +624,7 @@ function Home() {
             as="select"
             onChange={handlePlanChange}
             value={selectedPlan}
+            
           >
             <option>Seleccione un plan</option>
             {allPlanes.map((plan, index) => (
@@ -788,7 +792,7 @@ function Home() {
               </ModalBody>
               <Modal.Footer>
                 <Button
-                  disabled={!selectedCuatrimestre}
+                  disabled={!selectedCuatrimestre || !selectedPlan || !selectedCarrera}
                   style={{
                     backgroundColor: "rgb(114, 16, 16)",
                     color: "#FFF",
