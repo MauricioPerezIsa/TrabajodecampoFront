@@ -417,7 +417,7 @@ function Home() {
   };
 
   const handleShowModalConfirmacion = () => setShowModalConfirmacion(true);
-  const handleCloseModalConfirmacion = () => setShowModalConfirmacion(false);
+  const handeCloseModalConfirmacion = () => setShowModalConfirmacion(false);
 
   const handleShowModalConfirmacion2 = () => {
     setShowMateriaModal(false);
@@ -579,7 +579,7 @@ function Home() {
       </div>
 
       {/* Sección Días */}
-      <div className="mb-5 text-center">
+      <div className="mb-3 text-center">
         <h6>Seleccione el día de la semana</h6>
         <Form.Group id="selectDias">
           <Form.Control
@@ -595,6 +595,42 @@ function Home() {
           </Form.Control>
         </Form.Group>
       </div>
+      {/* Sección Carreras */}
+      <div className="mb-3 text-center">
+        <h6>Seleccione la carrera</h6>
+        <Form.Group id="selectCarreras">
+          <Form.Control
+            as="select"
+            onChange={handleCarreraChange}
+            value={selectedCarrera}
+          >
+            <option>Seleccione una carrera</option>
+            {allCarreras.map((carrera, index) => (
+              <option key={index} value={carrera._id}>
+                {carrera.nombre}
+              </option>
+            ))}
+          </Form.Control>
+        </Form.Group>
+      </div>
+      {/* Sección Planes */}
+      <div className="mb-5 text-center">
+        <h6>Seleccione un Plan de Estudio</h6>
+        <Form.Group id="selectPlan">
+          <Form.Control
+            as="select"
+            onChange={handlePlanChange}
+            value={selectedPlan}
+          >
+            <option>Seleccione un plan</option>
+            {allPlanes.map((plan, index) => (
+              <option key={index} value={plan._id}>
+                {plan.nombre}
+              </option>
+            ))}
+          </Form.Control>
+        </Form.Group>
+      </div>
 
       {/* Botones Asignación */}
 
@@ -605,7 +641,7 @@ function Home() {
 
       <div className="text-center">
         <div className="d-flex justify-content-between">
-          {!showDesasignarBtn && (
+        
             <Button
               className="m-2"
               style={{
@@ -617,9 +653,9 @@ function Home() {
             >
               Asignar Automáticamente
             </Button>
-          )}
+          
 
-          {showDesasignarBtn && (
+          
             <Button
               className="m-2"
               style={{
@@ -631,7 +667,7 @@ function Home() {
             >
               Desasignar Automáticamente
             </Button>
-          )}
+          
 
           <Button
             className="m-2"
@@ -678,7 +714,7 @@ function Home() {
             {/* Modal de Confirmación 1*/}
             <ModalConfirmacion
               show={showModalConfirmacion}
-              handleClose={handleCloseModalConfirmacion}
+              handleClose={handeCloseModalConfirmacion}
               handleConfirm={handleConfirmarDesasignar}
             />
 
@@ -696,6 +732,38 @@ function Home() {
               </ModalHeader>
               <ModalBody>
                 <Form>
+                  {/* Select de Carreras */}
+                  <Form.Group className="mb-3">
+                    <Form.Label>Carrera</Form.Label>
+                    <Form.Select
+                      value={selectedCarrera}
+                      onChange={handleCarreraChange}
+                    >
+                      <option value="">Seleccione una carrera</option>
+                      {allCarreras.map((carrera) => (
+                        <option key={carrera._id} value={carrera._id}>
+                          {carrera.nombre}
+                        </option>
+                      ))}
+                      </Form.Select>
+                    </Form.Group>
+
+                  {/* Select de Planes */}
+                  <Form.Group className="mb-3">
+                    <Form.Label>Plan de Estudio</Form.Label>
+                    <Form.Select
+                      value={selectedPlan}
+                      onChange={handlePlanChange}
+                      disabled={!planes.length}
+                    >
+                      <option value="">Seleccione un Plan de Estudio</option>
+                      {planes.map((plan) => (
+                        <option key={plan._id} value={plan._id}>
+                          {plan.nombre}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
                   <FormGroup className="mb-3">
                     {/* Radio para Primer Cuatrimestre */}
                     <Form.Check
@@ -765,8 +833,8 @@ function Home() {
                           {carrera.nombre}
                         </option>
                       ))}
-                    </Form.Select>
-                  </Form.Group>
+                      </Form.Select>
+                    </Form.Group>
 
                   {/* Select de Planes */}
                   <Form.Group className="mb-3">
@@ -1236,7 +1304,7 @@ function Home() {
                       className={tieneMateria ? styles.hoverMateria : ""}
                       style={{ cursor: tieneMateria ? "pointer" : "default" }}
                     >
-                      {tieneMateria ? horario.materia[0].nombre : "Disponible"}
+                      {tieneMateria ? horario.materia[0].nombre : "-"}
                     </td>
                   );
                 })}
@@ -1283,7 +1351,7 @@ function Home() {
                       className={tieneMateria ? styles.hoverMateria : ""}
                       style={{ cursor: tieneMateria ? "pointer" : "default" }}
                     >
-                      {tieneMateria ? horario.materia[0].nombre : "Disponible"}
+                      {tieneMateria ? horario.materia[0].nombre : "-"}
                     </td>
                   );
                 })}
