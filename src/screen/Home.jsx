@@ -123,7 +123,7 @@ function Home() {
     if (selectedEdificio && selectedDia) {
       try {
         const response = await fetch(
-          `http://localhost:7000/edificio/filtrar/${selectedDia}/${selectedEdificio}`
+          `http://localhost:7000/edificio/filtrar/${selectedDia}/${selectedEdificio}/${selectedCarrera}/${selectedPlan}`
         );
         console.log("Aqui1", response);
 
@@ -1223,6 +1223,7 @@ function Home() {
               <p>
                 <strong>Código:</strong> {materiaInfo.codigo}
               </p>
+              
             </div>
           ) : (
             <p>No se ha seleccionado ninguna materia.</p>
