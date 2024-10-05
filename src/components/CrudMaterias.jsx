@@ -16,6 +16,9 @@ function CrudMaterias() {
   const [CantidadAlumnos, setCantidadAlumnos] = useState("");
   const [horarios, setHorarios] = useState([{ dia: "", moduloInicio: 1, moduloFin: 1 }]);
   const [profesoresSeleccionados, setProfesoresSeleccionados] = useState([]);
+  const[allPlanes, setAllPlanes] = useState([])
+  const[selectedPlan, setSelectedPlan] = useState("")
+  const [planFiltro, setPlanFiltro] = useState("");
 
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -35,8 +38,16 @@ function CrudMaterias() {
   const [updateCantidadAlumnos, setUpdateCantidadAlumnos] = useState("");
   const [updateHorarios, setUpdateHorarios] = useState([{ dia: "", moduloInicio: 1, moduloFin: 1 }])
   const [updateProfesoresSeleccionados, setUpdateProfesoresSeleccionados] = useState([]);
+  const[updateSelectedPlan, setUpdateSelectedPlan] = useState("")
 
   const [Errores, setErrores] = useState({});
+
+  // 'planFiltro' contiene el ID o nombre del plan seleccionado
+  const planSeleccionado = allPlanes.find(plan => plan._id === planFiltro);
+
+  // Si se ha seleccionado un plan, mostramos sus materias
+  const materiasFiltradas = planSeleccionado ? planSeleccionado.materia : allMaterias;
+
 
   const getPersonal = async () => {
     try {
@@ -78,6 +89,20 @@ function CrudMaterias() {
       alert("Hubo un error al obtener los elementos");
     }
   };
+
+  const getPlanes = async () => {
+    try {
+      const response = await fetch("http://localhost:7000/planDeEstudio/");
+      if (!response.ok) {
+        throw new Error("No se pudieron obtener los empleados");
+      }
+      const result = await response.json();
+      setAllPlanes(result);
+    } catch (error) {
+      console.error(error);
+      alert("Hubo un error al obtener los empleados");
+    }
+  };
   
 
   const createMateria = async () => {
@@ -94,6 +119,7 @@ function CrudMaterias() {
         cantidadAlumnos: CantidadAlumnos,
         horarios: horarios,
         profesor: profesoresSeleccionados,
+        planId: selectedPlan
       });
 
       const requestOptions = {
@@ -114,8 +140,11 @@ function CrudMaterias() {
       setCantidadAlumnos("");
       setHorarios([{ dia: "", moduloInicio: 1, moduloFin: 1 }]); // Reiniciar el array de horarios
       setProfesoresSeleccionados([]);
+      setSelectedPlan("")
 
-      getMaterias();
+      // Llamar a getMaterias para actualizar la lista después de crear una materia
+      await getMaterias(); // Esto debe actualizar allMaterias
+      await getPlanes();
 
       setAlertMessage("La materia fue creada y agregada exitosamente");
       setShowAlert(true);
@@ -147,7 +176,8 @@ function CrudMaterias() {
       );
       if (!response.ok) throw new Error("No se pudo eliminar la materia");
 
-      getMaterias();
+      await getMaterias(); // Esto debe actualizar allMaterias
+      await getPlanes();
 
       setAlertMessage("La materia ha sido eliminada exitosamente");
       setShowAlert(true);
@@ -215,6 +245,7 @@ function CrudMaterias() {
         cantidadAlumnos: updateCantidadAlumnos,
         horarios: updateHorarios,
         profesor: updateProfesoresSeleccionados,
+        planId: updateSelectedPlan
       });
 
       const requestOptions = {
@@ -229,7 +260,8 @@ function CrudMaterias() {
 
       setShowUpdateModal(false);
 
-      getMaterias();
+      await getMaterias(); // Esto debe actualizar allMaterias
+      await getPlanes();
 
       setAlertMessage("Los cambios se han guardado correctamente");
       setShowAlert(true);
@@ -295,14 +327,35 @@ function CrudMaterias() {
       moduloInicio: horario.moduloInicio || 1,
       moduloFin: horario.moduloFin || 1
     })));
-    setUpdateProfesoresSeleccionados(materia.profesor.map(prof => prof._id));
-    setShowUpdateModal(true);
-  };
+    let profesoresIds;
+    if (Array.isArray(materia.profesor)) {
+        // Si es un array de objetos
+        if (typeof materia.profesor[0] === 'object' && materia.profesor[0] !== null) {
+            profesoresIds = materia.profesor.map(prof => prof._id); // Extraer IDs
+        } else {
+            // Si es un array de IDs
+            profesoresIds = materia.profesor;
+        }
+    } else {
+        // Si no es un array, pero existe
+        profesoresIds = materia.profesor ? [materia.profesor] : [];
+    }
+
+        setUpdateProfesoresSeleccionados(profesoresIds.length > 0 ? profesoresIds : []); // Asegurarse de que no sea undefined
+        setShowUpdateModal(true);
+
+        // Setear el plan de estudio actual
+        setUpdateSelectedPlan(materia.planId || ""); // Asegurarte de que se cargue el valor del plan de estudio
+        console.log(materia)
+
+        setShowUpdateModal(true);
+          };
 
   useEffect(() => {
     getMaterias();
     getPersonal();
     getElementos();
+    getPlanes();
   }, []);
 
   return (
@@ -318,6 +371,20 @@ function CrudMaterias() {
         <h1 style={{ fontFamily: "Crimson Text, serif" }}>AulaSMART - Materias</h1>
       </div>
 
+      <Form.Group controlId="formFiltroPlanEstudio">
+          <Form.Label>Filtrar por Plan de Estudio</Form.Label>
+          <Form.Control 
+            as="select" 
+            value={planFiltro} 
+            onChange={(e) => setPlanFiltro(e.target.value)}
+          >
+            <option value="">Seleccionar un plan de estudio</option>
+            {allPlanes.map(plan => (
+              <option key={plan._id} value={plan._id}>{plan.nombre}</option>
+            ))}
+          </Form.Control>
+      </Form.Group>
+
       <Row>
         <div className="d-flex justify-content-center">
         <Button style={{width: "600px",  marginTop: "10px", marginBottom: "10px", backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF'}} onClick={() => setShowCreateForm(prevState => !prevState)}>
@@ -326,6 +393,19 @@ function CrudMaterias() {
         </div>
         {showCreateForm && (
           <Form>
+            <Form.Group controlId="formBasicPlanEstudio">
+              <Form.Label>Plan de Estudio</Form.Label>
+              <Form.Control 
+                as="select" 
+                value={selectedPlan} 
+                onChange={(e) => setSelectedPlan(e.target.value)}
+              >
+                <option value="">Seleccionar Plan de Estudio</option>
+                {allPlanes.map(plan => (
+                  <option key={plan._id} value={plan._id}>{plan.nombre}</option>
+                ))}
+              </Form.Control>
+            </Form.Group>
             <Form.Group controlId="formBasicNombreMateria">
               <Form.Label>Nombre</Form.Label>
               <Form.Control type="text" value={NombreMateria} onChange={(e) => setNombreMateria(e.target.value)} />
@@ -480,7 +560,7 @@ function CrudMaterias() {
             </tr>
           </thead>
           <tbody>
-            {allMaterias.map(materia => (
+            {materiasFiltradas.map(materia => (
               <tr key={materia._id}>
                 <td>{materia.nombre}</td>
                 <td>{materia.codigo}</td>
@@ -488,7 +568,21 @@ function CrudMaterias() {
                 <td>{materia.semestre}</td>
                 <td>{materia.elementos.map(e => allElementos.find(el => el._id === e)?.nombre).join(', ')}</td>
                 <td>{materia.cantidadAlumnos}</td>
-                <td>{materia.profesor.map(prof => `${prof.nombre} ${prof.apellido}`).join(", ")}</td>
+                <td>
+                  {materia.profesor
+                    .map(p => {
+                      // Si 'p' ya contiene los datos del profesor, usamos directamente sus campos
+                      if (p.nombre && p.apellido) {
+                        return `${p.nombre} ${p.apellido}`;
+                      }
+                      // Si 'p' solo es un ID, buscamos en 'allProfesores' por ese ID
+                      const prof = allPersonal.find(prof => prof._id === p);
+                      return prof ? `${prof.nombre} ${prof.apellido}` : 'Profesor no encontrado';
+                    })
+                    .join(', ')}
+                </td>
+
+
                 <td>{materia.horarios.map((h, index) => (
                     <div key={index}>
                     |  Día: {h.dia}, Módulo Inicio: {h.moduloInicio}, Módulo Fin: {h.moduloFin}
@@ -511,6 +605,19 @@ function CrudMaterias() {
         </Modal.Header>
         <Modal.Body>
           <Form>
+          <Form.Group controlId="formUpdatePlanEstudio">
+              <Form.Label>Plan de Estudio</Form.Label>
+              <Form.Control 
+                as="select" 
+                value={updateSelectedPlan} 
+                onChange={(e) => setUpdateSelectedPlan(e.target.value)}
+              >
+                <option value="">Seleccionar Plan de Estudio</option>
+                {allPlanes.map(plan => (
+                  <option key={plan._id} value={plan._id}>{plan.nombre}</option>
+                ))}
+              </Form.Control>
+            </Form.Group>
             <Form.Group controlId="formUpdateNombreMateria">
               <Form.Label>Nombre</Form.Label>
               <Form.Control type="text" value={updateNombreMateria} onChange={(e) => setUpdateNombreMateria(e.target.value)} />
