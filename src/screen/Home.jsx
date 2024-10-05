@@ -97,14 +97,21 @@ function Home() {
       method: "GET",
       redirect: "follow",
     };
-
-    const response = await fetch(
-      "http://localhost:7000/edificio/buscar",
-      requestOptions
-    );
-    const result = await response.json();
-    setAllEdificios(result);
+  
+    try {
+      const response = await fetch("http://localhost:7000/edificio/buscar", requestOptions);
+      if (!response.ok) {
+        throw new Error(`Error al obtener edificios: ${response.status}`);
+      }
+      const result = await response.json();
+      setAllEdificios(result);
+      return result; // Retornar los datos
+    } catch (error) {
+      console.error("Error en getEdificios:", error);
+      return []; // Retornar un arreglo vacío en caso de error
+    }
   };
+  
 
   const getallespacios = async () => {
     const requestOptions = {
@@ -123,13 +130,139 @@ function Home() {
     getallespacios();
   }, []);
 
+  const getCarreras = async () => {
+    const requestOptions = {
+      method: "GET",
+      redirect: "follow",
+    };
+
+    try {
+      const response = await fetch("http://localhost:7000/carrera/", requestOptions);
+      if (!response.ok) {
+        throw new Error(`Error al obtener carreras: ${response.status}`);
+      }
+      const result = await response.json();
+      setAllCarreras(result);
+      return result; // Retornar los datos
+    } catch (error) {
+      console.error("Error en getCarreras:", error);
+      return []; // Retornar un arreglo vacío en caso de error
+    }
+  };
+
+  useEffect(() => {
+    getCarreras();
+  }, []);
+
+  const getMaterias = async () => {
+    const requestOptions = {
+      method: "GET",
+      redirect: "follow",
+    };
+
+    const response = await fetch(
+      "http://localhost:7000/materia/",
+      requestOptions
+    );
+    const result = await response.json();
+    setAllMaterias(result);
+  };
+
+  useEffect(() => {
+    getMaterias();
+  }, []);
+
+  const getPlanes = async () => {
+    const requestOptions = {
+      method: "GET",
+      redirect: "follow",
+    };
+
+    const response = await fetch(
+      "http://localhost:7000/planDeEstudio/",
+      requestOptions
+    );
+    const result = await response.json();
+    setAllPlanes(result);
+  };
+
+  useEffect(() => {
+    getPlanes();
+  }, []);
+
+  
+// Definir inicializarDatos fuera de useEffect para que esté disponible en todo el componente
+const inicializarDatos = async () => {
+  const edificios = await getEdificios(); // Ahora edificios contiene los datos
+  if (edificios && edificios.length > 0) {
+    // Busca "Facultad de Ingeniería"
+    const facultadIngenieria = edificios.find(edificio => edificio.nombre === "Facultad de Ingeniería");
+    if (facultadIngenieria) {
+      setSelectedEdificio(facultadIngenieria._id);
+    } else {
+      // Si no se encuentra, selecciona el primer edificio
+      setSelectedEdificio(edificios[0]._id);
+    }
+  }
+};
+
+// useEffect para cargar los edificios y seleccionar Facultad de Ingeniería por defecto
+useEffect(() => {  
+  inicializarDatos();
+}, []); // Se ejecuta solo al montar el componente
+  
+
+// useEffect para cargar las carreras y seleccionar Ingeniería Informática por defecto
+const cargarCarreras = async () => {
+  const carreras = await getCarreras(); // Ahora carreras contiene los datos
+  if (carreras && carreras.length > 0) {
+    // Busca "Ingeniería Informática"
+    const ingInformatica = carreras.find(carrera => carrera.nombre === "Ingeniería Informatica");
+    if (ingInformatica) {
+      setSelectedCarrera1(ingInformatica._id);
+
+      // Obtener los planes asociados a Ingeniería Informática
+      try {
+        const planesResponse = await fetch(`http://localhost:7000/carrera/buscarplan/${ingInformatica._id}`);
+        if (!planesResponse.ok) {
+          throw new Error(`Error al obtener planes: ${planesResponse.status}`);
+        }
+        const planesData = await planesResponse.json();
+        setplanes2(planesData);
+
+        // Selecciona el "plan 2008" por defecto
+        const plan2008 = planesData.find(plan => plan.nombre.includes("plan 2008"));
+        if (plan2008) {
+          setSelectedPlan1(plan2008._id);
+        }
+      } catch (error) {
+        console.error("Error al cargar planes y materias:", error);
+      }
+    }
+  }
+};
+
+useEffect(() => {  
+  cargarCarreras();
+}, []); // Se ejecuta solo al montar el componente
+
+  useEffect(() => {
+    const inicializarTodo = async () => {
+      await inicializarDatos(); // Cargar edificios y seleccionar por defecto
+      await cargarCarreras();  // Cargar carreras y seleccionar por defecto
+    };
+  
+    inicializarTodo();
+  }, []);
+
+
   const fetchEspacios = async () => {
-    if (selectedEdificio && selectedDia&&selectedCarrera1&&selectedPlan1) {
+    if (selectedEdificio && selectedDia && selectedCarrera1 && selectedPlan1) {
       try {
         const response = await fetch(
           `http://localhost:7000/edificio/filtrar/${selectedDia}/${selectedEdificio}/${selectedCarrera1}/${selectedPlan1}`
         );
-        console.log("Aqui1", response);
+        console.log("Estado de la respuesta:", response.status);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -144,72 +277,58 @@ function Home() {
     }
   };
 
-  // useEffect para hacer fetch de los edificios al cargar la página
+  // useEffect para cargar espacios cuando cambian los filtros
   useEffect(() => {
-    const inicializarDatos = async () => {
-      await getEdificios(); // Obtener la lista de edificios
-    };
-
-    inicializarDatos();
-  }, []); // Se ejecuta solo al montar el componente
-
-  // useEffect para seleccionar el primer edificio cuando allEdificios cambie
-  useEffect(() => {
-    if (allEdificios.length > 0 && !selectedEdificio) {
-      // Si hay edificios y no hay uno seleccionado
-      const primerEdificio = allEdificios[0]._id; // Selecciona el primer edificio
-      setSelectedEdificio(primerEdificio);
+    if (selectedEdificio && selectedDia && selectedCarrera1 && selectedPlan1) {
+      fetchEspacios(); 
     }
-  }, [allEdificios]); // Se ejecuta cuando se obtienen los edificios
+  }, [selectedEdificio, selectedDia, selectedCarrera1, selectedPlan1]);
 
-  // useEffect para cargar los espacios cada vez que cambie el edificio o el día
-  useEffect(() => {
-    if (selectedEdificio) {
-      fetchEspacios(selectedEdificio, selectedDia,selectedCarrera1,selectedPlan1); // Cargar espacios con el edificio y el día actualizados
-    }
-  }, [selectedEdificio, selectedDia,selectedCarrera1,selectedPlan1]); // Se ejecuta cuando cambian el edificio o el día
 
-  const getCarreras = async () => {
-    const requestOptions = {
-      method: "GET",
-      redirect: "follow",
-    };
-
-    const response = await fetch(
-      "http://localhost:7000/carrera/",
-      requestOptions
-    );
-    const result = await response.json();
-    setAllCarreras(result);
+  const handleEdificioChange = (e) => {
+    setSelectedEdificio(e.target.value);
   };
 
-  useEffect(() => {
-    getCarreras();
-  }, []);
+  const handleDiaChange = (e) => {
+    setSelectedDia(e.target.value);
+  };
 
-//manjea el cambio de la carrera en el filtro de home
-const handleCarreraChange2=async (e)=>{
-  const carreraId = e.target.value;
-  setSelectedCarrera1(carreraId);
-   if (carreraId) {
-    try {
-      // Hacer fetch para obtener los planes de estudio y materias asociadas
-      const response = await fetch(
-        `http://localhost:7000/carrera/buscarplan/${carreraId}`
-      );
-      const data = await response.json();
-      setplanes2(data); // Guardar planes de la carrera
-      console.log(data);
-    } catch (error) {
-      console.error("Error al cargar planes y materias:", error);
+
+  const handleCarreraChange2 = async (e) => {
+    const carreraId = e.target.value;
+    setSelectedCarrera1(carreraId);
+    if (carreraId) {
+      try {
+        const response = await fetch(`http://localhost:7000/carrera/buscarplan/${carreraId}`);
+        if (!response.ok) {
+          throw new Error(`Error al obtener planes: ${response.status}`);
+        }
+        const data = await response.json();
+        setplanes2(data);
+        console.log("Planes cargados:", data);
+
+        // Selecciona el primer plan o uno específico si lo deseas
+        if (data.length > 0) {
+          const plan2008 = data.find(plan => plan.nombre.includes("Plan 2008"));
+          if (plan2008) {
+            setSelectedPlan1(plan2008._id);
+          } else {
+            setSelectedPlan1(data[0]._id);
+          }
+        }
+      } catch (error) {
+        console.error("Error al cargar planes y materias:", error);
+      }
+    } else {
+      setplanes2([]);
+      setSelectedPlan1("");
     }
-  }
-};
+  };
+
 // Manejar el cambio de plan de estudio seleccionado
 const handlePlanChange1 = (e) => {
   const planId = e.target.value;
   setSelectedPlan1(planId);
-  fetchEspacios();
 
   // Buscar las materias del plan seleccionado
   const selectedPlanObj = planes2.find((plan) => plan._id === planId);
@@ -265,41 +384,6 @@ const handlePlanChange1 = (e) => {
     }));
   };
 
-  const getMaterias = async () => {
-    const requestOptions = {
-      method: "GET",
-      redirect: "follow",
-    };
-
-    const response = await fetch(
-      "http://localhost:7000/materia/",
-      requestOptions
-    );
-    const result = await response.json();
-    setAllMaterias(result);
-  };
-
-  useEffect(() => {
-    getMaterias();
-  }, []);
-
-  const getPlanes = async () => {
-    const requestOptions = {
-      method: "GET",
-      redirect: "follow",
-    };
-
-    const response = await fetch(
-      "http://localhost:7000/planDeEstudio/",
-      requestOptions
-    );
-    const result = await response.json();
-    setAllPlanes(result);
-  };
-
-  useEffect(() => {
-    getPlanes();
-  }, []);
 
   const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
@@ -446,14 +530,6 @@ const handlePlanChange1 = (e) => {
     fetchEspacios();
   }, [selectedEdificio, selectedDia]);
 
-  const handleEdificioChange = (e) => {
-    setSelectedEdificio(e.target.value);
-  };
-
-  const handleDiaChange = (e) => {
-    setSelectedDia(e.target.value);
-    fetchEspacios(); // Refresca los espacios cuando cambia el día
-  };
 
   const handleShowModalConfirmacion = () => setShowModalConfirmacion(true);
   const handeCloseModalConfirmacion = () => setShowModalConfirmacion(false);
@@ -660,7 +736,7 @@ const handlePlanChange1 = (e) => {
             as="select"
             onChange={handlePlanChange1}
             value={selectedPlan1}
-            
+            disabled={planes2.length === 0} // Deshabilita si no hay planes disponibles
           >
             <option>Seleccione un plan</option>
             {planes2.map((plan, index) => (
