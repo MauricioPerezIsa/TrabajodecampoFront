@@ -1340,6 +1340,8 @@ const handlePlanChange1 = (e) => {
                   
                   let cellStyle = {};
                   if (tieneMateria) {
+                    
+
                     if (materia.cantidadAlumnos < espacio.capacidad || materia.cantidadAlumnos > espacio.capacidad ) {
                       cellStyle.backgroundColor = 'yellow';
                     } else if (materia.cantidadAlumnos === espacio.capacidad) {
@@ -1407,11 +1409,18 @@ const handlePlanChange1 = (e) => {
                   
                   let cellStyle = {};
                   if (tieneMateria) {
-                    if (materia.cantidadAlumnos < espacio.capacidad || materia.cantidadAlumnos > espacio.capacidad ) {
-                      cellStyle.backgroundColor = 'yellow';
-                    } else if (materia.cantidadAlumnos === espacio.capacidad) {
-                      cellStyle.backgroundColor = 'green';
-                    }
+
+                    const porcentaje = (materia.cantidadAlumnos / espacio.capacidad) * 100; // Calcula el porcentaje
+
+  if (porcentaje === 100) {
+    cellStyle.backgroundColor = 'green'; // Totalmente lleno
+  } else if (porcentaje >= 75) {
+    cellStyle.backgroundColor = 'yellow'; // 75% a 99%
+  } else if (porcentaje >= 50) {
+    cellStyle.backgroundColor = 'orange'; // 50% a 74%
+  } else {
+    cellStyle.backgroundColor = 'red'; // Menos del 50%
+  }
                   }
 
                   return (
