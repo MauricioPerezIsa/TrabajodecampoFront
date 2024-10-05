@@ -1259,7 +1259,15 @@ const handlePlanChange1 = (e) => {
               <p>
                 <strong>Código:</strong> {materiaInfo.codigo}
               </p>
-              
+              <p>
+              <strong>Elementos:</strong> 
+{materiaInfo.elementos.map((elemento, index) => (
+  <span key={index}>
+    {elemento.nombre}
+    {index < materiaInfo.elementos.length - 1 ? ', ' : ''} {/* Añade coma entre los elementos, excepto al final */}
+  </span>
+))}
+              </p>
             </div>
           ) : (
             <p>No se ha seleccionado ninguna materia.</p>

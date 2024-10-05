@@ -169,19 +169,20 @@ function CrudMaterias() {
         headers: myHeaders,
         redirect: "follow",
       };
-
+  
       const response = await fetch(
         "http://localhost:7000/materia/" + _id,
         requestOptions
       );
+  
       if (!response.ok) throw new Error("No se pudo eliminar la materia");
-
+  
       await getMaterias(); // Esto debe actualizar allMaterias
-      await getPlanes();
-
+      await getPlanes(); // Esto debe actualizar los planes de estudio
+  
       setAlertMessage("La materia ha sido eliminada exitosamente");
       setShowAlert(true);
-
+  
     } catch (error) {
       console.error(error);
       setAlertMessage("Hubo un error al eliminar la materia");
