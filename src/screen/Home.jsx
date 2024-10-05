@@ -25,7 +25,11 @@ function Home() {
   const [espacios, setEspacios] = useState([]);
   const [materiaInfo, setMateriaInfo] = useState(null);
   const [espaciosmodal, setEspaciosmodal] = useState([]);
-  const [selectedPlan1,SetSelectedPlan1]=useState("")
+
+  const [planes2,setplanes2]=useState([])
+
+  const [selectedPlan1, setSelectedPlan1] = useState("");
+  const [selectedCarrera1,setSelectedCarrera1]=useState("")
 
   const [selectedCarrera, setSelectedCarrera] = useState("");
   const [selectedMateria, setSelectedMateria] = useState("");
@@ -120,10 +124,10 @@ function Home() {
   }, []);
 
   const fetchEspacios = async () => {
-    if (selectedEdificio && selectedDia) {
+    if (selectedEdificio && selectedDia&&selectedCarrera1&&selectedPlan1) {
       try {
         const response = await fetch(
-          `http://localhost:7000/edificio/filtrar/${selectedDia}/${selectedEdificio}/${selectedCarrera}/${selectedPlan}`
+          `http://localhost:7000/edificio/filtrar/${selectedDia}/${selectedEdificio}/${selectedCarrera1}/${selectedPlan1}`
         );
         console.log("Aqui1", response);
 
@@ -161,9 +165,9 @@ function Home() {
   // useEffect para cargar los espacios cada vez que cambie el edificio o el día
   useEffect(() => {
     if (selectedEdificio) {
-      fetchEspacios(selectedEdificio, selectedDia); // Cargar espacios con el edificio y el día actualizados
+      fetchEspacios(selectedEdificio, selectedDia,selectedCarrera1,selectedPlan1); // Cargar espacios con el edificio y el día actualizados
     }
-  }, [selectedEdificio, selectedDia]); // Se ejecuta cuando cambian el edificio o el día
+  }, [selectedEdificio, selectedDia,selectedCarrera1,selectedPlan1]); // Se ejecuta cuando cambian el edificio o el día
 
   const getCarreras = async () => {
     const requestOptions = {
@@ -182,6 +186,38 @@ function Home() {
   useEffect(() => {
     getCarreras();
   }, []);
+
+//manjea el cambio de la carrera en el filtro de home
+const handleCarreraChange2=async (e)=>{
+  const carreraId = e.target.value;
+  setSelectedCarrera1(carreraId);
+   if (carreraId) {
+    try {
+      // Hacer fetch para obtener los planes de estudio y materias asociadas
+      const response = await fetch(
+        `http://localhost:7000/carrera/buscarplan/${carreraId}`
+      );
+      const data = await response.json();
+      setplanes2(data); // Guardar planes de la carrera
+      console.log(data);
+    } catch (error) {
+      console.error("Error al cargar planes y materias:", error);
+    }
+  }
+};
+// Manejar el cambio de plan de estudio seleccionado
+const handlePlanChange1 = (e) => {
+  const planId = e.target.value;
+  setSelectedPlan1(planId);
+  fetchEspacios();
+
+  // Buscar las materias del plan seleccionado
+  const selectedPlanObj = planes2.find((plan) => plan._id === planId);
+  if (selectedPlanObj) {
+    setMaterias(selectedPlanObj.materia); // Guardar materias asociadas al plan
+    
+  }
+};
 
   // Manejar el cambio de carrera seleccionada
   const handleCarreraChange = async (e) => {
@@ -361,7 +397,7 @@ function Home() {
       setIsLoading(false);
 
       // Actualizar las tablas con los espacios
-      await fetchEspacios(selectedEdificio, selectedDia); // Llama a fetchEspacios para actualizar las celdas
+      await fetchEspacios(selectedEdificio, selectedDia,selectedCarrera1,selectedCarrera1); // Llama a fetchEspacios para actualizar las celdas
 
       // Guardar el estado en localStorage
       localStorage.setItem("estadoAsignacion", "asignado");
@@ -396,7 +432,7 @@ function Home() {
       setIsLoading(false);
 
       // Actualizar las tablas con los espacios
-      await fetchEspacios(selectedEdificio, selectedDia); // Llamar a fetchEspacios para actualizar las tablas
+      await fetchEspacios(selectedEdificio, selectedDia,selectedCarrera1,selectedPlan1); // Llamar a fetchEspacios para actualizar las tablas
 
       setShowDesasignarBtn(false); // O actualizar el estado si lo necesitas para otros elementos de la UI
       setShowModal2(false); // Cerrar el modal en caso de que se esté utilizando
@@ -483,7 +519,7 @@ function Home() {
       console.log(result); // Maneja la respuesta de la API según necesites
       setShowModal(false);
       setIsLoading(true);
-      await fetchEspacios(selectedEdificio, selectedDia);
+      await fetchEspacios(selectedEdificio, selectedDia,selectedCarrera1,selectedPlan1);
       setIsLoading(false);
 
       if (response.ok) {
@@ -604,8 +640,8 @@ function Home() {
         <Form.Group id="selectCarreras">
           <Form.Control
             as="select"
-            onChange={handleCarreraChange}
-            value={selectedCarrera}
+            onChange={handleCarreraChange2}
+            value={selectedCarrera1}
           >
             <option>Seleccione una carrera</option>
             {allCarreras.map((carrera, index) => (
@@ -622,12 +658,12 @@ function Home() {
         <Form.Group id="selectPlan">
           <Form.Control
             as="select"
-            onChange={handlePlanChange}
-            value={selectedPlan}
+            onChange={handlePlanChange1}
+            value={selectedPlan1}
             
           >
             <option>Seleccione un plan</option>
-            {allPlanes.map((plan, index) => (
+            {planes2.map((plan, index) => (
               <option key={index} value={plan._id}>
                 {plan.nombre}
               </option>
@@ -1286,7 +1322,7 @@ function Home() {
             </tr>
           </thead>
           <tbody>
-            {espacios.map((espacio, rowIndex) => (
+          {espacios.map((espacio, rowIndex) => (
               <tr key={rowIndex}>
                 {/* Hacer que el nombre del espacio sea clickable */}
                 <td
@@ -1297,19 +1333,39 @@ function Home() {
                   {espacio.nombre}
                 </td>
                 {Array.from({ length: 9 }).map((_, colIndex) => {
-                  const horario = espacio.horarios[colIndex];
+                  const horario = espacio.horarios[colIndex]; // Obtener el horario correspondiente
                   const tieneMateria = horario?.materia?.length > 0;
+                  const estaDisponible = horario?.disponible !== false;
+                  const materia = tieneMateria ? horario.materia[0] : null;
+                  
+                  let cellStyle = {};
+                  if (tieneMateria) {
+                    if (materia.cantidadAlumnos < espacio.capacidad || materia.cantidadAlumnos > espacio.capacidad ) {
+                      cellStyle.backgroundColor = 'yellow';
+                    } else if (materia.cantidadAlumnos === espacio.capacidad) {
+                      cellStyle.backgroundColor = 'green';
+                    }
+                  }
 
                   return (
                     <td
                       key={colIndex}
                       onClick={() =>
-                        tieneMateria && handleCellClick(horario.materia[0])
+                        tieneMateria && handleCellClick(materia)
                       }
                       className={tieneMateria ? styles.hoverMateria : ""}
-                      style={{ cursor: tieneMateria ? "pointer" : "default" }}
+                      style={{ 
+                        cursor: tieneMateria ? "pointer" : "default",
+                        ...cellStyle
+                      }}
                     >
-                      {tieneMateria ? horario.materia[0].nombre : "-"}
+                      {selectedPlan1
+                        ? tieneMateria
+                          ? materia.nombre
+                          : estaDisponible
+                          ? "-"
+                          : "X"
+                        : "-"}
                     </td>
                   );
                 })}
@@ -1346,17 +1402,37 @@ function Home() {
                 {Array.from({ length: 8 }).map((_, colIndex) => {
                   const horario = espacio.horarios[colIndex + 9]; // Obtener el horario correspondiente
                   const tieneMateria = horario?.materia?.length > 0;
+                  const estaDisponible = horario?.disponible !== false;
+                  const materia = tieneMateria ? horario.materia[0] : null;
+                  
+                  let cellStyle = {};
+                  if (tieneMateria) {
+                    if (materia.cantidadAlumnos < espacio.capacidad || materia.cantidadAlumnos > espacio.capacidad ) {
+                      cellStyle.backgroundColor = 'yellow';
+                    } else if (materia.cantidadAlumnos === espacio.capacidad) {
+                      cellStyle.backgroundColor = 'green';
+                    }
+                  }
 
                   return (
                     <td
                       key={colIndex}
                       onClick={() =>
-                        tieneMateria && handleCellClick(horario.materia[0])
+                        tieneMateria && handleCellClick(materia)
                       }
                       className={tieneMateria ? styles.hoverMateria : ""}
-                      style={{ cursor: tieneMateria ? "pointer" : "default" }}
+                      style={{ 
+                        cursor: tieneMateria ? "pointer" : "default",
+                        ...cellStyle
+                      }}
                     >
-                      {tieneMateria ? horario.materia[0].nombre : "-"}
+                      {selectedPlan1
+                        ? tieneMateria
+                          ? materia.nombre
+                          : estaDisponible
+                          ? "-"
+                          : "X"
+                        : "-"}
                     </td>
                   );
                 })}
