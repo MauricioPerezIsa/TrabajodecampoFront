@@ -1488,19 +1488,38 @@ const handlePlanChange1 = (e) => {
                   const estaDisponible = horario?.disponible !== false;
                   const materia = tieneMateria ? horario.materia[0] : null;
 
-                                                    
+                  const elementosMateria = tieneMateria ? materia.elementos : []; 
+                  const elementosEspacio = espacio.elemento || [];                  
+                  const elementosMateriaNombres = elementosMateria.map(elemento => elemento.nombre);
+                  const elementosEspacioNombres = elementosEspacio.map(elemento => elemento.nombre);                                                   
                   
                   let cellStyle = {};
                   if (tieneMateria) {
-                    
-
-
-                    if (materia.cantidadAlumnos < espacio.capacidad || materia.cantidadAlumnos > espacio.capacidad ) {
-                      cellStyle.backgroundColor = 'yellow';
-                    } else if (materia.cantidadAlumnos === espacio.capacidad) {
-                      cellStyle.backgroundColor = 'green';
-                    }
-                  }
+                    const totalElementosMateria = elementosMateria.length; // Total de elementos de la materia
+                    // Verifica si todos los elementos de la materia están en el espacio
+                    const todosElementosMateriaEnEspacio = elementosMateriaNombres.filter(nombre => 
+                      elementosEspacioNombres.includes(nombre)            
+                    ).length;
+                    const porcentajeCoincidencia = (todosElementosMateriaEnEspacio / totalElementosMateria) * 100; // Calcula el porcentaje de coincidencia  
+                    const porcentaje = (materia.cantidadAlumnos / espacio.capacidad) * 100; // Calcula el porcentaje de ocupación del espacio
+                    // Cambia el color basado en la comparación
+                    if (porcentajeCoincidencia === 100 && porcentaje === 100) {
+                      cellStyle.backgroundColor = '#5497A7'; // Color para todos los elementos coincidentes
+                    } else if (porcentajeCoincidencia === 100 && 100> porcentaje && porcentaje>=80) {
+                      cellStyle.backgroundColor = 'green'; // Color para todos los elementos coincidentes
+                  }else if(porcentajeCoincidencia === 100 && 80>= porcentaje && porcentaje>=50 ){
+                    cellStyle.backgroundColor = 'orange'; // Color para todos los elementos coincidentes
+                  }else if(porcentajeCoincidencia >=50 && 100> porcentaje && porcentaje>=80){
+                    cellStyle.backgroundColor='yellow'
+                  }else if(porcentajeCoincidencia >=50 && 80>= porcentaje && porcentaje>=50 ){
+                    cellStyle.backgroundColor='orange'
+                  } else if(porcentajeCoincidencia===100 && porcentaje>100){
+                    cellStyle.backgroundColor='#B564E3'
+                  }else if(porcentaje>100 ||porcentajeCoincidencia<50 && porcentaje<50){
+                    cellStyle.backgroundColor='red'
+                  }}else{
+                  cellStyle.backgroundColor = 'lightgray';
+                }
 
                   return (
                     <td
@@ -1555,26 +1574,43 @@ const handlePlanChange1 = (e) => {
                   {espacio.nombre}
                 </td>
                 {Array.from({ length: 8 }).map((_, colIndex) => {
-                  const horario = espacio.horarios[colIndex + 9]; // Obtener el horario correspondiente
-                  const tieneMateria = horario?.materia?.length > 0;
-                  const estaDisponible = horario?.disponible !== false;
-                  const materia = tieneMateria ? horario.materia[0] : null;
-                  
-                  let cellStyle = {};
-                  if (tieneMateria) {
+                 const horario = espacio.horarios[colIndex]; // Obtener el horario correspondiente
+                 const tieneMateria = horario?.materia?.length > 0;
+                 const estaDisponible = horario?.disponible !== false;
+                 const materia = tieneMateria ? horario.materia[0] : null;
 
-                    const porcentaje = (materia.cantidadAlumnos / espacio.capacidad) * 100; // Calcula el porcentaje
-
-  if (porcentaje === 100) {
-    cellStyle.backgroundColor = 'green'; // Totalmente lleno
-  } else if (porcentaje >= 75) {
-    cellStyle.backgroundColor = 'yellow'; // 75% a 99%
-  } else if (porcentaje >= 50) {
-    cellStyle.backgroundColor = 'orange'; // 50% a 74%
-  } else {
-    cellStyle.backgroundColor = 'red'; // Menos del 50%
-  }
-                  }
+                 const elementosMateria = tieneMateria ? materia.elementos : []; 
+                 const elementosEspacio = espacio.elemento || [];                  
+                 const elementosMateriaNombres = elementosMateria.map(elemento => elemento.nombre);
+                 const elementosEspacioNombres = elementosEspacio.map(elemento => elemento.nombre);                                                   
+                 
+                 let cellStyle = {};
+                 if (tieneMateria) {
+                   const totalElementosMateria = elementosMateria.length; // Total de elementos de la materia
+                   // Verifica si todos los elementos de la materia están en el espacio
+                   const todosElementosMateriaEnEspacio = elementosMateriaNombres.filter(nombre => 
+                     elementosEspacioNombres.includes(nombre)            
+                   ).length;
+                   const porcentajeCoincidencia = (todosElementosMateriaEnEspacio / totalElementosMateria) * 100; // Calcula el porcentaje de coincidencia  
+                   const porcentaje = (materia.cantidadAlumnos / espacio.capacidad) * 100; // Calcula el porcentaje de ocupación del espacio
+                   // Cambia el color basado en la comparación
+                   if (porcentajeCoincidencia === 100 && porcentaje === 100) {
+                     cellStyle.backgroundColor = '#5497A7'; // Color para todos los elementos coincidentes
+                   } else if (porcentajeCoincidencia === 100 && 100> porcentaje && porcentaje>=80) {
+                     cellStyle.backgroundColor = 'green'; // Color para todos los elementos coincidentes
+                 }else if(porcentajeCoincidencia === 100 && 80>= porcentaje && porcentaje>=50 ){
+                   cellStyle.backgroundColor = 'orange'; // Color para todos los elementos coincidentes
+                 }else if(porcentajeCoincidencia >=50 && 100> porcentaje && porcentaje>=80){
+                   cellStyle.backgroundColor='yellow'
+                 }else if(porcentajeCoincidencia >=50 && 80>= porcentaje && porcentaje>=50 ){
+                   cellStyle.backgroundColor='orange'
+                 } else if(porcentajeCoincidencia===100 && porcentaje>100){
+                   cellStyle.backgroundColor='#B564E3'
+                 }else if(porcentaje>100 ||porcentajeCoincidencia<50 && porcentaje<50){
+                   cellStyle.backgroundColor='red'
+                 }}else{
+                 cellStyle.backgroundColor = 'lightgray';
+               }
 
                   return (
                     <td
