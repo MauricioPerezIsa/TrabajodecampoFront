@@ -31,6 +31,11 @@ function Home() {
   const [selectedPlan1, setSelectedPlan1] = useState("");
   const [selectedCarrera1,setSelectedCarrera1]=useState("")
 
+  const [selectedEdificio2, setSelectedEdificio2] = useState("");
+  const [selectedEspacio2, setSelectedEspacio2] = useState("");
+
+
+
   const [selectedCarrera, setSelectedCarrera] = useState("");
   const [selectedMateria, setSelectedMateria] = useState("");
   const [selectedPlan, setSelectedPlan] = useState("");
@@ -113,7 +118,7 @@ function Home() {
   };
   
 
-  const getallespacios = async () => {
+  {/*const getallespacios = async () => {
     const requestOptions = {
       method: "GET",
       redirect: "follow",
@@ -128,7 +133,32 @@ function Home() {
   };
   useEffect(() => {
     getallespacios();
-  }, []);
+  }, []);*/}
+
+
+  // Manejar el cambio de edificio seleccionada
+const handleEdificioChange2 = async (e) => {
+  const edificio2Id = e.target.value;
+  setSelectedEdificio2(edificio2Id); // Almacenar el edificio seleccionado
+
+  if (edificio2Id) {
+    try {
+      // Hacer una petición para obtener los espacios del edificio seleccionado
+      const response = await fetch(`http://localhost:7000/edificio/espaciosEdificio/${edificio2Id}`);
+      if (!response.ok) {
+        throw new Error(`Error al obtener espacios: ${response.status}`);
+      }
+      const data = await response.json();
+      setEspaciosmodal(data);
+      console.log("Espacios cargados:",data) // Guardar los espacios obtenidos en el estado
+    } catch (error) {
+      console.error("Error al cargar espacios:", error);
+    }
+  } else {
+    setEspaciosmodal([]); // Reinicia los espacios si no hay un edificio seleccionado
+  }
+};
+
 
   const getCarreras = async () => {
     const requestOptions = {
@@ -657,6 +687,8 @@ const handlePlanChange1 = (e) => {
     }
   };
 
+
+
   return (
     <div className="container" style={{ marginBottom: "150px" }}>
       {/* Título y Logo */}
@@ -986,6 +1018,23 @@ const handlePlanChange1 = (e) => {
                     </Form.Select>
                   </Form.Group>
 
+                  {/*Edificios */}
+                  <Form.Group className="mb-3">
+                    <Form.Label>Edificios</Form.Label>
+                    <Form.Select
+                      value={selectedEdificio2} // Usamos el estado seleccionado
+                      onChange={handleEdificioChange2} // Asignamos el manejador
+                    
+                    >
+                      <option value="">Seleccione un espacio</option>
+                      {allEdificios.map((edificio) => (
+                        <option key={edificio._id} value={edificio._id}>
+                          {edificio.nombre}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+
                   {/*Espacios */}
                   <Form.Group className="mb-3">
                     <Form.Label>Espacios</Form.Label>
@@ -1105,7 +1154,8 @@ const handlePlanChange1 = (e) => {
                     !selectedCarrera ||
                     !selectedEspacio ||
                     !selectedPlan ||
-                    !selectedMateria
+                    !selectedMateria||
+                    !selectedEdificio2
                   }
                 >
                   Asignar
@@ -1168,6 +1218,22 @@ const handlePlanChange1 = (e) => {
                       {materias.map((materia) => (
                         <option key={materia._id} value={materia._id}>
                           {materia.nombre}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+                  {/*Edificios */}
+                  <Form.Group className="mb-3">
+                    <Form.Label>Edificios</Form.Label>
+                    <Form.Select
+                      value={selectedEdificio2} // Usamos el estado seleccionado
+                      onChange={handleEdificioChange2} // Asignamos el manejador
+                    
+                    >
+                      <option value="">Seleccione un espacio</option>
+                      {allEdificios.map((edificio) => (
+                        <option key={edificio._id} value={edificio._id}>
+                          {edificio.nombre}
                         </option>
                       ))}
                     </Form.Select>
@@ -1421,10 +1487,13 @@ const handlePlanChange1 = (e) => {
                   const tieneMateria = horario?.materia?.length > 0;
                   const estaDisponible = horario?.disponible !== false;
                   const materia = tieneMateria ? horario.materia[0] : null;
+
+                                                    
                   
                   let cellStyle = {};
                   if (tieneMateria) {
                     
+
 
                     if (materia.cantidadAlumnos < espacio.capacidad || materia.cantidadAlumnos > espacio.capacidad ) {
                       cellStyle.backgroundColor = 'yellow';
