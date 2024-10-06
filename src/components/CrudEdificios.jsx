@@ -14,6 +14,9 @@ function CrudEdificio() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
 
+  const [showEspaciosModal, setShowEspaciosModal] = useState(false);
+  const [espaciosDelEdificio, setEspaciosDelEdificio] = useState([]);
+
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
 
@@ -158,6 +161,11 @@ function CrudEdificio() {
     }
   };
 
+  const handleMostrarEspacios = (espacios) => {
+    setEspaciosDelEdificio(espacios);
+    setShowEspaciosModal(true);
+  };
+
   useEffect(() => {
     getEdificios();
     getEspacios();
@@ -241,14 +249,12 @@ function CrudEdificio() {
             <tr key={edificio._id}>
               <td>{edificio.nombre}</td>
               <td>
-                <ul>
-                  {edificio.espacio.map((espacio) => (
-                    <li key={espacio._id}>
-                      {espacio.nombre}
-                    </li>
-                  ))}
-                </ul>
-              </td>
+                  <Button 
+                    style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }}
+                    onClick={() => handleMostrarEspacios(edificio.espacio)}>
+                    Mostrar Espacios
+                  </Button>
+                </td>
               <td>
                 <Button
                   style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }}
@@ -273,6 +279,26 @@ function CrudEdificio() {
           ))}
         </tbody>
       </Table>
+
+      <Modal show={showEspaciosModal} onHide={() => setShowEspaciosModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Espacios del Edificio</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <ul>
+            {espaciosDelEdificio.map((espacio) => (
+              <li key={espacio._id}>
+                {espacio.nombre}
+              </li>
+            ))}
+          </ul>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowEspaciosModal(false)}>
+            Cerrar
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
       <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)}>
         <Modal.Header closeButton>

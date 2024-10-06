@@ -38,7 +38,7 @@ function CrudMaterias() {
   const [updateCantidadAlumnos, setUpdateCantidadAlumnos] = useState("");
   const [updateHorarios, setUpdateHorarios] = useState([{ dia: "", moduloInicio: 1, moduloFin: 1 }])
   const [updateProfesoresSeleccionados, setUpdateProfesoresSeleccionados] = useState([]);
-  const[updateSelectedPlan, setUpdateSelectedPlan] = useState("")
+  const [updateSelectedPlan, setUpdateSelectedPlan] = useState("")
 
   const [Errores, setErrores] = useState({});
 
@@ -328,6 +328,7 @@ function CrudMaterias() {
       moduloInicio: horario.moduloInicio || 1,
       moduloFin: horario.moduloFin || 1
     })));
+    
     let profesoresIds;
     if (Array.isArray(materia.profesor)) {
         // Si es un array de objetos

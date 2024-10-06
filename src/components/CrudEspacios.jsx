@@ -7,10 +7,13 @@ import logo from "../assets/ISO_UNSTA.png";
 function CrudEspacio() {
   const [allEspacio, setAllEspacio] = useState([]);
   const [allElementos, setAllElementos] = useState([]);
+  const [allEdificios, setAllEdificios] = useState([])
   const [nombreEspacio, setNombreEspacio] = useState("");
   const [tipoEspacio, setTipoEspacio] = useState("");
   const [capacidadEspacio, setCapacidadEspacio] = useState("");
   const [elementosEspacio, setElementosEspacio] = useState([]);
+  const [selectedEdificio, setSelectedEdificio] = useState("")
+  const [edificioFiltro, setEdificioFiltro] = useState("");
 
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -26,8 +29,13 @@ function CrudEspacio() {
   const [updateTipoEspacio, setUpdateTipoEspacio] = useState("");
   const [updateCapacidadEspacio, setUpdateCapacidadEspacio] = useState("");
   const [updateElementosEspacio, setUpdateElementosEspacio] = useState([]);
+  const [updateSelectedEdificio, setUpdateSelectedEdificio] = useState("");
 
   const [Errores, setErrores] = useState({});
+
+  const edificioSeleccionado = allEdificios.find(edificio => edificio._id === edificioFiltro);
+
+  const espaciosFiltrados = edificioSeleccionado ? edificioSeleccionado.espacio : allEspacio;
 
   const getEspacio = async () => {
     try {
@@ -39,6 +47,22 @@ function CrudEspacio() {
       } else {
         console.error("La respuesta no es un array:", result);
         setAllEspacio([]);
+      }
+    } catch (error) {
+      console.error("Error al obtener los espacios:", error);
+    }
+  };
+
+  const getEdificios = async () => {
+    try {
+      const response = await fetch("http://localhost:7000/edificio/buscar");
+      const result = await response.json();
+
+      if (Array.isArray(result)) {
+        setAllEdificios(result);
+      } else {
+        console.error("La respuesta no es un array:", result);
+        setAllEdificios([]);
       }
     } catch (error) {
       console.error("Error al obtener los espacios:", error);
@@ -58,6 +82,10 @@ function CrudEspacio() {
     }
   };
 
+  const handleEdificioChange = (e) => {
+    setSelectedEdificio(e.target.value);
+  };
+
   const CrearEspacio = async () => {
     try {
       const myHeaders = new Headers();
@@ -68,6 +96,7 @@ function CrudEspacio() {
         tipo: tipoEspacio,
         capacidad: capacidadEspacio,
         elemento: elementosEspacio,
+        edificioId: selectedEdificio
       });
 
       const response = await fetch("http://localhost:7000/espacio/crear", {
@@ -76,13 +105,17 @@ function CrudEspacio() {
         body: raw,
       });
 
+      const data = await response.json();
+
       if (!response.ok) throw new Error("No se pudo crear el espacio");
       setNombreEspacio("");
       setTipoEspacio("");
       setCapacidadEspacio("");
       setElementosEspacio([]);
+      setSelectedEdificio("")
 
-      getEspacio();
+      await getEspacio();
+      await getEdificios();
 
       setAlertMessage("El espacio ha sido creado y agregado exitosamente");
       setShowAlert(true);
@@ -107,7 +140,8 @@ function CrudEspacio() {
       });
       if (!response.ok) throw new Error("No se pudo eliminar el espacio");
 
-      getEspacio();
+      await getEspacio();
+      await getEdificios();
 
       setAlertMessage("El espacio ha sido eliminado exitosamente");
       setShowAlert(true);
@@ -131,6 +165,7 @@ function CrudEspacio() {
         tipo: updateTipoEspacio,
         capacidad: updateCapacidadEspacio,
         elemento: updateElementosEspacio,
+        edificioId: updateSelectedEdificio
       });
 
       const response = await fetch(`http://localhost:7000/espacio/${updateId}`, {
@@ -143,7 +178,8 @@ function CrudEspacio() {
 
       setShowUpdateModal(false);
 
-      getEspacio();
+      await getEspacio();
+      await getEdificios();
 
       setAlertMessage("Los cambios se han guardado correctamente");
       setShowAlert(true);
@@ -190,6 +226,7 @@ function CrudEspacio() {
   useEffect(() => {
     getEspacio();
     getElementos();
+    getEdificios();
   }, []);
 
   return (
@@ -204,6 +241,23 @@ function CrudEspacio() {
           <h1 style={{ fontFamily: "Crimson Text, serif" }}>AulaSMART - Espacios</h1>
       </div>
 
+      <div className="mb-3 text-center">
+        <Form.Group controlId="selectEdificio">
+          <Form.Control
+            as="select"
+            value={edificioFiltro}
+            onChange={(e) => setEdificioFiltro(e.target.value)}
+          >
+            <option value="">Seleccione un edificio</option>
+            {allEdificios.map((edificio, index) => (
+              <option key={index} value={edificio._id}>
+                {edificio.nombre}
+              </option>
+            ))}
+          </Form.Control>
+        </Form.Group>
+      </div>
+
       <Row>
           <div className="d-flex justify-content-center">
             <Button style={{width: "600px",  marginTop: "10px", marginBottom: "10px", backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF'}} onClick={() => setShowCreateForm(prevState => !prevState)}>
@@ -212,6 +266,22 @@ function CrudEspacio() {
           </div>
         {showCreateForm && (
           <Form>
+            <Form.Group controlId="formBasicEdificio">
+              <Form.Label>Edificio</Form.Label>
+              <Form.Control
+                as="select"
+                value={selectedEdificio}
+                onChange={(e) => setSelectedEdificio(e.target.value)}
+              >
+                <option value="">Seleccionar edificio</option>
+                {allEdificios.map((edificio) => (
+                  <option key={edificio._id} value={edificio._id}>
+                    {edificio.nombre}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+
             <Form.Group controlId="formBasicNombreEspacio">
               <Form.Label>Nombre</Form.Label>
               <Form.Control
@@ -267,7 +337,8 @@ function CrudEspacio() {
                 !nombreEspacio ||
                 !tipoEspacio ||
                 !capacidadEspacio ||
-                elementosEspacio.length === 0
+                elementosEspacio.length === 0 ||
+                !selectedEdificio
               }
             >
               Crear Espacio
@@ -297,17 +368,27 @@ function CrudEspacio() {
           </tr>
         </thead>
         <tbody>
-          {allEspacio.map((espacio) => (
+          {espaciosFiltrados.map((espacio) => (
             <tr key={espacio._id}>
               <td>{espacio.nombre}</td>
               <td>{espacio.tipo}</td>
               <td>{espacio.capacidad}</td>
               <td>
-                <ul>
-                  {espacio.elemento.map((elemento) => (
-                    <li key={elemento._id}>{elemento.nombre}</li>
-                  ))}
-                </ul>
+                  {espacio.elemento && espacio.elemento.length > 0 ? (
+                    espacio.elemento
+                      .map((elemento) => {
+                        // Si 'elemento' ya es un objeto completo con el nombre, lo usamos directamente
+                        if (elemento.nombre) {
+                          return elemento.nombre;
+                        } 
+                        // Si 'elemento' es solo un ID, buscamos el nombre en 'allElementos'
+                        const elementoEncontrado = allElementos.find((el) => el._id === elemento);
+                        return elementoEncontrado ? elementoEncontrado.nombre : "Elemento no encontrado";
+                      })
+                      .join(", ") // Unimos los nombres con una coma
+                  ) : (
+                    "No hay elementos disponibles"
+                  )}
               </td>
               <td>
                 <Button
@@ -317,9 +398,22 @@ function CrudEspacio() {
                     setUpdateNombreEspacio(espacio.nombre);
                     setUpdateTipoEspacio(espacio.tipo);
                     setUpdateCapacidadEspacio(espacio.capacidad);
-                    setUpdateElementosEspacio(
-                      espacio.elemento.map((el) => el._id)
-                    );
+                    
+                    let elementosIds;
+                    if (Array.isArray(espacio.elemento)) {
+                        // Si es un array de objetos
+                        if (typeof espacio.elemento[0] === 'object' && espacio.elemento[0] !== null) {
+                          elementosIds = espacio.elemento.map(el => el._id); // Extraer IDs
+                        } else {
+                            // Si es un array de IDs
+                            elementosIds = espacio.elemento;
+                        }
+                    } else {
+                        // Si no es un array, pero existe
+                        elementosIds = espacio.elemento ? [espacio.elemento] : [];
+                    }
+                
+                    setUpdateElementosEspacio(elementosIds.length > 0 ? elementosIds : []); // Asegurarse de que no sea undefined
                     setShowUpdateModal(true);
                   }}
                 >
@@ -340,6 +434,21 @@ function CrudEspacio() {
           <Modal.Title>Modificar Espacio</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+        <Form.Group controlId="formUpdateEdificio">
+              <Form.Label>Edificio</Form.Label>
+              <Form.Control
+                as="select"
+                value={updateSelectedEdificio}
+                onChange={(e) => setUpdateSelectedEdificio(e.target.value)}
+              >
+                <option value="">Seleccionar edificio</option>
+                {allEdificios.map((edificio) => (
+                  <option key={edificio._id} value={edificio._id}>
+                    {edificio.nombre}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
           <Form.Group controlId="formUpdateNombreEspacio">
             <Form.Label>Nombre</Form.Label>
             <Form.Control

@@ -15,6 +15,9 @@ function CrudPlanDeEstudio() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
 
+  const [showMateriasModal, setShowMateriasModal] = useState(false);
+  const [materiasDelPlan, setMateriasDelPlan] = useState([]); // Para almacenar las materias seleccionadas de un plan
+
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
 
@@ -152,6 +155,12 @@ function CrudPlanDeEstudio() {
     }
   };
 
+  const handleMostrarMaterias = (materias) => {
+    setMateriasDelPlan(materias); // Establecemos las materias del plan seleccionado
+    setShowMateriasModal(true); // Mostramos el modal
+  };
+  
+
   useEffect(() => {
     getplanes();
     getMaterias();
@@ -218,42 +227,70 @@ function CrudPlanDeEstudio() {
       />
       
       <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Materias</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {allPlanes.map((plan) => (
-            <tr key={plan._id}>
-              <td>{plan.nombre}</td>
-              <td>{plan.descripcion}</td>
-              <td>
-                <ul>
-                  {plan.materia.map((materia) => (
-                    <li key={materia._id}>
-                      {materia.nombre}, Año: {materia.anio}
-                    </li>
-                  ))}
-                </ul>
-              </td>
-              <td>
-                <Button style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={() => {
-                  setUpdateId(plan._id);
-                  setUpdateNombrePlan(plan.nombre);
-                  setUpdateDescripcionPlan(plan.descripcion);
-                  setUpdateMateriasSeleccionadas(plan.materia.map(m => m._id));
-                  setShowUpdateModal(true);
-                }}>Modificar</Button>
-                <Button style={{ margin: '10px', backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} onClick={() => handleDeleteClick(plan._id)}>Eliminar</Button>
-              </td>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Materias</th>
+              <th>Acciones</th>
             </tr>
-          ))}
-        </tbody>
+          </thead>
+          <tbody>
+            {allPlanes.map((plan) => (
+              <tr key={plan._id}>
+                <td>{plan.nombre}</td>
+                <td>{plan.descripcion}</td>
+                <td>
+                  <Button 
+                    style={{ marginTop: '10px', backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }}
+                    onClick={() => handleMostrarMaterias(plan.materia)}>
+                    Mostrar Materias
+                  </Button>
+                </td>
+                <td>
+                  <Button 
+                    style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }}
+                    onClick={() => {
+                      setUpdateId(plan._id);
+                      setUpdateNombrePlan(plan.nombre);
+                      setUpdateDescripcionPlan(plan.descripcion);
+                      setUpdateMateriasSeleccionadas(plan.materia.map(m => m._id));
+                      setShowUpdateModal(true);
+                    }}>
+                    Modificar
+                  </Button>
+                  <Button 
+                    style={{ margin: '10px', backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }}
+                    onClick={() => handleDeleteClick(plan._id)}>
+                    Eliminar
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
       </Table>
+
+
+      <Modal show={showMateriasModal} onHide={() => setShowMateriasModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Materias del Plan</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <ul>
+            {materiasDelPlan.map((materia) => (
+              <li key={materia._id}>
+                {materia.nombre}, Año: {materia.anio}
+              </li>
+            ))}
+          </ul>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowMateriasModal(false)}>
+            Cerrar
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
 
       <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)}>
         <Modal.Header closeButton>
