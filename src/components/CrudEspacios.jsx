@@ -223,6 +223,45 @@ function CrudEspacio() {
     }
   };
 
+  const handleShowUpdateModal = async (espacio) => {
+                           setUpdateId(espacio._id);
+                    setUpdateNombreEspacio(espacio.nombre);
+                    setUpdateTipoEspacio(espacio.tipo);
+                    setUpdateCapacidadEspacio(espacio.capacidad);
+                     setUpdateSelectedEdificio("");
+                    let elementosIds;
+                    if (Array.isArray(espacio.elemento)) {
+                        // Si es un array de objetos
+                        if (typeof espacio.elemento[0] === 'object' && espacio.elemento[0] !== null) {
+                          elementosIds = espacio.elemento.map(el => el._id); // Extraer IDs
+                        } else {
+                            // Si es un array de IDs
+                            elementosIds = espacio.elemento;
+                        }
+                    } else {
+                        // Si no es un array, pero existe
+                        elementosIds = espacio.elemento ? [espacio.elemento] : [];
+                    }
+                
+                    setUpdateElementosEspacio(elementosIds.length > 0 ? elementosIds : []); // Asegurarse de que no sea undefined
+                    //cosnulta a la base de datos
+                    try{
+                      const response = await fetch(`http://localhost:7000/edificio/espacioDelEdificio/${espacio._id}`);
+      const edificio = await response.json();
+      console.log("edificio:",edificio);
+      if (edificio && edificio) {
+          // Setear el plan de estudio actual si existe
+          setUpdateSelectedEdificio(edificio._id);
+      }
+  } catch (error) {
+      console.error("Error al obtener el plan de estudio:", error);
+                    }
+
+                    setShowUpdateModal(true);
+  }
+
+    
+
   useEffect(() => {
     getEspacio();
     getElementos();
@@ -393,29 +432,8 @@ function CrudEspacio() {
               <td>
                 <Button
                   style={{ backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }}
-                  onClick={() => {
-                    setUpdateId(espacio._id);
-                    setUpdateNombreEspacio(espacio.nombre);
-                    setUpdateTipoEspacio(espacio.tipo);
-                    setUpdateCapacidadEspacio(espacio.capacidad);
-                    
-                    let elementosIds;
-                    if (Array.isArray(espacio.elemento)) {
-                        // Si es un array de objetos
-                        if (typeof espacio.elemento[0] === 'object' && espacio.elemento[0] !== null) {
-                          elementosIds = espacio.elemento.map(el => el._id); // Extraer IDs
-                        } else {
-                            // Si es un array de IDs
-                            elementosIds = espacio.elemento;
-                        }
-                    } else {
-                        // Si no es un array, pero existe
-                        elementosIds = espacio.elemento ? [espacio.elemento] : [];
-                    }
-                
-                    setUpdateElementosEspacio(elementosIds.length > 0 ? elementosIds : []); // Asegurarse de que no sea undefined
-                    setShowUpdateModal(true);
-                  }}
+                  onClick={() => handleShowUpdateModal(espacio)}   
+                  
                 >
                   Modificar
                 </Button>{" "}

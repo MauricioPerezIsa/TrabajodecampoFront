@@ -237,6 +237,7 @@ function CrudMaterias() {
     try {
       myHeaders.append("Content-Type", "application/json");
 
+
       const raw = JSON.stringify({
         nombre: updateNombreMateria,
         codigo: updateCodigoMateria,
@@ -258,6 +259,8 @@ function CrudMaterias() {
 
       const response = await fetch(`http://localhost:7000/materia/${updateId}`, requestOptions);
       if (!response.ok) throw new Error("No se pudo actualizar la materia");
+
+      
 
       setShowUpdateModal(false);
 
@@ -315,7 +318,7 @@ function CrudMaterias() {
     }
   };
 
-  const handleShowUpdateModal = (materia) => {
+  const handleShowUpdateModal = async (materia) => {  // Añadido async aquí
     setUpdateId(materia._id);
     setUpdateNombreMateria(materia.nombre);
     setUpdateCodigoMateria(materia.codigo);
@@ -328,6 +331,21 @@ function CrudMaterias() {
       moduloInicio: horario.moduloInicio || 1,
       moduloFin: horario.moduloFin || 1
     })));
+     // Resetear el valor del plan antes de cargar uno nuevo
+     setUpdateSelectedPlan(""); 
+
+     // Consulta para obtener el plan de la materia
+    try {
+      const response = await fetch(`http://localhost:7000/planDeEstudio/PlanMaterias/${materia._id}`);
+      const plan = await response.json();
+      console.log("Plan de la materia:",plan);
+      if (plan && plan._id) {
+          // Setear el plan de estudio actual si existe
+          setUpdateSelectedPlan(plan._id);
+      }
+  } catch (error) {
+      console.error("Error al obtener el plan de estudio:", error);
+  }
     
     let profesoresIds;
     if (Array.isArray(materia.profesor)) {
@@ -343,15 +361,12 @@ function CrudMaterias() {
         profesoresIds = materia.profesor ? [materia.profesor] : [];
     }
 
-        setUpdateProfesoresSeleccionados(profesoresIds.length > 0 ? profesoresIds : []); // Asegurarse de que no sea undefined
-        setShowUpdateModal(true);
+    setUpdateProfesoresSeleccionados(profesoresIds.length > 0 ? profesoresIds : []); // Asegurarse de que no sea undefined
+    
+    // Mostrar el modal después de que el plan ha sido seteado (esto garantiza que el estado esté listo)
+    setShowUpdateModal(true);
+};
 
-        // Setear el plan de estudio actual
-        setUpdateSelectedPlan(materia.planId || ""); // Asegurarte de que se cargue el valor del plan de estudio
-        console.log(materia)
-
-        setShowUpdateModal(true);
-          };
 
   useEffect(() => {
     getMaterias();

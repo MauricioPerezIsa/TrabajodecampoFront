@@ -1435,7 +1435,7 @@ function Home() {
                 <strong>Código:</strong> {materiaInfo.codigo}
               </p>
               <p>
-                <strong>Elementos:</strong>
+                <strong>Elementos: </strong>
                 {materiaInfo.elementos.map((elemento, index) => (
                   <span key={index}>
                     {elemento.nombre}
