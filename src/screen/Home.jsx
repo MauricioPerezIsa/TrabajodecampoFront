@@ -814,12 +814,6 @@ function Home() {
       </div>
 
       {/* Botones Asignación */}
-
-      <div className="d-flex justify-content-between">
-        <h6>Presionar aquí para ejecutar la acción</h6>
-        <h6>Presionar aquí para ejecutar la acción</h6>
-      </div>
-
       <div className="text-center">
         <div className="d-flex justify-content-between">
           <Button
@@ -1722,6 +1716,15 @@ function Home() {
           </tbody>
         </Table>
       </div>
+
+      <div>
+            <h6>X : indica que existe una materia de otro plan de estudio ocupada en ese espacio y en ese módulo.</h6>
+            <h6>- : indica que el espacio está disponible en ese módulo.</h6>
+            <h6>
+              Colores : los colores de las celdas que contienen materias indican el tipo de asignación, el cual está especificado al pasar el cursor por sobre la celda.
+            </h6>
+      </div>
+
     </div>
   );
 }

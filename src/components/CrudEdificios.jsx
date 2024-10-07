@@ -201,25 +201,10 @@ function CrudEdificio() {
                 maxLength={50}
               />
             </Form.Group>
-            <Form.Group controlId="formBasicEspacios">
-              <Form.Label>Espacios</Form.Label>
-              <Form.Control
-                as="select"
-                multiple
-                value={espaciosEdificio}
-                onChange={(e) => setEspaciosEdificio(Array.from(e.target.selectedOptions, option => option.value))}
-              >
-                {allEspacios.map((espacio) => (
-                  <option key={espacio._id} value={espacio._id}>
-                    {espacio.nombre}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
             <div style={{display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center'}} >
-            <Button style={{margin: "28px", backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF'}} onClick={CrearEdificio} disabled={!nombreEdificio || espaciosEdificio.length === 0}>
+            <Button style={{margin: "28px", backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF'}} onClick={CrearEdificio} disabled={!nombreEdificio}>
               Crear Edificio
             </Button>
             </div>
@@ -315,21 +300,6 @@ function CrudEdificio() {
                 onChange={(e) => setUpdateNombreEdificio(e.target.value)}
                 maxLength={50}
               />
-            </Form.Group>
-            <Form.Group controlId="formUpdateEspacios">
-              <Form.Label>Espacios</Form.Label>
-              <Form.Control
-                as="select"
-                multiple
-                value={updateEspaciosEdificio}
-                onChange={(e) => setUpdateEspaciosEdificio(Array.from(e.target.selectedOptions, option => option.value))}
-              >
-                {allEspacios.map((espacio) => (
-                  <option key={espacio._id} value={espacio._id}>
-                    {espacio.nombre}
-                  </option>
-                ))}
-              </Form.Control>
             </Form.Group>
           </Form>
         </Modal.Body>

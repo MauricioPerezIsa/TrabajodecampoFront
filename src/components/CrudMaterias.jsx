@@ -19,6 +19,7 @@ function CrudMaterias() {
   const[allPlanes, setAllPlanes] = useState([])
   const[selectedPlan, setSelectedPlan] = useState("")
   const [planFiltro, setPlanFiltro] = useState("");
+  const [anioFiltro, setAnioFiltro] = useState("");
 
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -42,11 +43,16 @@ function CrudMaterias() {
 
   const [Errores, setErrores] = useState({});
 
-  // 'planFiltro' contiene el ID o nombre del plan seleccionado
+  // Seleccionar el plan basado en el filtro actual
   const planSeleccionado = allPlanes.find(plan => plan._id === planFiltro);
 
-  // Si se ha seleccionado un plan, mostramos sus materias
-  const materiasFiltradas = planSeleccionado ? planSeleccionado.materia : allMaterias;
+  // Si se ha seleccionado un plan, mostramos sus materias; si no, mostramos todas
+  const materiasDelPlan = planSeleccionado ? planSeleccionado.materia : allMaterias;
+
+  // Filtrar materias por año si se ha seleccionado un año
+  const materiasFiltradas = materiasDelPlan.filter(materia => {
+    return anioFiltro ? materia.anio === parseInt(anioFiltro) : true;
+  });
 
 
   const getPersonal = async () => {
@@ -388,7 +394,7 @@ function CrudMaterias() {
         <h1 style={{ fontFamily: "Crimson Text, serif" }}>AulaSMART - Materias</h1>
       </div>
 
-      <Form.Group controlId="formFiltroPlanEstudio">
+      <Form.Group className="mb-3" controlId="formFiltroPlanEstudio">
           <Form.Label>Filtrar por Plan de Estudio</Form.Label>
           <Form.Control 
             as="select" 
@@ -400,6 +406,19 @@ function CrudMaterias() {
               <option key={plan._id} value={plan._id}>{plan.nombre}</option>
             ))}
           </Form.Control>
+      </Form.Group>
+      <Form.Group className="mb-3" controlId="formFiltroAnio">
+        <Form.Label>Filtrar por Año</Form.Label>
+        <Form.Control 
+          as="select" 
+          value={anioFiltro} 
+          onChange={(e) => setAnioFiltro(e.target.value)}
+        >
+          <option value="">Seleccionar un año</option>
+          {[1, 2, 3, 4, 5].map(anio => (
+            <option key={anio} value={anio}>{anio}</option>
+          ))}
+        </Form.Control>
       </Form.Group>
 
       <Row>
