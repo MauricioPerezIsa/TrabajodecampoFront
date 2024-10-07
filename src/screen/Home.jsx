@@ -1570,6 +1570,9 @@ function Home() {
                     }else if(porcentaje >= 50 && porcentajeCoincidencia < 50){
                       cellStyle.backgroundColor = "#FC6601";
                       celltex ="Asignación Poco adecuada: El espacio tiene capacidad suficiente, pero faltan elementos necesarios"
+                    }else if(porcentaje === 100 && porcentajeCoincidencia>50){
+                      cellStyle.backgroundColor = "Lightgreen";
+                      celltex ="Asignación Adecuada: El espacio tiene capacidad exacta, pero faltan elementos necesarios"
                     }
                   } else {
                     cellStyle.backgroundColor = "lightgray";
@@ -1685,6 +1688,9 @@ function Home() {
                     }else if(porcentaje >= 50 && porcentajeCoincidencia < 50){
                       cellStyle.backgroundColor = "#FC6601";
                       celltex ="Asignación Poco adecuada: El espacio tiene capacidad suficiente, pero faltan elementos necesarios"
+                    }else if(porcentaje === 100 && porcentajeCoincidencia>50){
+                      cellStyle.backgroundColor = "Lightgreen";
+                      celltex ="Asignación Adecuada: El espacio tiene capacidad exacta, pero faltan elementos necesarios"
                     }
                   } else {
                     cellStyle.backgroundColor = "lightgray";
