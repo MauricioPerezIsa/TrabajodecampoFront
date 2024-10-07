@@ -12,8 +12,10 @@ import {
 } from "react-bootstrap";
 import styles from "../styles/detalles.module.css";
 import ModalConfirmacion from "../components/ModalConfirmacion.jsx";
+import { set } from "date-fns";
 
 function Home() {
+  
   const [allEdificios, setAllEdificios] = useState([]);
   const [allCarreras, setAllCarreras] = useState([]);
   const [planes, setPlanes] = useState([]);
@@ -25,16 +27,14 @@ function Home() {
   const [espacios, setEspacios] = useState([]);
   const [materiaInfo, setMateriaInfo] = useState(null);
   const [espaciosmodal, setEspaciosmodal] = useState([]);
-
-  const [planes2,setplanes2]=useState([])
+  
+  const [planes2, setplanes2] = useState([]);
 
   const [selectedPlan1, setSelectedPlan1] = useState("");
-  const [selectedCarrera1,setSelectedCarrera1]=useState("")
+  const [selectedCarrera1, setSelectedCarrera1] = useState("");
 
   const [selectedEdificio2, setSelectedEdificio2] = useState("");
   const [selectedEspacio2, setSelectedEspacio2] = useState("");
-
-
 
   const [selectedCarrera, setSelectedCarrera] = useState("");
   const [selectedMateria, setSelectedMateria] = useState("");
@@ -102,9 +102,12 @@ function Home() {
       method: "GET",
       redirect: "follow",
     };
-  
+
     try {
-      const response = await fetch("http://localhost:7000/edificio/buscar", requestOptions);
+      const response = await fetch(
+        "http://localhost:7000/edificio/buscar",
+        requestOptions
+      );
       if (!response.ok) {
         throw new Error(`Error al obtener edificios: ${response.status}`);
       }
@@ -116,9 +119,9 @@ function Home() {
       return []; // Retornar un arreglo vacío en caso de error
     }
   };
-  
 
-  {/*const getallespacios = async () => {
+  {
+    /*const getallespacios = async () => {
     const requestOptions = {
       method: "GET",
       redirect: "follow",
@@ -133,32 +136,33 @@ function Home() {
   };
   useEffect(() => {
     getallespacios();
-  }, []);*/}
-
+  }, []);*/
+  }
 
   // Manejar el cambio de edificio seleccionada
-const handleEdificioChange2 = async (e) => {
-  const edificio2Id = e.target.value;
-  setSelectedEdificio2(edificio2Id); // Almacenar el edificio seleccionado
+  const handleEdificioChange2 = async (e) => {
+    const edificio2Id = e.target.value;
+    setSelectedEdificio2(edificio2Id); // Almacenar el edificio seleccionado
 
-  if (edificio2Id) {
-    try {
-      // Hacer una petición para obtener los espacios del edificio seleccionado
-      const response = await fetch(`http://localhost:7000/edificio/espaciosEdificio/${edificio2Id}`);
-      if (!response.ok) {
-        throw new Error(`Error al obtener espacios: ${response.status}`);
+    if (edificio2Id) {
+      try {
+        // Hacer una petición para obtener los espacios del edificio seleccionado
+        const response = await fetch(
+          `http://localhost:7000/edificio/espaciosEdificio/${edificio2Id}`
+        );
+        if (!response.ok) {
+          throw new Error(`Error al obtener espacios: ${response.status}`);
+        }
+        const data = await response.json();
+        setEspaciosmodal(data);
+        console.log("Espacios cargados:", data); // Guardar los espacios obtenidos en el estado
+      } catch (error) {
+        console.error("Error al cargar espacios:", error);
       }
-      const data = await response.json();
-      setEspaciosmodal(data);
-      console.log("Espacios cargados:",data) // Guardar los espacios obtenidos en el estado
-    } catch (error) {
-      console.error("Error al cargar espacios:", error);
+    } else {
+      setEspaciosmodal([]); // Reinicia los espacios si no hay un edificio seleccionado
     }
-  } else {
-    setEspaciosmodal([]); // Reinicia los espacios si no hay un edificio seleccionado
-  }
-};
-
+  };
 
   const getCarreras = async () => {
     const requestOptions = {
@@ -167,7 +171,10 @@ const handleEdificioChange2 = async (e) => {
     };
 
     try {
-      const response = await fetch("http://localhost:7000/carrera/", requestOptions);
+      const response = await fetch(
+        "http://localhost:7000/carrera/",
+        requestOptions
+      );
       if (!response.ok) {
         throw new Error(`Error al obtener carreras: ${response.status}`);
       }
@@ -220,71 +227,78 @@ const handleEdificioChange2 = async (e) => {
     getPlanes();
   }, []);
 
-  
-// Definir inicializarDatos fuera de useEffect para que esté disponible en todo el componente
-const inicializarDatos = async () => {
-  const edificios = await getEdificios(); // Ahora edificios contiene los datos
-  if (edificios && edificios.length > 0) {
-    // Busca "Facultad de Ingeniería"
-    const facultadIngenieria = edificios.find(edificio => edificio.nombre === "Facultad de Ingeniería");
-    if (facultadIngenieria) {
-      setSelectedEdificio(facultadIngenieria._id);
-    } else {
-      // Si no se encuentra, selecciona el primer edificio
-      setSelectedEdificio(edificios[0]._id);
-    }
-  }
-};
-
-// useEffect para cargar los edificios y seleccionar Facultad de Ingeniería por defecto
-useEffect(() => {  
-  inicializarDatos();
-}, []); // Se ejecuta solo al montar el componente
-  
-
-// useEffect para cargar las carreras y seleccionar Ingeniería Informática por defecto
-const cargarCarreras = async () => {
-  const carreras = await getCarreras(); // Ahora carreras contiene los datos
-  if (carreras && carreras.length > 0) {
-    // Busca "Ingeniería Informática"
-    const ingInformatica = carreras.find(carrera => carrera.nombre === "Ingeniería Informatica");
-    if (ingInformatica) {
-      setSelectedCarrera1(ingInformatica._id);
-
-      // Obtener los planes asociados a Ingeniería Informática
-      try {
-        const planesResponse = await fetch(`http://localhost:7000/carrera/buscarplan/${ingInformatica._id}`);
-        if (!planesResponse.ok) {
-          throw new Error(`Error al obtener planes: ${planesResponse.status}`);
-        }
-        const planesData = await planesResponse.json();
-        setplanes2(planesData);
-
-        // Selecciona el "plan 2008" por defecto
-        const plan2008 = planesData.find(plan => plan.nombre.includes("plan 2008"));
-        if (plan2008) {
-          setSelectedPlan1(plan2008._id);
-        }
-      } catch (error) {
-        console.error("Error al cargar planes y materias:", error);
+  // Definir inicializarDatos fuera de useEffect para que esté disponible en todo el componente
+  const inicializarDatos = async () => {
+    const edificios = await getEdificios(); // Ahora edificios contiene los datos
+    if (edificios && edificios.length > 0) {
+      // Busca "Facultad de Ingeniería"
+      const facultadIngenieria = edificios.find(
+        (edificio) => edificio.nombre === "Facultad de Ingeniería"
+      );
+      if (facultadIngenieria) {
+        setSelectedEdificio(facultadIngenieria._id);
+      } else {
+        // Si no se encuentra, selecciona el primer edificio
+        setSelectedEdificio(edificios[0]._id);
       }
     }
-  }
-};
+  };
 
-useEffect(() => {  
-  cargarCarreras();
-}, []); // Se ejecuta solo al montar el componente
+  // useEffect para cargar los edificios y seleccionar Facultad de Ingeniería por defecto
+  useEffect(() => {
+    inicializarDatos();
+  }, []); // Se ejecuta solo al montar el componente
+
+  // useEffect para cargar las carreras y seleccionar Ingeniería Informática por defecto
+  const cargarCarreras = async () => {
+    const carreras = await getCarreras(); // Ahora carreras contiene los datos
+    if (carreras && carreras.length > 0) {
+      // Busca "Ingeniería Informática"
+      const ingInformatica = carreras.find(
+        (carrera) => carrera.nombre === "Ingeniería Informatica"
+      );
+      if (ingInformatica) {
+        setSelectedCarrera1(ingInformatica._id);
+
+        // Obtener los planes asociados a Ingeniería Informática
+        try {
+          const planesResponse = await fetch(
+            `http://localhost:7000/carrera/buscarplan/${ingInformatica._id}`
+          );
+          if (!planesResponse.ok) {
+            throw new Error(
+              `Error al obtener planes: ${planesResponse.status}`
+            );
+          }
+          const planesData = await planesResponse.json();
+          setplanes2(planesData);
+
+          // Selecciona el "plan 2008" por defecto
+          const plan2008 = planesData.find((plan) =>
+            plan.nombre.includes("plan 2008")
+          );
+          if (plan2008) {
+            setSelectedPlan1(plan2008._id);
+          }
+        } catch (error) {
+          console.error("Error al cargar planes y materias:", error);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    cargarCarreras();
+  }, []); // Se ejecuta solo al montar el componente
 
   useEffect(() => {
     const inicializarTodo = async () => {
       await inicializarDatos(); // Cargar edificios y seleccionar por defecto
-      await cargarCarreras();  // Cargar carreras y seleccionar por defecto
+      await cargarCarreras(); // Cargar carreras y seleccionar por defecto
     };
-  
+
     inicializarTodo();
   }, []);
-
 
   const fetchEspacios = async () => {
     if (selectedEdificio && selectedDia && selectedCarrera1 && selectedPlan1) {
@@ -310,10 +324,9 @@ useEffect(() => {
   // useEffect para cargar espacios cuando cambian los filtros
   useEffect(() => {
     if (selectedEdificio && selectedDia && selectedCarrera1 && selectedPlan1) {
-      fetchEspacios(); 
+      fetchEspacios();
     }
   }, [selectedEdificio, selectedDia, selectedCarrera1, selectedPlan1]);
-
 
   const handleEdificioChange = (e) => {
     setSelectedEdificio(e.target.value);
@@ -323,13 +336,14 @@ useEffect(() => {
     setSelectedDia(e.target.value);
   };
 
-
   const handleCarreraChange2 = async (e) => {
     const carreraId = e.target.value;
     setSelectedCarrera1(carreraId);
     if (carreraId) {
       try {
-        const response = await fetch(`http://localhost:7000/carrera/buscarplan/${carreraId}`);
+        const response = await fetch(
+          `http://localhost:7000/carrera/buscarplan/${carreraId}`
+        );
         if (!response.ok) {
           throw new Error(`Error al obtener planes: ${response.status}`);
         }
@@ -339,7 +353,9 @@ useEffect(() => {
 
         // Selecciona el primer plan o uno específico si lo deseas
         if (data.length > 0) {
-          const plan2008 = data.find(plan => plan.nombre.includes("Plan 2008"));
+          const plan2008 = data.find((plan) =>
+            plan.nombre.includes("Plan 2008")
+          );
           if (plan2008) {
             setSelectedPlan1(plan2008._id);
           } else {
@@ -355,18 +371,17 @@ useEffect(() => {
     }
   };
 
-// Manejar el cambio de plan de estudio seleccionado
-const handlePlanChange1 = (e) => {
-  const planId = e.target.value;
-  setSelectedPlan1(planId);
+  // Manejar el cambio de plan de estudio seleccionado
+  const handlePlanChange1 = (e) => {
+    const planId = e.target.value;
+    setSelectedPlan1(planId);
 
-  // Buscar las materias del plan seleccionado
-  const selectedPlanObj = planes2.find((plan) => plan._id === planId);
-  if (selectedPlanObj) {
-    setMaterias(selectedPlanObj.materia); // Guardar materias asociadas al plan
-    
-  }
-};
+    // Buscar las materias del plan seleccionado
+    const selectedPlanObj = planes2.find((plan) => plan._id === planId);
+    if (selectedPlanObj) {
+      setMaterias(selectedPlanObj.materia); // Guardar materias asociadas al plan
+    }
+  };
 
   // Manejar el cambio de carrera seleccionada
   const handleCarreraChange = async (e) => {
@@ -393,13 +408,11 @@ const handlePlanChange1 = (e) => {
   const handlePlanChange = (e) => {
     const planId = e.target.value;
     setSelectedPlan(planId);
-   
 
     // Buscar las materias del plan seleccionado
     const selectedPlanObj = planes.find((plan) => plan._id === planId);
     if (selectedPlanObj) {
       setMaterias(selectedPlanObj.materia); // Guardar materias asociadas al plan
-      
     }
   };
 
@@ -413,7 +426,6 @@ const handlePlanChange1 = (e) => {
       materiaId: materiaId, // Agrega materiaId a formData
     }));
   };
-
 
   const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
@@ -493,9 +505,13 @@ const handlePlanChange1 = (e) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ semestre: selectedCuatrimestre, carreraId: selectedCarrera, planEstudioId : selectedPlan,}), // Envía el semestre seleccionado en el body  
+        body: JSON.stringify({
+          semestre: selectedCuatrimestre,
+          carreraId: selectedCarrera,
+          planEstudioId: selectedPlan,
+        }), // Envía el semestre seleccionado en el body
       });
-      console.log(selectedCarrera,selectedPlan,selectedCuatrimestre)
+      console.log(selectedCarrera, selectedPlan, selectedCuatrimestre);
 
       if (!response.ok) {
         throw new Error("Error en la respuesta del servidor");
@@ -511,7 +527,12 @@ const handlePlanChange1 = (e) => {
       setIsLoading(false);
 
       // Actualizar las tablas con los espacios
-      await fetchEspacios(selectedEdificio, selectedDia,selectedCarrera1,selectedCarrera1); // Llama a fetchEspacios para actualizar las celdas
+      await fetchEspacios(
+        selectedEdificio,
+        selectedDia,
+        selectedCarrera1,
+        selectedCarrera1
+      ); // Llama a fetchEspacios para actualizar las celdas
 
       // Guardar el estado en localStorage
       localStorage.setItem("estadoAsignacion", "asignado");
@@ -546,7 +567,12 @@ const handlePlanChange1 = (e) => {
       setIsLoading(false);
 
       // Actualizar las tablas con los espacios
-      await fetchEspacios(selectedEdificio, selectedDia,selectedCarrera1,selectedPlan1); // Llamar a fetchEspacios para actualizar las tablas
+      await fetchEspacios(
+        selectedEdificio,
+        selectedDia,
+        selectedCarrera1,
+        selectedPlan1
+      ); // Llamar a fetchEspacios para actualizar las tablas
 
       setShowDesasignarBtn(false); // O actualizar el estado si lo necesitas para otros elementos de la UI
       setShowModal2(false); // Cerrar el modal en caso de que se esté utilizando
@@ -559,7 +585,6 @@ const handlePlanChange1 = (e) => {
   useEffect(() => {
     fetchEspacios();
   }, [selectedEdificio, selectedDia]);
-
 
   const handleShowModalConfirmacion = () => setShowModalConfirmacion(true);
   const handeCloseModalConfirmacion = () => setShowModalConfirmacion(false);
@@ -588,7 +613,6 @@ const handlePlanChange1 = (e) => {
   };
 
   const handleConfirmarDesasignar2 = async () => {
-    
     setShowModalConfirmacion2(false); // Cierra el modal después de ejecutar la acción
     setIsLoading(true);
     await handleEliminar(); // Ejecuta la función de desasignar
@@ -625,16 +649,21 @@ const handlePlanChange1 = (e) => {
       console.log(result); // Maneja la respuesta de la API según necesites
       setShowModal(false);
       setIsLoading(true);
-      await fetchEspacios(selectedEdificio, selectedDia,selectedCarrera1,selectedPlan1);
+      await fetchEspacios(
+        selectedEdificio,
+        selectedDia,
+        selectedCarrera1,
+        selectedPlan1
+      );
       setIsLoading(false);
 
       if (response.ok) {
-        setErrorMessage(result.mensaje)
+        setErrorMessage(result.mensaje);
         setShowErrorModal(true);
-
       } else {
-        
-        setErrorMessage(result.mensaje || "Hubo un error al asignar la materia."); // Personaliza el mensaje
+        setErrorMessage(
+          result.mensaje || "Hubo un error al asignar la materia."
+        ); // Personaliza el mensaje
         setShowErrorModal(true); // Mostrar el modal de error
       }
     } catch (error) {
@@ -675,19 +704,18 @@ const handlePlanChange1 = (e) => {
       const result = await response.json();
       console.log(result); // Maneja la respuesta de la API según necesites
       if (response.ok) {
-        setErrorMessage(result.mensaje)
+        setErrorMessage(result.mensaje);
         setShowErrorModal(true);
       } else {
-        
-        setErrorMessage(result.mensaje || "Hubo un error al eliminar la materia."); // Personaliza el mensaje
+        setErrorMessage(
+          result.mensaje || "Hubo un error al eliminar la materia."
+        ); // Personaliza el mensaje
         setShowErrorModal(true); // Mostrar el modal de error
       }
     } catch (error) {
       console.error("Error:", error);
     }
   };
-
-
 
   return (
     <div className="container" style={{ marginBottom: "150px" }}>
@@ -701,7 +729,12 @@ const handlePlanChange1 = (e) => {
         <h1 style={{ fontFamily: "Crimson Text, serif" }}>AulaSMART</h1>
       </div>
       <div>
-        <h2 className="d-flex align-items-center justify-content-center my-4" style={{ fontFamily: "Crimson Text, serif" }} >Menú Principal</h2>
+        <h2
+          className="d-flex align-items-center justify-content-center my-4"
+          style={{ fontFamily: "Crimson Text, serif" }}
+        >
+          Menú Principal
+        </h2>
       </div>
 
       {/* Sección Edificios */}
@@ -789,33 +822,29 @@ const handlePlanChange1 = (e) => {
 
       <div className="text-center">
         <div className="d-flex justify-content-between">
-        
-            <Button
-              className="m-2"
-              style={{
-                backgroundColor: "rgb(114, 16, 16)",
-                color: "#FFF",
-                borderColor: "#FFF",
-              }}
-              onClick={handleShow2}
-            >
-              Asignar Automáticamente
-            </Button>
-          
+          <Button
+            className="m-2"
+            style={{
+              backgroundColor: "rgb(114, 16, 16)",
+              color: "#FFF",
+              borderColor: "#FFF",
+            }}
+            onClick={handleShow2}
+          >
+            Asignar Automáticamente
+          </Button>
 
-          
-            <Button
-              className="m-2"
-              style={{
-                backgroundColor: "rgb(114, 16, 16)",
-                color: "#FFF",
-                borderColor: "#FFF",
-              }}
-              onClick={handleShowModalConfirmacion}
-            >
-              Desasignar Automáticamente
-            </Button>
-          
+          <Button
+            className="m-2"
+            style={{
+              backgroundColor: "rgb(114, 16, 16)",
+              color: "#FFF",
+              borderColor: "#FFF",
+            }}
+            onClick={handleShowModalConfirmacion}
+          >
+            Desasignar Automáticamente
+          </Button>
 
           <Button
             className="m-2"
@@ -842,22 +871,26 @@ const handlePlanChange1 = (e) => {
               Asignar Manualmente
             </Button>
 
-              {/* Modal de Alert*/}
-            <Modal show={showErrorModal} onHide={() => setShowErrorModal(false)}>
+            {/* Modal de Alert*/}
+            <Modal
+              show={showErrorModal}
+              onHide={() => setShowErrorModal(false)}
+            >
               <Modal.Header closeButton>
                 <Modal.Title>Mensaje</Modal.Title>
               </Modal.Header>
               <Modal.Body>
                 <h5>{errorMessage}</h5>
-
               </Modal.Body>
               <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShowErrorModal(false)}>
+                <Button
+                  variant="secondary"
+                  onClick={() => setShowErrorModal(false)}
+                >
                   Cerrar
                 </Button>
               </Modal.Footer>
             </Modal>
-
 
             {/* Modal de Confirmación 1*/}
             <ModalConfirmacion
@@ -893,8 +926,8 @@ const handlePlanChange1 = (e) => {
                           {carrera.nombre}
                         </option>
                       ))}
-                      </Form.Select>
-                    </Form.Group>
+                    </Form.Select>
+                  </Form.Group>
 
                   {/* Select de Planes */}
                   <Form.Group className="mb-3">
@@ -936,7 +969,9 @@ const handlePlanChange1 = (e) => {
               </ModalBody>
               <Modal.Footer>
                 <Button
-                  disabled={!selectedCuatrimestre || !selectedPlan || !selectedCarrera}
+                  disabled={
+                    !selectedCuatrimestre || !selectedPlan || !selectedCarrera
+                  }
                   style={{
                     backgroundColor: "rgb(114, 16, 16)",
                     color: "#FFF",
@@ -981,8 +1016,8 @@ const handlePlanChange1 = (e) => {
                           {carrera.nombre}
                         </option>
                       ))}
-                      </Form.Select>
-                    </Form.Group>
+                    </Form.Select>
+                  </Form.Group>
 
                   {/* Select de Planes */}
                   <Form.Group className="mb-3">
@@ -1024,7 +1059,6 @@ const handlePlanChange1 = (e) => {
                     <Form.Select
                       value={selectedEdificio2} // Usamos el estado seleccionado
                       onChange={handleEdificioChange2} // Asignamos el manejador
-                    
                     >
                       <option value="">Seleccione un espacio</option>
                       {allEdificios.map((edificio) => (
@@ -1154,7 +1188,7 @@ const handlePlanChange1 = (e) => {
                     !selectedCarrera ||
                     !selectedEspacio ||
                     !selectedPlan ||
-                    !selectedMateria||
+                    !selectedMateria ||
                     !selectedEdificio2
                   }
                 >
@@ -1228,7 +1262,6 @@ const handlePlanChange1 = (e) => {
                     <Form.Select
                       value={selectedEdificio2} // Usamos el estado seleccionado
                       onChange={handleEdificioChange2} // Asignamos el manejador
-                    
                     >
                       <option value="">Seleccione un espacio</option>
                       {allEdificios.map((edificio) => (
@@ -1402,14 +1435,16 @@ const handlePlanChange1 = (e) => {
                 <strong>Código:</strong> {materiaInfo.codigo}
               </p>
               <p>
-              <strong>Elementos:</strong> 
-{materiaInfo.elementos.map((elemento, index) => (
-  <span key={index}>
-    {elemento.nombre}
-    {index < materiaInfo.elementos.length - 1 ? ', ' : ''} {/* Añade coma entre los elementos, excepto al final */}
-  </span>
-))}
+                <strong>Elementos:</strong>
+                {materiaInfo.elementos.map((elemento, index) => (
+                  <span key={index}>
+                    {elemento.nombre}
+                    {index < materiaInfo.elementos.length - 1 ? ", " : ""}{" "}
+                    {/* Añade coma entre los elementos, excepto al final */}
+                  </span>
+                ))}
               </p>
+             
             </div>
           ) : (
             <p>No se ha seleccionado ninguna materia.</p>
@@ -1472,7 +1507,7 @@ const handlePlanChange1 = (e) => {
             </tr>
           </thead>
           <tbody>
-          {espacios.map((espacio, rowIndex) => (
+            {espacios.map((espacio, rowIndex) => (
               <tr key={rowIndex}>
                 {/* Hacer que el nombre del espacio sea clickable */}
                 <td
@@ -1488,50 +1523,74 @@ const handlePlanChange1 = (e) => {
                   const estaDisponible = horario?.disponible !== false;
                   const materia = tieneMateria ? horario.materia[0] : null;
 
-                  const elementosMateria = tieneMateria ? materia.elementos : []; 
-                  const elementosEspacio = espacio.elemento || [];                  
-                  const elementosMateriaNombres = elementosMateria.map(elemento => elemento.nombre);
-                  const elementosEspacioNombres = elementosEspacio.map(elemento => elemento.nombre);                                                   
-                  
+                  const elementosMateria = tieneMateria   ? materia.elementos    : [];
+                  const elementosEspacio = espacio.elemento || [];
+                  const elementosMateriaNombres = elementosMateria.map(
+                    (elemento) => elemento.nombre
+                  );
+                  const elementosEspacioNombres = elementosEspacio.map(
+                    (elemento) => elemento.nombre
+                  );
+
                   let cellStyle = {};
+                  let celltex =""
                   if (tieneMateria) {
                     const totalElementosMateria = elementosMateria.length; // Total de elementos de la materia
                     // Verifica si todos los elementos de la materia están en el espacio
-                    const todosElementosMateriaEnEspacio = elementosMateriaNombres.filter(nombre => 
-                      elementosEspacioNombres.includes(nombre)            
-                    ).length;
-                    const porcentajeCoincidencia = (todosElementosMateriaEnEspacio / totalElementosMateria) * 100; // Calcula el porcentaje de coincidencia  
+                    const todosElementosMateriaEnEspacio =
+                      elementosMateriaNombres.filter((nombre) =>
+                        elementosEspacioNombres.includes(nombre)
+                      ).length;
+                    const porcentajeCoincidencia =
+                      (todosElementosMateriaEnEspacio / totalElementosMateria) *
+                      100; // Calcula el porcentaje de coincidencia
                     const porcentaje = (materia.cantidadAlumnos / espacio.capacidad) * 100; // Calcula el porcentaje de ocupación del espacio
                     // Cambia el color basado en la comparación
                     if (porcentajeCoincidencia === 100 && porcentaje === 100) {
-                      cellStyle.backgroundColor = '#5497A7'; // Color para todos los elementos coincidentes
-                    } else if (porcentajeCoincidencia === 100 && 100> porcentaje && porcentaje>=80) {
-                      cellStyle.backgroundColor = 'green'; // Color para todos los elementos coincidentes
-                  }else if(porcentajeCoincidencia === 100 && 80>= porcentaje && porcentaje>=50 ){
-                    cellStyle.backgroundColor = 'orange'; // Color para todos los elementos coincidentes
-                  }else if(porcentajeCoincidencia >=50 && 100> porcentaje && porcentaje>=80){
-                    cellStyle.backgroundColor='yellow'
-                  }else if(porcentajeCoincidencia >=50 && 80>= porcentaje && porcentaje>=50 ){
-                    cellStyle.backgroundColor='orange'
-                  } else if(porcentajeCoincidencia===100 && porcentaje>100){
-                    cellStyle.backgroundColor='#B564E3'
-                  }else if(porcentaje>100 ||porcentajeCoincidencia<50 && porcentaje<50){
-                    cellStyle.backgroundColor='red'
-                  }}else{
-                  cellStyle.backgroundColor = 'lightgray';
-                }
+                      cellStyle.backgroundColor = "#5497A7"; 
+                      celltex="Asignación perfecta: Todos los elementos coinciden y el espacio cumple con la capacidad EXACTA ."                                         // Color para todos los elementos coincidentes
+                    } else if (porcentajeCoincidencia === 100 && 100 > porcentaje && porcentaje >= 80 ) {
+                      cellStyle.backgroundColor = "lightgreen";
+                      celltex="Asignación Adecudada: Todos los elementos coinciden y el espacio cumple con la capacidad suficiente" // Color para todos los elementos coincidentes
+                    } else if ( porcentajeCoincidencia === 100 &&  80 >= porcentaje && porcentaje >= 50) {
+                      cellStyle.backgroundColor = "#FC6601";
+                      celltex= "Asignacion Poco Adecuada: Todos los elementos coinciden, pero el espacio es mas grande que solicitado" // Color para todos los elementos coincidentes
+                    } else if (porcentajeCoincidencia >= 50 && 100 > porcentaje && porcentaje >= 80 ) {
+                      cellStyle.backgroundColor = "yellow";
+                      celltex=" Asignación Parcial: La mayoria de los elementos coinciden y el espacio cumple con la capacidad suficiente"
+                    } else if ( porcentajeCoincidencia >= 50 &&  80 >= porcentaje && porcentaje >= 50 ) {
+                      cellStyle.backgroundColor = "#FC6601";
+                      celltex= "Asignacion Poco Adecuada: La elementos coinciden, pero el espacio es mas grande que solicitado ";
+                    } else if (porcentajeCoincidencia === 100 && porcentaje > 100) {
+                      cellStyle.backgroundColor = "#B564E3";
+                      celltex = "Asignacion Poco Adecuada: La elementos coinciden, pero el espacio es mas chico que solicitado"; 
+                    } else if (porcentaje > 100 && porcentajeCoincidencia < 50) {
+                      cellStyle.backgroundColor = "red";
+                      celltex ="Asignacion Deficiente: Espacio Muy Pequen y tene muy pocos elementos ";
+                    }else if (porcentaje < 50 && porcentajeCoincidencia > 50) {
+                      cellStyle.backgroundColor = "red";
+                      celltex ="Asignacion Deficiente: Espacio Muy Grande, pero cumple con la mayoria de los elementos";
+                    }else if(porcentaje>100 && porcentajeCoincidencia>50){
+                      cellStyle.backgroundColor = "red";
+                      celltex ="Asignacion Deficiente: Espacio Muy chico, pero cumple con la mayoria de los elementos";                      
+                    }else if(porcentaje >= 50 && porcentajeCoincidencia < 50){
+                      cellStyle.backgroundColor = "#FC6601";
+                      celltex ="Asignación Poco adecuada: El espacio tiene capacidad suficiente, pero faltan elementos necesarios"
+                    }
+                  } else {
+                    cellStyle.backgroundColor = "lightgray";
+                  }
 
                   return (
                     <td
                       key={colIndex}
-                      onClick={() =>
-                        tieneMateria && handleCellClick(materia)
-                      }
-                      className={tieneMateria ? styles.hoverMateria : ""}
-                      style={{ 
+                      onClick={() => tieneMateria && handleCellClick(materia)}
+                      className={tieneMateria ? `${styles.hoverMateria} ${styles.grande}` : ""}
+                      style={{
                         cursor: tieneMateria ? "pointer" : "default",
-                        ...cellStyle
+                        ...cellStyle,
                       }}
+                     title={celltex}
                     >
                       {selectedPlan1
                         ? tieneMateria
@@ -1574,55 +1633,79 @@ const handlePlanChange1 = (e) => {
                   {espacio.nombre}
                 </td>
                 {Array.from({ length: 8 }).map((_, colIndex) => {
-                 const horario = espacio.horarios[colIndex]; // Obtener el horario correspondiente
-                 const tieneMateria = horario?.materia?.length > 0;
-                 const estaDisponible = horario?.disponible !== false;
-                 const materia = tieneMateria ? horario.materia[0] : null;
+                  const horario = espacio.horarios[colIndex+9]; // Obtener el horario correspondiente
+                  const tieneMateria = horario?.materia?.length > 0;
+                  const estaDisponible = horario?.disponible !== false;
+                  const materia = tieneMateria ? horario.materia[0] : null;
 
-                 const elementosMateria = tieneMateria ? materia.elementos : []; 
-                 const elementosEspacio = espacio.elemento || [];                  
-                 const elementosMateriaNombres = elementosMateria.map(elemento => elemento.nombre);
-                 const elementosEspacioNombres = elementosEspacio.map(elemento => elemento.nombre);                                                   
-                 
-                 let cellStyle = {};
-                 if (tieneMateria) {
-                   const totalElementosMateria = elementosMateria.length; // Total de elementos de la materia
-                   // Verifica si todos los elementos de la materia están en el espacio
-                   const todosElementosMateriaEnEspacio = elementosMateriaNombres.filter(nombre => 
-                     elementosEspacioNombres.includes(nombre)            
-                   ).length;
-                   const porcentajeCoincidencia = (todosElementosMateriaEnEspacio / totalElementosMateria) * 100; // Calcula el porcentaje de coincidencia  
-                   const porcentaje = (materia.cantidadAlumnos / espacio.capacidad) * 100; // Calcula el porcentaje de ocupación del espacio
-                   // Cambia el color basado en la comparación
-                   if (porcentajeCoincidencia === 100 && porcentaje === 100) {
-                     cellStyle.backgroundColor = '#5497A7'; // Color para todos los elementos coincidentes
-                   } else if (porcentajeCoincidencia === 100 && 100> porcentaje && porcentaje>=80) {
-                     cellStyle.backgroundColor = 'green'; // Color para todos los elementos coincidentes
-                 }else if(porcentajeCoincidencia === 100 && 80>= porcentaje && porcentaje>=50 ){
-                   cellStyle.backgroundColor = 'orange'; // Color para todos los elementos coincidentes
-                 }else if(porcentajeCoincidencia >=50 && 100> porcentaje && porcentaje>=80){
-                   cellStyle.backgroundColor='yellow'
-                 }else if(porcentajeCoincidencia >=50 && 80>= porcentaje && porcentaje>=50 ){
-                   cellStyle.backgroundColor='orange'
-                 } else if(porcentajeCoincidencia===100 && porcentaje>100){
-                   cellStyle.backgroundColor='#B564E3'
-                 }else if(porcentaje>100 ||porcentajeCoincidencia<50 && porcentaje<50){
-                   cellStyle.backgroundColor='red'
-                 }}else{
-                 cellStyle.backgroundColor = 'lightgray';
-               }
+                  const elementosMateria = tieneMateria   ? materia.elementos    : [];
+                  const elementosEspacio = espacio.elemento || [];
+                  const elementosMateriaNombres = elementosMateria.map(
+                    (elemento) => elemento.nombre
+                  );
+                  const elementosEspacioNombres = elementosEspacio.map(
+                    (elemento) => elemento.nombre
+                  );
+
+                  let cellStyle = {};
+                  let celltex = ""
+                  if (tieneMateria) {
+                    const totalElementosMateria = elementosMateria.length; // Total de elementos de la materia
+                    // Verifica si todos los elementos de la materia están en el espacio
+                    const todosElementosMateriaEnEspacio =
+                      elementosMateriaNombres.filter((nombre) =>
+                        elementosEspacioNombres.includes(nombre)
+                      ).length;
+                    const porcentajeCoincidencia =
+                      (todosElementosMateriaEnEspacio / totalElementosMateria) *
+                      100; // Calcula el porcentaje de coincidencia
+                    const porcentaje = (materia.cantidadAlumnos / espacio.capacidad) * 100; // Calcula el porcentaje de ocupación del espacio
+                    // Cambia el color basado en la comparación
+                    if (porcentajeCoincidencia === 100 && porcentaje === 100) {
+                      cellStyle.backgroundColor = "#5497A7"; 
+                      celltex="Asignación perfecta: Todos los elementos coinciden y el espacio cumple con la capacidad EXACTA ."                                         // Color para todos los elementos coincidentes
+                    } else if (porcentajeCoincidencia === 100 && 100 > porcentaje && porcentaje >= 80 ) {
+                      cellStyle.backgroundColor = "lightgreen";
+                      celltex="Asignación Adecudada: Todos los elementos coinciden y el espacio cumple con la capacidad suficiente" // Color para todos los elementos coincidentes
+                    } else if ( porcentajeCoincidencia === 100 &&  80 >= porcentaje && porcentaje >= 50) {
+                      cellStyle.backgroundColor = "#FC6601";
+                      celltex= "Asignacion Poco Adecuada: Todos los elementos coinciden, pero el espacio es mas grande que solicitado" // Color para todos los elementos coincidentes
+                    } else if (porcentajeCoincidencia >= 50 && 100 > porcentaje && porcentaje >= 80 ) {
+                      cellStyle.backgroundColor = "yellow";
+                      celltex=" Asignación Parcial: La mayoria de los elementos coinciden y el espacio cumple con la capacidad suficiente"
+                    } else if ( porcentajeCoincidencia >= 50 &&  80 >= porcentaje && porcentaje >= 50 ) {
+                      cellStyle.backgroundColor = "#FC6601";
+                      celltex= "Asignacion Poco Adecuada: La elementos coinciden, pero el espacio es mas grande que solicitado ";
+                    } else if (porcentajeCoincidencia === 100 && porcentaje > 100) {
+                      cellStyle.backgroundColor = "#B564E3";
+                      celltex = "Asignacion Poco Adecuada: La elementos coinciden, pero el espacio es mas chico que solicitado"; 
+                    } else if (porcentaje > 100 && porcentajeCoincidencia < 50) {
+                      cellStyle.backgroundColor = "red";
+                      celltex ="Asignacion Deficiente: Espacio Muy Pequen y tene muy pocos elementos ";
+                    }else if (porcentaje < 50 && porcentajeCoincidencia > 50) {
+                      cellStyle.backgroundColor = "red";
+                      celltex ="Asignacion Deficiente: Espacio Muy Grande, pero cumple con la mayoria de los elementos";
+                    }else if(porcentaje>100 && porcentajeCoincidencia>50){
+                      cellStyle.backgroundColor = "red";
+                      celltex ="Asignacion Deficiente: Espacio Muy chico, pero cumple con la mayoria de los elementos";                      
+                    }else if(porcentaje >= 50 && porcentajeCoincidencia < 50){
+                      cellStyle.backgroundColor = "#FC6601";
+                      celltex ="Asignación Poco adecuada: El espacio tiene capacidad suficiente, pero faltan elementos necesarios"
+                    }
+                  } else {
+                    cellStyle.backgroundColor = "lightgray";
+                  }
 
                   return (
                     <td
                       key={colIndex}
-                      onClick={() =>
-                        tieneMateria && handleCellClick(materia)
-                      }
-                      className={tieneMateria ? styles.hoverMateria : ""}
-                      style={{ 
+                      onClick={() => tieneMateria && handleCellClick(materia)}
+                      className={tieneMateria ? `${styles.hoverMateria} ${styles.grande}` : ""}
+                      style={{
                         cursor: tieneMateria ? "pointer" : "default",
-                        ...cellStyle
+                        ...cellStyle,
                       }}
+                      title={celltex}
                     >
                       {selectedPlan1
                         ? tieneMateria
