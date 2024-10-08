@@ -396,7 +396,7 @@ function CrudEspacio() {
         handleConfirm={() => DeleteEspacio(deleteId)}              
       />
 
-      <Table striped bordered hover style={{marginBottom: "150px"}}>
+      <Table striped bordered hover>
         <thead>
           <tr>
             <th>Nombre</th>

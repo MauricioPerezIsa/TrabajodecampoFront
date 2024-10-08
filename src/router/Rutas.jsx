@@ -33,7 +33,8 @@ function Rutas() {
     <Route path='/PlanDeEstudio' element={<PlanDeEstudio/>}/>
     <Route path='/Profesores' element={<Profesores/>}/>
      </Routes>
-     <FooterCustom className={` ${Styles["footer-grid"]}`} ></FooterCustom>
+     {/* <FooterCustom className={` ${Styles["footer-grid"]}`} ></FooterCustom> */}
+
      </div>
      
     

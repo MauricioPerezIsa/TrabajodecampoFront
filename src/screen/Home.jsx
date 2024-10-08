@@ -730,7 +730,7 @@ function Home() {
   
 
   return (
-    <div className="container" style={{ marginBottom: "150px" }}>
+    <div className="container">
       {/* Título y Logo */}
       <div className="d-flex align-items-center justify-content-center my-5">
         <img

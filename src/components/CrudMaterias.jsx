@@ -568,7 +568,20 @@ function CrudMaterias() {
             <div style={{display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center'}} >
-            <Button style={{margin: "28px", backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF'}} variant="primary" onClick={handleSubmit}>Crear Materia</Button>
+            <Button style={{margin: "28px", backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF'}}
+             disabled={!selectedPlan || !NombreMateria || !CodigoMateria || !AnioMateria || !SemestreMateria || Elementos.length === 0 || 
+             !CantidadAlumnos || profesoresSeleccionados.length === 0 ||
+             horarios.some(                               // Validación de los horarios
+              (horario) =>
+                horario.dia === "" ||                    // El día no puede estar vacío
+                horario.moduloInicio === "" ||           // El módulo de inicio no puede estar vacío
+                horario.moduloFin === "" ||              // El módulo de fin no puede estar vacío
+                horario.moduloInicio < 1 ||              // El módulo de inicio debe ser mayor a 0
+                horario.moduloFin < 1 ||                 // El módulo de fin debe ser mayor a 0
+                horario.moduloInicio > horario.moduloFin // El módulo de inicio no puede ser mayor al módulo de fin
+            )} variant="primary" onClick={handleSubmit}>
+              Crear Materia
+            </Button>
             </div>
            
           </Form>
@@ -581,7 +594,7 @@ function CrudMaterias() {
         handleConfirm={() => DeleteMateria(deleteId)}
       />
 
-        <Table striped bordered hover style={{marginBottom: "350px"}}>
+        <Table striped bordered hover>
           <thead>
             <tr>
               <th>Nombre</th>
