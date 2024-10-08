@@ -1684,16 +1684,19 @@ function Home() {
                       celltex=" Asignación Parcial: La mayoria de los elementos coinciden y el espacio cumple con la capacidad suficiente"
                     } else if ( porcentajeCoincidencia >= 50 &&  80 >= porcentaje && porcentaje >= 50 ) {
                       cellStyle.backgroundColor = "#FC6601";
-                      celltex= "Asignacion Poco Adecuada: La elementos coinciden, pero el espacio es mas grande que solicitado ";
+                      celltex= "Asignacion Poco Adecuada: Los elementos coinciden, pero el espacio es mas grande que solicitado ";
                     } else if (porcentajeCoincidencia === 100 && porcentaje > 100) {
                       cellStyle.backgroundColor = "#B564E3";
-                      celltex = "Asignacion Poco Adecuada: La elementos coinciden, pero el espacio es mas chico que solicitado"; 
+                      celltex = "Asignacion Poco Adecuada: Los elementos coinciden, pero el espacio es mas chico que solicitado"; 
                     } else if (porcentaje > 100 && porcentajeCoincidencia < 50) {
                       cellStyle.backgroundColor = "red";
                       celltex ="Asignacion Deficiente: Espacio Muy Pequen y tene muy pocos elementos ";
                     }else if (porcentaje < 50 && porcentajeCoincidencia > 50) {
                       cellStyle.backgroundColor = "red";
                       celltex ="Asignacion Deficiente: Espacio Muy Grande, pero cumple con la mayoria de los elementos";
+                    }else if (porcentaje < 50 && porcentajeCoincidencia === 50) {
+                      cellStyle.backgroundColor = "red";
+                      celltex ="Asignacion Deficiente: Espacio Muy Grande y contiene solo la mitad de los elementos";
                     }else if(porcentaje>100 && porcentajeCoincidencia>50){
                       cellStyle.backgroundColor = "red";
                       celltex ="Asignacion Deficiente: Espacio Muy chico, pero cumple con la mayoria de los elementos";                      
