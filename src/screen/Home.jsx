@@ -684,38 +684,50 @@ function Home() {
 
   /// funcion para eliminar la materia de un espacio
   const handleEliminar = async () => {
-    const dataToSend = {
-      espacioId: selectedEspacio, // ID del espacio seleccionado
-      materiaId: selectedMateria, // ID de la materia seleccionada
-      dias: horarios, // Los horarios capturados
-    };
-
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(dataToSend),
-    };
-
     try {
+      // Convertir los horarios a números
+      const horariosConvertidos = horarios.map((horario) => ({
+        dia: horario.dia,
+        moduloInicio: Number(horario.moduloInicio), // Asegurarse de que sea número
+        moduloFin: Number(horario.moduloFin), // Asegurarse de que sea número
+      }));
+  
+      const dataToSend = {
+        espacioId: selectedEspacio, // ID del espacio seleccionado
+        materiaId: selectedMateria, // ID de la materia seleccionada
+        dias: horariosConvertidos, // Horarios procesados
+      };
+  
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dataToSend),
+      };
+  
+      // Hacer la petición al backend
       const response = await fetch(
         "http://localhost:7000/asignar/desasignarManual",
         requestOptions
-      ); // Cambia el endpoint por el correcto
-      const result = await response.json();
-      console.log(result); // Maneja la respuesta de la API según necesites
+      );
+  
+      const result = await response.json(); // Procesar la respuesta
+  
       if (response.ok) {
-        setErrorMessage(result.mensaje);
-        setShowErrorModal(true);
+        setErrorMessage(result.mensaje || "Materia desasignada con éxito.");
+        setShowErrorModal(true); // Podrías cambiar esto por mostrar un modal de éxito
       } else {
         setErrorMessage(
           result.mensaje || "Hubo un error al eliminar la materia."
-        ); // Personaliza el mensaje
+        );
         setShowErrorModal(true); // Mostrar el modal de error
       }
     } catch (error) {
       console.error("Error:", error);
+      setErrorMessage("Error en la solicitud. Inténtalo de nuevo más tarde.");
+      setShowErrorModal(true); // Mostrar modal de error en caso de fallo
     }
   };
+  
 
   return (
     <div className="container" style={{ marginBottom: "150px" }}>
