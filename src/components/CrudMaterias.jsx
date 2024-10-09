@@ -609,42 +609,42 @@ function CrudMaterias() {
             </tr>
           </thead>
           <tbody>
-            {materiasFiltradas.map(materia => (
-              <tr key={materia._id}>
-                <td>{materia.nombre}</td>
-                <td>{materia.codigo}</td>
-                <td>{materia.anio}</td>
-                <td>{materia.semestre}</td>
-                <td>{materia.elementos.map(e => allElementos.find(el => el._id === e)?.nombre).join(', ')}</td>
-                <td>{materia.cantidadAlumnos}</td>
-                <td>
-                  {materia.profesor
-                    .map(p => {
-                      // Si 'p' ya contiene los datos del profesor, usamos directamente sus campos
-                      if (p.nombre && p.apellido) {
-                        return `${p.nombre} ${p.apellido}`;
-                      }
-                      // Si 'p' solo es un ID, buscamos en 'allProfesores' por ese ID
-                      const prof = allPersonal.find(prof => prof._id === p);
-                      return prof ? `${prof.nombre} ${prof.apellido}` : 'Profesor no encontrado';
-                    })
-                    .join(', ')}
-                </td>
-
-
-                <td>{materia.horarios.map((h, index) => (
-                    <div key={index}>
-                    |  Día: {h.dia}, Módulo Inicio: {h.moduloInicio}, Módulo Fin: {h.moduloFin}
-                    </div>
-                  ))}
-                </td>
-                <td>
-                  <Button style={{ marginBottom: '7px', backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} variant="warning" onClick={() => handleShowUpdateModal(materia)}>Modificar</Button>
-                  <Button style={{ marginLeft: '6px', backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} variant="danger" onClick={() => handleDeleteClick(materia._id)}>Eliminar</Button>
-                </td>
-              </tr>
-            ))}
+            {materiasFiltradas
+              .sort((a, b) => parseInt(a.codigo) - parseInt(b.codigo)) // Ordenar por el campo código convertido a número
+              .map(materia => (
+                <tr key={materia._id}>
+                  <td>{materia.nombre}</td>
+                  <td>{materia.codigo}</td>
+                  <td>{materia.anio}</td>
+                  <td>{materia.semestre}</td>
+                  <td>{materia.elementos.map(e => allElementos.find(el => el._id === e)?.nombre).join(', ')}</td>
+                  <td>{materia.cantidadAlumnos}</td>
+                  <td>
+                    {materia.profesor
+                      .map(p => {
+                        if (p.nombre && p.apellido) {
+                          return `${p.nombre} ${p.apellido}`;
+                        }
+                        const prof = allPersonal.find(prof => prof._id === p);
+                        return prof ? `${prof.nombre} ${prof.apellido}` : 'Profesor no encontrado';
+                      })
+                      .join(', ')}
+                  </td>
+                  <td>
+                    {materia.horarios.map((h, index) => (
+                      <div key={index}>
+                        |  Día: {h.dia}, Módulo Inicio: {h.moduloInicio}, Módulo Fin: {h.moduloFin}
+                      </div>
+                    ))}
+                  </td>
+                  <td>
+                    <Button style={{ marginBottom: '7px', backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} variant="warning" onClick={() => handleShowUpdateModal(materia)}>Modificar</Button>
+                    <Button style={{ marginLeft: '6px', backgroundColor: 'rgb(114, 16, 16)', color: '#FFF', borderColor: '#FFF' }} variant="danger" onClick={() => handleDeleteClick(materia._id)}>Eliminar</Button>
+                  </td>
+                </tr>
+              ))}
           </tbody>
+
         </Table>
       </Row>
 
