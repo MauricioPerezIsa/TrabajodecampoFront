@@ -1288,6 +1288,22 @@ function Home() {
                         </Form.Select>
                       </Form.Group>
 
+                      {/*Edificios */}
+                  <Form.Group className="mb-3">
+                    <Form.Label>Edificios</Form.Label>
+                    <Form.Select
+                      value={selectedEdificio2} // Usamos el estado seleccionado
+                      onChange={handleEdificioChange2} // Asignamos el manejador
+                    >
+                      <option value="">Seleccione un espacio</option>
+                      {allEdificios.map((edificio) => (
+                        <option key={edificio._id} value={edificio._id}>
+                          {edificio.nombre}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+
                   {/*Espacios */}
                   <Form.Group className="mb-3">
                     <Form.Label>Espacios</Form.Label>
