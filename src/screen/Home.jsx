@@ -27,6 +27,8 @@ function Home() {
   const [espacios, setEspacios] = useState([]);
   const [materiaInfo, setMateriaInfo] = useState(null);
   const [espaciosmodal, setEspaciosmodal] = useState([]);
+  const [filterText, setFilterText] = useState("");
+  const [filterText2, setFilterText2] = useState("");
   
   const [planes2, setplanes2] = useState([]);
 
@@ -1044,20 +1046,32 @@ function Home() {
 
                   {/* Select de Materias */}
                   <Form.Group className="mb-3">
-                    <Form.Label>Materia</Form.Label>
-                    <Form.Select
-                      value={selectedMateria}
-                      onChange={handleMateriaChange}
-                      disabled={!materias.length}
-                    >
-                      <option value="">Seleccione una materia</option>
-                      {materias.map((materia) => (
-                        <option key={materia._id} value={materia._id}>
-                          {materia.nombre}
-                        </option>
-                      ))}
-                    </Form.Select>
-                  </Form.Group>
+                        <Form.Label>Materia</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="Buscar materia"
+                          value={filterText}
+                          onChange={(e) => setFilterText(e.target.value)} // Actualiza el filtro
+                          disabled={!selectedPlan}
+                        />
+                        <Form.Select
+                          value={selectedMateria}
+                          onChange={handleMateriaChange}
+                          disabled={!materias.length}
+                        >
+                          <option value="">Seleccione una materia</option>
+                          {materias
+                            .filter((materia) =>
+                              materia.nombre.toLowerCase().includes(filterText.toLowerCase()) // Filtra las materias por nombre
+                            )
+                            .map((materia) => (
+                              <option key={materia._id} value={materia._id}>
+                                {materia.nombre}
+                              </option>
+                            ))}
+                        </Form.Select>
+                      </Form.Group>
+
 
                   {/*Edificios */}
                   <Form.Group className="mb-3">
@@ -1248,35 +1262,31 @@ function Home() {
 
                   {/* Select de Materias */}
                   <Form.Group className="mb-3">
-                    <Form.Label>Materia</Form.Label>
-                    <Form.Select
-                      value={selectedMateria}
-                      onChange={handleMateriaChange}
-                      disabled={!materias.length}
-                    >
-                      <option value="">Seleccione una materia</option>
-                      {materias.map((materia) => (
-                        <option key={materia._id} value={materia._id}>
-                          {materia.nombre}
-                        </option>
-                      ))}
-                    </Form.Select>
-                  </Form.Group>
-                  {/*Edificios */}
-                  <Form.Group className="mb-3">
-                    <Form.Label>Edificios</Form.Label>
-                    <Form.Select
-                      value={selectedEdificio2} // Usamos el estado seleccionado
-                      onChange={handleEdificioChange2} // Asignamos el manejador
-                    >
-                      <option value="">Seleccione un espacio</option>
-                      {allEdificios.map((edificio) => (
-                        <option key={edificio._id} value={edificio._id}>
-                          {edificio.nombre}
-                        </option>
-                      ))}
-                    </Form.Select>
-                  </Form.Group>
+                        <Form.Label>Materia</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="Buscar materia"
+                          value={filterText2}
+                          onChange={(e) => setFilterText2(e.target.value)} // Actualiza el filtro
+                          disabled={!selectedPlan}
+                        />
+                        <Form.Select
+                          value={selectedMateria}
+                          onChange={handleMateriaChange}
+                          disabled={!materias.length}
+                        >
+                          <option value="">Seleccione una materia</option>
+                          {materias
+                            .filter((materia) =>
+                              materia.nombre.toLowerCase().includes(filterText2.toLowerCase()) // Filtra las materias por nombre
+                            )
+                            .map((materia) => (
+                              <option key={materia._id} value={materia._id}>
+                                {materia.nombre}
+                              </option>
+                            ))}
+                        </Form.Select>
+                      </Form.Group>
 
                   {/*Espacios */}
                   <Form.Group className="mb-3">
