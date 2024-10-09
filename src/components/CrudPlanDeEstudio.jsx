@@ -257,24 +257,26 @@ function CrudPlanDeEstudio() {
 
 
       <Modal show={showMateriasModal} onHide={() => setShowMateriasModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Materias del Plan</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <ul>
-            {materiasDelPlan.map((materia) => (
-              <li key={materia._id}>
-                {materia.nombre}, Año: {materia.anio}
-              </li>
-            ))}
-          </ul>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowMateriasModal(false)}>
-            Cerrar
-          </Button>
-        </Modal.Footer>
-      </Modal>
+  <Modal.Header closeButton>
+    <Modal.Title>Materias del Plan</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <ul>
+      {materiasDelPlan
+        .sort((a, b) => a.anio - b.anio) // Ordenar las materias por el campo 'anio' de menor a mayor
+        .map((materia) => (
+          <li key={materia._id}>
+            {materia.nombre}, Año: {materia.anio}
+          </li>
+        ))}
+    </ul>
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setShowMateriasModal(false)}>
+      Cerrar
+    </Button>
+  </Modal.Footer>
+</Modal>
 
 
       <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)}>
