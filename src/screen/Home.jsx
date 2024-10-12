@@ -1596,7 +1596,7 @@ function Home() {
                     } else if (porcentajeCoincidencia === 100 && porcentaje > 100) {
                       cellStyle.backgroundColor = "#B564E3";
                       celltex = "Asignación Mala: Los elementos coinciden, pero el espacio es más pequeño que solicitado.";
-                    } else if (porcentaje > 100 && porcentajeCoincidencia < 50) {
+                    } else if (porcentaje > 100 && porcentajeCoincidencia <= 50) {
                       cellStyle.backgroundColor = "red";
                       celltex = "Asignación Deficiente: Espacio demasiado pequeño y tiene muy pocos elementos.";
                     } else if (porcentaje < 50 && porcentajeCoincidencia > 50) {
@@ -1718,7 +1718,7 @@ function Home() {
                     } else if (porcentajeCoincidencia === 100 && porcentaje > 100) {
                       cellStyle.backgroundColor = "#B564E3";
                       celltex = "Asignación Mala: Los elementos coinciden, pero el espacio es más pequeño que solicitado.";
-                    } else if (porcentaje > 100 && porcentajeCoincidencia < 50) {
+                    } else if (porcentaje > 100 && porcentajeCoincidencia <= 50) {
                       cellStyle.backgroundColor = "red";
                       celltex = "Asignación Deficiente: Espacio demasiado pequeño y tiene muy pocos elementos.";
                     } else if (porcentaje < 50 && porcentajeCoincidencia > 50) {
