@@ -1583,31 +1583,31 @@ function Home() {
                       celltex = "Asignación perfecta: Todos los elementos coinciden y el espacio cumple con la capacidad EXACTA.";
                     } else if (porcentajeCoincidencia === 100 && porcentaje >= 80 && porcentaje < 100) {
                       cellStyle.backgroundColor = "lightgreen";
-                      celltex = "Asignación Adecuada: Todos los elementos coinciden y el espacio cumple con la capacidad suficiente.";
+                      celltex = "Asignación Adecuada: Todos los elementos coinciden y el espacio cumple con capacidad suficiente.";
                     } else if (porcentajeCoincidencia === 100 && porcentaje >= 50 && porcentaje < 80) {
                       cellStyle.backgroundColor = "#FC6601";
-                      celltex = "Asignación Poco Adecuada: Todos los elementos coinciden, pero el espacio es más grande que solicitado.";
+                      celltex = "Asignación Poco Adecuada: Todos los elementos coinciden, pero el espacio es más grande que lo solicitado.";
                     } else if (porcentajeCoincidencia >= 50 && porcentaje >= 80 && porcentaje < 100) {
                       cellStyle.backgroundColor = "yellow";
-                      celltex = "Asignación Parcial: La mayoría de los elementos coinciden y el espacio cumple con la capacidad suficiente.";
+                      celltex = "Asignación Parcial: La mayoría de los elementos coinciden y el espacio cumple con capacidad suficiente.";
                     } else if (porcentajeCoincidencia >= 50 && porcentaje >= 50 && porcentaje < 80) {
                       cellStyle.backgroundColor = "#FC6601";
-                      celltex = "Asignación Poco Adecuada: La mayoría de los elementos coinciden, pero el espacio es más grande que solicitado.";
+                      celltex = "Asignación Poco Adecuada: La mayoría de los elementos coinciden, pero el espacio es más grande que lo solicitado.";
                     } else if (porcentajeCoincidencia === 100 && porcentaje > 100) {
                       cellStyle.backgroundColor = "#B564E3";
-                      celltex = "Asignación Mala: Los elementos coinciden, pero el espacio es más pequeño que solicitado.";
+                      celltex = "Asignación Mala: Los elementos coinciden, pero el espacio es más pequeño que lo solicitado.";
                     } else if (porcentaje > 100 && porcentajeCoincidencia <= 50) {
                       cellStyle.backgroundColor = "red";
-                      celltex = "Asignación Deficiente: Espacio demasiado pequeño y tiene muy pocos elementos.";
+                      celltex = "Asignación Deficiente: Espacio demasiado pequeño y además tiene muy pocos elementos requeridos.";
                     } else if (porcentaje < 50 && porcentajeCoincidencia > 50) {
                       cellStyle.backgroundColor = "red";
-                      celltex = "Asignación Deficiente: Espacio demasiado grande, pero cumple con la mayoría de los elementos.";
+                      celltex = "Asignación Deficiente: Espacio demasiado grande, pero cumple con la mayoría de los elementos requeridos.";
                     } else if (porcentaje < 50 && porcentajeCoincidencia === 50) {
                       cellStyle.backgroundColor = "red";
-                      celltex = "Asignación Deficiente: Espacio demasiado grande y contiene solo la mitad de los elementos.";
+                      celltex = "Asignación Deficiente: Espacio demasiado grande y contiene solo la mitad de los elementos requeridos.";
                     } else if (porcentaje > 100 && porcentajeCoincidencia > 50) {
                       cellStyle.backgroundColor = "red";
-                      celltex = "Asignación Deficiente: Espacio muy pequeño, pero cumple con la mayoría de los elementos.";
+                      celltex = "Asignación Deficiente: Espacio muy pequeño, pero cumple con la mayoría de los elementos requeridos.";
                     } else if (porcentaje >= 50 && porcentajeCoincidencia < 50) {
                       cellStyle.backgroundColor = "#FC6601";
                       celltex = "Asignación Poco Adecuada: El espacio tiene capacidad suficiente, pero faltan elementos necesarios.";
@@ -1616,7 +1616,7 @@ function Home() {
                       celltex = "Asignación Adecuada: El espacio tiene capacidad exacta, pero faltan elementos necesarios.";
                     } else if (porcentaje === 100 && porcentajeCoincidencia > 50) {
                       cellStyle.backgroundColor = "lightgreen";
-                      celltex = "Asignación Adecuada: El espacio tiene capacidad exacta, pero faltan algunos elementos.";
+                      celltex = "Asignación Adecuada: El espacio tiene capacidad exacta, pero faltan algunos elementos necesarios.";
                     }
                   }
                   
@@ -1705,31 +1705,31 @@ function Home() {
                       celltex = "Asignación perfecta: Todos los elementos coinciden y el espacio cumple con la capacidad EXACTA.";
                     } else if (porcentajeCoincidencia === 100 && porcentaje >= 80 && porcentaje < 100) {
                       cellStyle.backgroundColor = "lightgreen";
-                      celltex = "Asignación Adecuada: Todos los elementos coinciden y el espacio cumple con la capacidad suficiente.";
+                      celltex = "Asignación Adecuada: Todos los elementos coinciden y el espacio cumple con capacidad suficiente.";
                     } else if (porcentajeCoincidencia === 100 && porcentaje >= 50 && porcentaje < 80) {
                       cellStyle.backgroundColor = "#FC6601";
-                      celltex = "Asignación Poco Adecuada: Todos los elementos coinciden, pero el espacio es más grande que solicitado.";
+                      celltex = "Asignación Poco Adecuada: Todos los elementos coinciden, pero el espacio es más grande que lo solicitado.";
                     } else if (porcentajeCoincidencia >= 50 && porcentaje >= 80 && porcentaje < 100) {
                       cellStyle.backgroundColor = "yellow";
-                      celltex = "Asignación Parcial: La mayoría de los elementos coinciden y el espacio cumple con la capacidad suficiente.";
+                      celltex = "Asignación Parcial: La mayoría de los elementos coinciden y el espacio cumple con capacidad suficiente.";
                     } else if (porcentajeCoincidencia >= 50 && porcentaje >= 50 && porcentaje < 80) {
                       cellStyle.backgroundColor = "#FC6601";
-                      celltex = "Asignación Poco Adecuada: La mayoría de los elementos coinciden, pero el espacio es más grande que solicitado.";
+                      celltex = "Asignación Poco Adecuada: La mayoría de los elementos coinciden, pero el espacio es más grande que lo solicitado.";
                     } else if (porcentajeCoincidencia === 100 && porcentaje > 100) {
                       cellStyle.backgroundColor = "#B564E3";
-                      celltex = "Asignación Mala: Los elementos coinciden, pero el espacio es más pequeño que solicitado.";
+                      celltex = "Asignación Mala: Los elementos coinciden, pero el espacio es más pequeño que lo solicitado.";
                     } else if (porcentaje > 100 && porcentajeCoincidencia <= 50) {
                       cellStyle.backgroundColor = "red";
-                      celltex = "Asignación Deficiente: Espacio demasiado pequeño y tiene muy pocos elementos.";
+                      celltex = "Asignación Deficiente: Espacio demasiado pequeño y además tiene muy pocos elementos requeridos.";
                     } else if (porcentaje < 50 && porcentajeCoincidencia > 50) {
                       cellStyle.backgroundColor = "red";
-                      celltex = "Asignación Deficiente: Espacio demasiado grande, pero cumple con la mayoría de los elementos.";
+                      celltex = "Asignación Deficiente: Espacio demasiado grande, pero cumple con la mayoría de los elementos requeridos.";
                     } else if (porcentaje < 50 && porcentajeCoincidencia === 50) {
                       cellStyle.backgroundColor = "red";
-                      celltex = "Asignación Deficiente: Espacio demasiado grande y contiene solo la mitad de los elementos.";
+                      celltex = "Asignación Deficiente: Espacio demasiado grande y contiene solo la mitad de los elementos requeridos.";
                     } else if (porcentaje > 100 && porcentajeCoincidencia > 50) {
                       cellStyle.backgroundColor = "red";
-                      celltex = "Asignación Deficiente: Espacio muy pequeño, pero cumple con la mayoría de los elementos.";
+                      celltex = "Asignación Deficiente: Espacio muy pequeño, pero cumple con la mayoría de los elementos requeridos.";
                     } else if (porcentaje >= 50 && porcentajeCoincidencia < 50) {
                       cellStyle.backgroundColor = "#FC6601";
                       celltex = "Asignación Poco Adecuada: El espacio tiene capacidad suficiente, pero faltan elementos necesarios.";
@@ -1738,7 +1738,7 @@ function Home() {
                       celltex = "Asignación Adecuada: El espacio tiene capacidad exacta, pero faltan elementos necesarios.";
                     } else if (porcentaje === 100 && porcentajeCoincidencia > 50) {
                       cellStyle.backgroundColor = "lightgreen";
-                      celltex = "Asignación Adecuada: El espacio tiene capacidad exacta, pero faltan algunos elementos.";
+                      celltex = "Asignación Adecuada: El espacio tiene capacidad exacta, pero faltan algunos elementos necesarios.";
                     }
                   }                  
 
